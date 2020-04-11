@@ -8,10 +8,13 @@ import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
@@ -22,6 +25,7 @@ import java.nio.charset.Charset
 class MainActivity : AppCompatActivity() {
 
     companion object {
+        private const val TAG = "MainActivity"
         private const val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
     }
 
@@ -41,9 +45,14 @@ class MainActivity : AppCompatActivity() {
                 when (intent?.action) {
                     ACTION_USB_PERMISSION -> {
                         synchronized(this) {
-                            val device: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
+                            val device: UsbDevice? =
+                                intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
 
-                            if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                            if (intent.getBooleanExtra(
+                                    UsbManager.EXTRA_PERMISSION_GRANTED,
+                                    false
+                                )
+                            ) {
                                 tvOutput.append("\nPermission granted for ${device?.manufacturerName}")
                                 device?.apply {
                                     // setup the device communication.
@@ -59,20 +68,43 @@ class MainActivity : AppCompatActivity() {
                                             it.setParity(UsbSerialInterface.PARITY_NONE)
                                             it.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF)
                                             it.read { message ->
-                                                try {
-                                                    val encoded =
-                                                        String(message, Charset.defaultCharset())
-                                                    tvOutput.append(encoded)
-                                                } catch (e: UnsupportedEncodingException) {
-                                                    e.printStackTrace()
-                                                    tvOutput.append("\n${e.localizedMessage}")
+                                                // check if the Android version is not 5.1.1 Lollipop
+                                                // before printing the message into output.
+                                                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1) {
+                                                    Log.e(
+                                                        TAG,
+                                                        "Lollipop 5.1.1 is not supported to show the serial messages from the Arduino."
+                                                    )
+                                                } else {
+                                                    message?.let {
+                                                        try {
+                                                            val encoded =
+                                                                String(
+                                                                    message,
+                                                                    Charset.defaultCharset()
+                                                                )
+                                                            tvOutput.append(encoded)
+                                                        } catch (e: UnsupportedEncodingException) {
+                                                            e.printStackTrace()
+                                                            tvOutput
+                                                                .append("\n${e.localizedMessage}")
+                                                        } catch (e: Exception) {
+                                                            Toast.makeText(
+                                                                this@MainActivity,
+                                                                e.localizedMessage,
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        }
+                                                    }
                                                 }
                                             }
                                             tvOutput.append("\nSerial Connection Opened")
                                         } else {
                                             tvOutput.append("\nPort not opened")
                                         }
-                                    } else { tvOutput.append("\nSerial Port was null") }
+                                    } else {
+                                        tvOutput.append("\nSerial Port was null")
+                                    }
 
                                 }
                             } else {
@@ -102,7 +134,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.actionConnect -> {
 
                 val usbDevices = usbManager.deviceList
