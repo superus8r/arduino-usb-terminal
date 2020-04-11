@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/actionConnect" android:title="@string/title_connect" app:showAsAction="ifRoom"/>
+    <item android:id="@+id/actionConnect" android:title="@string/title_connect" app:showAsAction="ifRoom" android:icon="@drawable/ic_usb_white_24dp"/>
+    <item android:id="@+id/actionOpenJoystick" android:title="Joystick" app:showAsAction="ifRoom" android:icon="@drawable/ic_gamepad_white_24dp" />
 </menu>

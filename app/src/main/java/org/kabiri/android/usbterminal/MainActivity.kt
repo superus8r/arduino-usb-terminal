@@ -161,6 +161,11 @@ class MainActivity : AppCompatActivity() {
                 }
                 true
             }
+            R.id.actionOpenJoystick -> {
+                val intent = Intent(this, JoystickActivity::class.java)
+                startActivity(intent)
+                true
+            }
             else -> false
         }
     }
