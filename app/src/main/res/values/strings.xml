@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">USBTerminal</string>
     <string name="title_connect">Connect</string>
+    <string name="bt_joystick_forward">Go Forward</string>
+    <string name="bt_joystick_left">Turn Left</string>
+    <string name="bt_joystick_right">Turn Right</string>
+    <string name="bt_joystick_backward">Go Backward</string>
 </resources>
