@@ -5,6 +5,7 @@
     <uses-feature android:name="android.hardware.usb.host" />
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
