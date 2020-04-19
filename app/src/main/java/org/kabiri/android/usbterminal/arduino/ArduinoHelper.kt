@@ -8,10 +8,13 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
 import org.kabiri.android.usbterminal.Constants
+
 
 /**
  * Created by Ali Kabiri on 13.04.20.
@@ -28,9 +31,9 @@ class ArduinoHelper(private val context: Context,
         private const val TAG = "ArduinoHelper"
     }
 
-    private val liveOutput = MutableLiveData<String>()
-    private val liveInfoOutput = MutableLiveData<String>()
-    private val liveErrorOutput = MutableLiveData<String>()
+    private val _liveOutput = MutableLiveData<String>()
+    private val _liveInfoOutput = MutableLiveData<String>()
+    private val _liveErrorOutput = MutableLiveData<String>()
 
     private var usbManager: UsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
     private lateinit var connection: UsbDeviceConnection
@@ -55,12 +58,12 @@ class ArduinoHelper(private val context: Context,
                     context.registerReceiver(arduinoPermReceiver, filter) // register the broadcast receiver
                     usbManager.requestPermission(device.value, permissionIntent)
                 } else {
-                    liveOutput.postValue("\nArduino Device not found")
+                    _liveInfoOutput.postValue("\nArduino Device not found")
                     connection.close()
                 }
             }
         } else {
-            liveOutput.postValue("\nNo USB devices are attached")
+            _liveInfoOutput.postValue("\nNo USB devices are attached")
         }
     }
 
@@ -74,7 +77,7 @@ class ArduinoHelper(private val context: Context,
      * This method should be called after the permission is granted to access the Arduino via USB.
      */
     fun openDeviceAndPort(device: UsbDevice) {
-        synchronized(this) { // TODO - should this be removed?
+        synchronized(this) { // TODO - probably this should be replaced with coroutines.
             // setup the device communication.
             connection = usbManager.openDevice(device)
             serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection)
@@ -82,7 +85,7 @@ class ArduinoHelper(private val context: Context,
             if (::serialPort.isInitialized)
                 prepareSerialPort(serialPort)
             else {
-                liveInfoOutput.postValue("\nSerial Port was null")
+                _liveInfoOutput.postValue("\nSerial Port was null")
                 connection.close()
             }
         }
@@ -102,9 +105,9 @@ class ArduinoHelper(private val context: Context,
                 it.setParity(UsbSerialInterface.PARITY_NONE)
                 it.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF)
                 it.read(arduinoSerialReceiver) // messages will be received from the receiver.
-                liveInfoOutput.postValue("\nSerial Connection Opened")
+                _liveInfoOutput.postValue("\nSerial Connection Opened")
             } else { // serial port not opened.
-                liveInfoOutput.postValue("\nPort not opened")
+                _liveInfoOutput.postValue("\nPort not opened")
             }
         }
     }
@@ -117,16 +120,47 @@ class ArduinoHelper(private val context: Context,
             if (::serialPort.isInitialized && command.isNotBlank()) {
                 serialPort.write(command.toByteArray())
                 // go to next line because the answer might be sent in more than one part.
-                liveOutput.postValue("\n")
+                _liveOutput.postValue("\n")
                 true
             } else {
-                liveInfoOutput.postValue("Serial Port is null")
+                _liveInfoOutput.postValue("Serial Port is null")
                 false
             }
         } catch (e: Exception) {
             Log.e(TAG, "Serial Write encountered an error: $e")
-            liveErrorOutput.postValue("\n${e.localizedMessage}")
+            _liveErrorOutput.postValue("\n${e.localizedMessage}")
             false
         }
     }
+
+    fun getLiveOutput(): LiveData<String> {
+
+        val liveDataMerger = MediatorLiveData<String>()
+        liveDataMerger.addSource(_liveOutput) { liveDataMerger.value = it }
+        liveDataMerger.addSource(arduinoPermReceiver.liveOutput) { liveDataMerger.value = it }
+        liveDataMerger.addSource(arduinoSerialReceiver.liveOutput) { liveDataMerger.value = it }
+
+        return liveDataMerger
+    }
+
+    fun getLiveInfoOutput(): LiveData<String> {
+
+        val liveDataMerger = MediatorLiveData<String>()
+        liveDataMerger.addSource(_liveInfoOutput) { liveDataMerger.value = it }
+        liveDataMerger.addSource(arduinoPermReceiver.liveInfoOutput) { liveDataMerger.value = it }
+        liveDataMerger.addSource(arduinoSerialReceiver.liveInfoOutput) { liveDataMerger.value = it }
+
+        return liveDataMerger
+    }
+
+    fun getLiveErrorOutput(): LiveData<String> {
+
+        val liveDataMerger = MediatorLiveData<String>()
+        liveDataMerger.addSource(_liveErrorOutput) { liveDataMerger.value = it }
+        liveDataMerger.addSource(arduinoPermReceiver.liveErrorOutput) { liveDataMerger.value = it }
+        liveDataMerger.addSource(arduinoSerialReceiver.liveErrorOutput) { liveDataMerger.value = it }
+
+        return liveDataMerger
+    }
+
 }
