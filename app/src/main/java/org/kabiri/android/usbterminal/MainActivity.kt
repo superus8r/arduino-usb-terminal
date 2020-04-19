@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         private const val TAG = "MainActivity"
     }
 
-    val viewModel: MainActivityViewModel by viewModel()
+    private val viewModel: MainActivityViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,12 +29,16 @@ class MainActivity : AppCompatActivity() {
             viewModel.openDeviceAndPort(device)
         })
 
+        viewModel.getLiveOutput().observe(this, Observer {
+            tvOutput.append(it)
+        })
+
         // send the command to device when the button is clicked.
         btEnter.setOnClickListener {
             val input = etInput.text.toString()
             if (viewModel.serialWrite(input))
                 etInput.setText("") // clear the terminal input.
-            else Log.e(TAG, "Message was not sent to Arduino")
+            else Log.e(TAG, "The message was not sent to Arduino")
         }
     }
 
