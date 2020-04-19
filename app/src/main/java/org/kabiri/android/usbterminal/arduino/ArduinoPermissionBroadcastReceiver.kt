@@ -21,8 +21,16 @@ class ArduinoPermissionBroadcastReceiver: BroadcastReceiver() {
         private const val TAG = "ArduinoPermReceiver"
     }
 
-    private val liveOutput = MutableLiveData<String>()
-    private val liveInfoOutput = MutableLiveData<String>()
+    private val _liveOutput = MutableLiveData<String>()
+    private val _liveInfoOutput = MutableLiveData<String>()
+    private val _liveErrorOutput = MutableLiveData<String>()
+
+    val liveOutput: LiveData<String>
+        get() = _liveOutput
+    val liveInfoOutput: LiveData<String>
+        get() = _liveInfoOutput
+    val liveErrorOutput: LiveData<String>
+        get() = _liveErrorOutput
 
     private val _liveGrantedDevice = MutableLiveData<UsbDevice>()
     val liveGrantedDevice: LiveData<UsbDevice> // prevent mutable object to be public.
@@ -37,15 +45,15 @@ class ArduinoPermissionBroadcastReceiver: BroadcastReceiver() {
                     .getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
 
                 if (permissionGranted) {
-                    liveInfoOutput.postValue("\nPermission granted for ${device?.manufacturerName}")
+                    _liveInfoOutput.postValue("\nPermission granted for ${device?.manufacturerName}")
                     Log.i(TAG, "USB permission granted by the user")
                     device?.let { _liveGrantedDevice.postValue(it) }
                 } else
                     Log.e(TAG, "USB permission denied by the user")
-                    liveInfoOutput.postValue("\npermission denied for device $device")
+                    _liveErrorOutput.postValue("\npermission denied for device $device")
             }
-            UsbManager.ACTION_USB_DEVICE_ATTACHED -> liveOutput.postValue("\nDevice attached")
-            UsbManager.ACTION_USB_DEVICE_DETACHED -> liveOutput.postValue("\nDevice detached")
+            UsbManager.ACTION_USB_DEVICE_ATTACHED -> _liveOutput.postValue("\nDevice attached")
+            UsbManager.ACTION_USB_DEVICE_DETACHED -> _liveOutput.postValue("\nDevice detached")
         }
     }
 }

@@ -2,6 +2,7 @@ package org.kabiri.android.usbterminal.arduino
 
 import android.os.Build
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.felhr.usbserial.UsbSerialInterface
 import java.io.UnsupportedEncodingException
@@ -18,9 +19,16 @@ class ArduinoSerialReceiver: UsbSerialInterface.UsbReadCallback {
         private const val TAG = "ArduinoSerialReceiver"
     }
 
-    private val liveOutput = MutableLiveData<String>()
-    private val liveInfoOutput = MutableLiveData<String>()
-    private val liveErrorOutput = MutableLiveData<String>()
+    private val _liveOutput = MutableLiveData<String>()
+    private val _liveInfoOutput = MutableLiveData<String>()
+    private val _liveErrorOutput = MutableLiveData<String>()
+
+    val liveOutput: LiveData<String>
+        get() = _liveOutput
+    val liveInfoOutput: LiveData<String>
+        get() = _liveInfoOutput
+    val liveErrorOutput: LiveData<String>
+        get() = _liveErrorOutput
 
     override fun onReceivedData(message: ByteArray?) {
         // check if the Android version is not 5.1.1 Lollipop
@@ -35,14 +43,14 @@ class ArduinoSerialReceiver: UsbSerialInterface.UsbReadCallback {
                 try { // reading the message from the arduino board.
                     val encoded = String(message, Charset.defaultCharset())
                     Log.i(TAG, "message from arduino: $encoded")
-                    liveOutput.postValue(encoded)
+                    _liveOutput.postValue(encoded)
                 } catch (e: UnsupportedEncodingException) {
                     e.printStackTrace()
                     Log.e(TAG, "Encoding problem occurred when reading the serial message: $e")
-                    liveInfoOutput.postValue("\n${e.localizedMessage}")
+                    _liveInfoOutput.postValue("\n${e.localizedMessage}")
                 } catch (e: Exception) {
                     Log.e(TAG, "Unknown error occurred when reading the serial message: $e")
-                    liveErrorOutput.postValue("\n${e.localizedMessage}")
+                    _liveErrorOutput.postValue("\n${e.localizedMessage}")
                 }
             }
         }
