@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.kabiri.android.usbterminal.Constants
+import org.kabiri.android.usbterminal.R
 
 /**
  * Created by Ali Kabiri on 13.04.20.
@@ -45,15 +46,17 @@ class ArduinoPermissionBroadcastReceiver: BroadcastReceiver() {
                     .getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
 
                 if (permissionGranted) {
-                    _liveInfoOutput.postValue("\nPermission granted for ${device?.manufacturerName}")
+                    _liveInfoOutput.postValue(
+                        "${context?.getString(R.string.breceiver_info_usb_permission_granted)} ${device?.manufacturerName}")
                     Log.i(TAG, "USB permission granted by the user")
                     device?.let { _liveGrantedDevice.postValue(it) }
                 } else
                     Log.e(TAG, "USB permission denied by the user")
-                    _liveErrorOutput.postValue("\npermission denied for device $device")
+                    _liveErrorOutput.postValue(
+                        "${context?.getString(R.string.breceiver_error_usb_permission_denied)} $device")
             }
-            UsbManager.ACTION_USB_DEVICE_ATTACHED -> _liveOutput.postValue("\nDevice attached")
-            UsbManager.ACTION_USB_DEVICE_DETACHED -> _liveOutput.postValue("\nDevice detached")
+            UsbManager.ACTION_USB_DEVICE_ATTACHED -> _liveOutput.postValue(context?.getString(R.string.breceiver_info_device_attached))
+            UsbManager.ACTION_USB_DEVICE_DETACHED -> _liveOutput.postValue(context?.getString(R.string.breceiver_info_device_detached))
         }
     }
 }

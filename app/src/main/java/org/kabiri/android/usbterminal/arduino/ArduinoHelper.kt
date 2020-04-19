@@ -14,6 +14,7 @@ import androidx.lifecycle.MutableLiveData
 import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
 import org.kabiri.android.usbterminal.Constants
+import org.kabiri.android.usbterminal.R
 
 
 /**
@@ -44,6 +45,7 @@ class ArduinoHelper(private val context: Context,
      */
     fun askForConnectionPermission() {
         val usbDevices = usbManager.deviceList
+        _liveInfoOutput.postValue(context.getString(R.string.helper_info_checking_attached_usb_devices))
         if (usbDevices.isNotEmpty()) {
             for (device in usbDevices) {
                 val deviceVID = device.value.vendorId
@@ -57,13 +59,14 @@ class ArduinoHelper(private val context: Context,
                     val filter = IntentFilter(Constants.ACTION_USB_PERMISSION)
                     context.registerReceiver(arduinoPermReceiver, filter) // register the broadcast receiver
                     usbManager.requestPermission(device.value, permissionIntent)
+                    _liveInfoOutput.postValue(context.getString(R.string.helper_info_usb_permission_requested))
                 } else {
-                    _liveInfoOutput.postValue("\nArduino Device not found")
+                    _liveErrorOutput.postValue(context.getString(R.string.helper_error_device_not_found))
                     connection.close()
                 }
             }
         } else {
-            _liveInfoOutput.postValue("\nNo USB devices are attached")
+            _liveErrorOutput.postValue(context.getString(R.string.helper_error_usb_devices_not_attached))
         }
     }
 
@@ -85,7 +88,7 @@ class ArduinoHelper(private val context: Context,
             if (::serialPort.isInitialized)
                 prepareSerialPort(serialPort)
             else {
-                _liveInfoOutput.postValue("\nSerial Port was null")
+                _liveInfoOutput.postValue(context.getString(R.string.helper_error_serial_port_is_null))
                 connection.close()
             }
         }
@@ -105,9 +108,9 @@ class ArduinoHelper(private val context: Context,
                 it.setParity(UsbSerialInterface.PARITY_NONE)
                 it.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF)
                 it.read(arduinoSerialReceiver) // messages will be received from the receiver.
-                _liveInfoOutput.postValue("\nSerial Connection Opened")
+                _liveInfoOutput.postValue(context.getString(R.string.helper_info_serial_connection_opened))
             } else { // serial port not opened.
-                _liveInfoOutput.postValue("\nPort not opened")
+                _liveErrorOutput.postValue(context.getString(R.string.helper_error_serial_connection_not_opened))
             }
         }
     }
@@ -120,15 +123,15 @@ class ArduinoHelper(private val context: Context,
             if (::serialPort.isInitialized && command.isNotBlank()) {
                 serialPort.write(command.toByteArray())
                 // go to next line because the answer might be sent in more than one part.
-                _liveOutput.postValue("\n")
+                _liveOutput.postValue(context.getString(R.string.next_line))
                 true
             } else {
-                _liveInfoOutput.postValue("Serial Port is null")
+                _liveErrorOutput.postValue(context.getString(R.string.helper_error_serial_port_is_null))
                 false
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Serial Write encountered an error: $e")
-            _liveErrorOutput.postValue("\n${e.localizedMessage}")
+            _liveErrorOutput.postValue("${context.getString(R.string.helper_error_write_problem)} ${e.localizedMessage}")
+            Log.e(TAG, "$e")
             false
         }
     }

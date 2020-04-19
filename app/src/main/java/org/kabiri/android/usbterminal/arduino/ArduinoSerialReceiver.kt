@@ -47,7 +47,7 @@ class ArduinoSerialReceiver: UsbSerialInterface.UsbReadCallback {
                 } catch (e: UnsupportedEncodingException) {
                     e.printStackTrace()
                     Log.e(TAG, "Encoding problem occurred when reading the serial message: $e")
-                    _liveInfoOutput.postValue("\n${e.localizedMessage}")
+                    _liveErrorOutput.postValue("\n${e.localizedMessage}")
                 } catch (e: Exception) {
                     Log.e(TAG, "Unknown error occurred when reading the serial message: $e")
                     _liveErrorOutput.postValue("\n${e.localizedMessage}")
