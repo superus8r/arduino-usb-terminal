@@ -2,6 +2,8 @@ package org.kabiri.android.usbterminal
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -24,13 +26,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // make the text view scrollable:
+        tvOutput.movementMethod = ScrollingMovementMethod()
+
         // open the device and port when the permission is granted by user.
         viewModel.getGrantedDevice().observe(this, Observer { device ->
             viewModel.openDeviceAndPort(device)
         })
 
         viewModel.getLiveOutput().observe(this, Observer {
-            tvOutput.append(it)
+            val spannable = SpannableString(it.text)
+            spannable.setSpan(
+                it.getAppearance(this),
+                0,
+                it.text.length,
+                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+            tvOutput.append(it.text)
         })
 
         // send the command to device when the button is clicked.
