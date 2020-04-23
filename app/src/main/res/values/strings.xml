@@ -12,7 +12,7 @@
     <string name="bt_joystick_right">Turn Right</string>
     <string name="bt_joystick_backward">Go Backward</string>
 
-    <string name="helper_error_serial_port_is_null">Serial Port is null; Is the device connected?\n</string>
+    <string name="helper_error_serial_port_is_null">Serial Port is null: The device might be disconnected.\n</string>
     <string name="helper_error_device_not_found">\nArduino Device not found</string>
     <string name="helper_error_usb_devices_not_attached">\nNo USB devices are attached</string>
     <string name="helper_error_serial_connection_not_opened">\nPort not opened - There might be a problem with the serial connection to Arduino</string>
