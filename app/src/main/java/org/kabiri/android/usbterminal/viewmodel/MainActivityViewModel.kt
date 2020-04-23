@@ -1,17 +1,17 @@
 package org.kabiri.android.usbterminal.viewmodel
 
-import android.graphics.Color
 import android.hardware.usb.UsbDevice
-import android.text.*
-import android.text.style.ForegroundColorSpan
-import android.widget.TextView
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
 import org.kabiri.android.usbterminal.arduino.ArduinoHelper
+import org.kabiri.android.usbterminal.model.OutputText
 
 /**
  * Created by Ali Kabiri on 12.04.20.
  */
-class MainActivityViewModel(val arduinoHelper: ArduinoHelper): ViewModel() {
+class MainActivityViewModel(private val arduinoHelper: ArduinoHelper): ViewModel() {
 
     fun askForConnectionPermission() = arduinoHelper.askForConnectionPermission()
     fun getGrantedDevice() = arduinoHelper.getGrantedDevice()
@@ -22,34 +22,25 @@ class MainActivityViewModel(val arduinoHelper: ArduinoHelper): ViewModel() {
      * Transforms the outputs from ArduinoHelper into spannable text
      * and merges them in one single live data.
      */
-    fun getLiveOutput(): LiveData<SpannableString> {
+    fun getLiveOutput(): LiveData<OutputText> {
 
         val liveOutput = arduinoHelper.getLiveOutput()
         val liveInfoOutput = arduinoHelper.getLiveInfoOutput()
         val liveErrorOutput = arduinoHelper.getLiveErrorOutput()
 
-        val liveSpannedOutput: LiveData<SpannableString> = Transformations.map(liveOutput) {
-            val spannableString = SpannableString(it)
-            spannableString.setSpan(ForegroundColorSpan(Color.DKGRAY), 0, it.length,
-                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
-            return@map spannableString
+        val liveSpannedOutput: LiveData<OutputText> = Transformations.map(liveOutput) {
+            return@map OutputText(it, OutputText.OutputType.TYPE_NORMAL)
         }
 
-        val liveSpannedInfoOutput: LiveData<SpannableString> = Transformations.map(liveInfoOutput) {
-            val spannableString = SpannableString(it)
-            spannableString.setSpan(ForegroundColorSpan(Color.BLUE), 0, it.length,
-                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
-            return@map spannableString
+        val liveSpannedInfoOutput: LiveData<OutputText> = Transformations.map(liveInfoOutput) {
+            return@map OutputText(it, OutputText.OutputType.TYPE_INFO)
         }
 
-        val liveSpannedErrorOutput: LiveData<SpannableString> = Transformations.map(liveErrorOutput) {
-            val spannableString = SpannableString(it)
-            spannableString.setSpan(ForegroundColorSpan(Color.RED), 0, it.length,
-                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
-            return@map spannableString
+        val liveSpannedErrorOutput: LiveData<OutputText> = Transformations.map(liveErrorOutput) {
+            return@map OutputText(it, OutputText.OutputType.TYPE_ERROR)
         }
 
-        val liveDataMerger = MediatorLiveData<SpannableString>()
+        val liveDataMerger = MediatorLiveData<OutputText>()
         liveDataMerger.addSource(liveSpannedOutput) { liveDataMerger.value = it }
         liveDataMerger.addSource(liveSpannedInfoOutput) { liveDataMerger.value = it }
         liveDataMerger.addSource(liveSpannedErrorOutput) { liveDataMerger.value = it }
