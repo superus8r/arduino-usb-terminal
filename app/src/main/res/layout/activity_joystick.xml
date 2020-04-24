@@ -4,46 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingStart="16dp"
+    android:paddingLeft="16dp"
+    android:paddingEnd="16dp"
+    android:paddingRight="16dp"
     tools:context=".JoystickActivity">
 
     <ImageButton
         android:id="@+id/btForward"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/bt_joystick_forward"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/imageButton4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_arrow_upward_black_24dp" />
+        app:layout_constraintWidth_percent="0.33"
+        app:srcCompat="@drawable/ic_arrow_upward_24dp" />
 
     <ImageButton
         android:id="@+id/btLeft"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/bt_joystick_left"
-        app:layout_constraintEnd_toStartOf="@+id/btForward"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btForward"
-        app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.33"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
 
     <ImageButton
         android:id="@+id/btRight"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/bt_joystick_right"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btForward"
-        app:layout_constraintTop_toBottomOf="@+id/btForward"
-        app:srcCompat="@drawable/ic_arrow_forward_black_24dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.33"
+        app:srcCompat="@drawable/ic_arrow_forward_24dp" />
 
     <ImageButton
         android:id="@+id/imageButton4"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/bt_joystick_backward"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btLeft"
-        app:srcCompat="@drawable/ic_arrow_downward_black_24dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btRight"
+        app:layout_constraintStart_toEndOf="@+id/btLeft"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.33"
+        app:srcCompat="@drawable/ic_arrow_downward_24dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
