@@ -80,17 +80,20 @@ class ArduinoHelper(private val context: Context,
      * This method should be called after the permission is granted to access the Arduino via USB.
      */
     fun openDeviceAndPort(device: UsbDevice) {
-        synchronized(this) { // TODO - probably this should be replaced with coroutines.
+        try {
             // setup the device communication.
             connection = usbManager.openDevice(device)
             serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection)
+        } catch (e: IllegalStateException) {
+            Log.e(TAG, "${e.message}")
+            _liveErrorOutput.postValue(context.getString(R.string.helper_error_connection_closed_unexpectedly))
+        }
 
-            if (::serialPort.isInitialized)
-                prepareSerialPort(serialPort)
-            else {
-                _liveInfoOutput.postValue(context.getString(R.string.helper_error_serial_port_is_null))
-                connection.close()
-            }
+        if (::serialPort.isInitialized)
+            prepareSerialPort(serialPort)
+        else {
+            _liveInfoOutput.postValue(context.getString(R.string.helper_error_serial_port_is_null))
+            connection.close()
         }
     }
 
