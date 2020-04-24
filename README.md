@@ -9,7 +9,10 @@
  A Simple terminal page which does what it is supposed to do interacting with an Arduino manually through the USB cable.
  
  ## Joystick
- Under construction...
+ The Joystick is removed for the first release.
+ 
+ ## Tests
+ Under Construction
  
  ### Knows Issues
  _On Android 5.1.1, the Arduino serial output cannot be shown. (It is said that an Android internal bug is the issue!)_ This was hopefully solved using LiveData
