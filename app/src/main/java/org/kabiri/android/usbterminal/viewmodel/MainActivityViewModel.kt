@@ -1,10 +1,8 @@
 package org.kabiri.android.usbterminal.viewmodel
 
 import android.hardware.usb.UsbDevice
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.arduino.ArduinoHelper
 import org.kabiri.android.usbterminal.model.OutputText
 
@@ -15,7 +13,9 @@ class MainActivityViewModel(private val arduinoHelper: ArduinoHelper): ViewModel
 
     fun askForConnectionPermission() = arduinoHelper.askForConnectionPermission()
     fun getGrantedDevice() = arduinoHelper.getGrantedDevice()
-    fun openDeviceAndPort(device: UsbDevice) = arduinoHelper.openDeviceAndPort(device)
+    fun openDeviceAndPort(device: UsbDevice) = viewModelScope.launch {
+        arduinoHelper.openDeviceAndPort(device)
+    }
     fun serialWrite(command: String) = arduinoHelper.serialWrite(command)
 
     /**
