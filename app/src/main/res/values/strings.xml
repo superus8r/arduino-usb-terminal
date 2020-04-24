@@ -17,6 +17,7 @@
     <string name="helper_error_usb_devices_not_attached">\nNo USB devices are attached</string>
     <string name="helper_error_serial_connection_not_opened">\nPort not opened - There might be a problem with the serial connection to Arduino</string>
     <string name="helper_error_write_problem">Serial Write encountered an error:</string>
+    <string name="helper_error_connection_closed_unexpectedly">Device connection was closed unexpectedly</string>
     <string name="helper_info_serial_connection_opened">\nSerial Connection Opened</string>
     <string name="helper_info_usb_permission_requested">Requested permission to access the USB device…</string>
     <string name="helper_info_checking_attached_usb_devices">\nChecking attached USB devices…</string>
