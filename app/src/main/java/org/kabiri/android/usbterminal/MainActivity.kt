@@ -1,6 +1,5 @@
 package org.kabiri.android.usbterminal
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.ScrollingMovementMethod
@@ -10,9 +9,11 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import io.sentry.core.Sentry
 import kotlinx.android.synthetic.main.activity_main.*
 import org.kabiri.android.usbterminal.viewmodel.MainActivityViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
+
 
 class MainActivity : AppCompatActivity() {
 
