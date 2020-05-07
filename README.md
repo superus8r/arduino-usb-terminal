@@ -5,6 +5,11 @@
  
  This is being done as a hobby, and for experimenting, so probably there might be some flaws; As an example, the vendor ID of Arduino is hardcoded to only work with Arduino devices, but this is my use case and please feel free to change it to match your needs.
  
+ # Build and Run
+ The app is available for free on Google Play Store (Arduino USB Terminal).
+ Otherwise, you can clone the project and run it locally.
+ Please read the **Sentry Reports** part on this page before running the project to avoid build failures. 
+ 
  ## Terminal
  A Simple terminal page which does what it is supposed to do interacting with an Arduino manually through the USB cable.
  
@@ -14,9 +19,20 @@
  ## Tests
  Under Construction
  
+ ## Sentry Reports
+ The project uses Sentry for the crash reports, if this is not needed, you can remove the following line in `AndroidManifest.xml`:
+ `<meta-data android:name="io.sentry.dsn" android:value="@string/sentry_dsn" />`
+ But if it is needed, you need to [create a Sentry dsn value](https://docs.sentry.io/platforms/android/) to put under the following path:
+ `app/src/main/res/values/api_keys.xml`
+ The file contents might look like similar to this:
+ `<?xml version="1.0" encoding="utf-8"?>
+  <resources>
+      <string name="sentry_dsn" translatable="false">YOUR_SENTRY_SPECIFIC_VALUE</string>
+  </resources>`
+ 
+ 
  ### Knows Issues
- _On Android 5.1.1, the Arduino serial output cannot be shown. (It is said that an Android internal bug is the issue!)_ This was hopefully solved using LiveData
- The Arduino output characters might be shown a bit weird in the app while skipping some characters when the message is too long. This will be fixed as I figure out the reason! Any suggestions will be appreciated. :) 
+ _Still unknown! :) 
  
  Suggestions and PRs are welcome! :)
  
