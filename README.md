@@ -5,7 +5,7 @@
  
  This is being done as a hobby, and for experimenting, so probably there might be some flaws; As an example, the vendor ID of Arduino is hardcoded to only work with Arduino devices, but this is my use case and please feel free to change it to match your needs.
  
- # Install
+ # Build and Run
  The app is available for free on Google Play Store (Arduino USB Terminal).
  Otherwise, you can clone the project and run it locally.
  Please read the **Sentry Reports** part on this page before running the project to avoid build failures. 
