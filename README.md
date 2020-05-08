@@ -1,6 +1,6 @@
-# arduino-usb-terminal
-![Arduino USB Terminal Android App Logo](.github/images/logo.png){:height="30%" width="30%"}
+<img src=".github/images/logo.png" width="128">
 
+# arduino-usb-terminal
  Terminal-like app to send commands to Arduino through USB
  
  This app simplifies testing your Arduino components that work with direct usb commands by giving you the ability to send custom commands and view the returned message from your Arduino device.
