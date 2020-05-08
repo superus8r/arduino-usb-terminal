@@ -4,4 +4,5 @@
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="textColorSecondary">#FFFFFF</color>
 
+    <color name="icLauncherBackground">#455A64</color>
 </resources>
