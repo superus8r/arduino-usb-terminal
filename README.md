@@ -1,7 +1,9 @@
 <img src=".github/images/logo.png" width="128">
 
-# arduino-usb-terminal
+# arduino-usb-terminal 
  Terminal-like app to send commands to Arduino through USB
+
+ 
  
  This app simplifies testing your Arduino components that work with direct usb commands by giving you the ability to send custom commands and view the returned message from your Arduino device.
  
@@ -11,6 +13,8 @@
  The app is available for free on Google Play Store (Arduino USB Terminal).
  Otherwise, you can clone the project and run it locally.
  Please read the **Sentry Reports** part on this page before running the project to avoid build failures. 
+
+  <a href='https://play.google.com/store/apps/details?id=org.kabiri.android.usbterminal&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="128"/></a>
  
  ## Terminal
  A Simple terminal page which does what it is supposed to do interacting with an Arduino manually through the USB cable.
