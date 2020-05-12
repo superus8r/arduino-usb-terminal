@@ -1,17 +1,22 @@
 <resources>
 
     <!--NON-TRANSLATABLE-->
-    <string translatable="false" name="next_line">\n</string>
+    <string name="next_line" translatable="false">\n</string>
 
     <!--TRANSLATABLE-->
     <string name="app_name">USBTerminal</string>
-    <string name="title_connect">Connect</string>
 
+    <!-- menus -->
+    <string name="menu_title_connect">Connect</string>
+    <string name="menu_title_settings">Settings</string>
+
+    <!-- joystick -->
     <string name="bt_joystick_forward">Go Forward</string>
     <string name="bt_joystick_left">Turn Left</string>
     <string name="bt_joystick_right">Turn Right</string>
     <string name="bt_joystick_backward">Go Backward</string>
 
+    <!-- arduino helper -->
     <string name="helper_error_serial_port_is_null">Serial Port is null: The device might be disconnected.\n</string>
     <string name="helper_error_device_not_found">\nArduino Device not found</string>
     <string name="helper_error_usb_devices_not_attached">\nNo USB devices are attached</string>
@@ -22,8 +27,24 @@
     <string name="helper_info_usb_permission_requested">Requested permission to access the USB device…</string>
     <string name="helper_info_checking_attached_usb_devices">\nChecking attached USB devices…</string>
 
+    <!-- broadcast receiver -->
     <string name="breceiver_info_usb_permission_granted">"\nPermission granted for: "</string>
     <string name="breceiver_error_usb_permission_denied">\npermission denied for device:</string>
     <string name="breceiver_info_device_attached">\nDevice attached</string>
     <string name="breceiver_info_device_detached">\nDevice detached</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

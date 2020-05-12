@@ -1,5 +1,6 @@
 package org.kabiri.android.usbterminal
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.ScrollingMovementMethod
@@ -58,6 +59,10 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.actionConnect -> {
                 viewModel.askForConnectionPermission()
+                true
+            }
+            R.id.actionOpenSettings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
                 true
             }
             else -> false
