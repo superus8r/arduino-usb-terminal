@@ -24,7 +24,7 @@ class DiscoveryListener(
 
     override fun onServiceFound(service: NsdServiceInfo) {
         // A service was found! Do something with it.
-        Log.d(TAG, "Service discovery success$service")
+        Log.d(TAG, "Service discovery success $service")
         when {
             service.serviceType != SERVICE_TYPE -> // Service type is the string containing the protocol and
                 // transport layer for this service.
@@ -32,9 +32,10 @@ class DiscoveryListener(
             service.serviceName == SERVICE_NAME -> // The name of the service tells the user what they'd be
                 // connecting to.
                 Log.d(TAG, "Same machine: ${service.serviceName}")
-            service.serviceName.contains("NsdChat") -> // determine the connection info
+            service.serviceName.contains(SERVICE_NAME) -> {// determine the connection info
                 // for that discovered service
-                 nsdManager.resolveService(service, resolveListener)
+                nsdManager.resolveService(service, resolveListener)
+            }
         }
     }
 
