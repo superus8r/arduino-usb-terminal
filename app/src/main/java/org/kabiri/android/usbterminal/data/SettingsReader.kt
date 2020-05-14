@@ -19,13 +19,15 @@ class SettingsReader(private val context: Context) {
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener {
             sharedPrefs, key ->
             if (key == context.getString(R.string.settings_key_discovery)) {
+                // discovery switched on by the user.
                 val mDiscovery = sharedPrefs?.getBoolean(
-                    context.getString(R.string.settings_key_discovery),
-                    false) ?: false
+                    context.getString(R.string.settings_key_discovery), false) ?: false
                 discoveryEnabled(mDiscovery)
             }
         }
+
     init {
+        // register the shared preferences change listener
         prefs.registerOnSharedPreferenceChangeListener(listener)
     }
 }

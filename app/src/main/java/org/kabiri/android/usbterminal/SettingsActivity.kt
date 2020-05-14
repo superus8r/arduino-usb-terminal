@@ -25,12 +25,15 @@ class SettingsActivity : AppCompatActivity() {
             .commit()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        // TODO - This will be removed from here: testing the settings reader
         val settings = SettingsReader(this)
         val helper = NsdHelper()
         settings.discoveryEnabled = {
             Log.d(TAG, "enabled:$it")
             if (it) helper.registerService(this, 999)
             else helper.unregisterService()
+
+            helper.discoverService()
         }
     }
 

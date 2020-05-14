@@ -13,7 +13,7 @@ class NsdHelper {
 
     companion object {
         private const val TAG = "NsdHelper"
-        const val SERVICE_TYPE = "_nsdarduino._tcp"
+        const val SERVICE_TYPE = "_nsdarduino._tcp."
         const val SERVICE_NAME = "NsdArduino"
     }
 
@@ -73,18 +73,14 @@ class NsdHelper {
             Log.e(TAG, "NsdManager not initialized, " +
                     "probably the service was not registered or was already unregistered." +
                     " - Discovery aborted.")
-            return
+            return // return if nsdManager is not initialized.
         }
-        val resolveListener = ResolveListener()
 
+        // prepare the discovery listener.
+        val resolveListener = ResolveListener()
         discoveryListener = DiscoveryListener(nsdManager, resolveListener)
+
+        // register the discovery callBack and discover services.
         nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener)
     }
-
-//    fun tearDown() {
-//        nsdManager.apply {
-//            unregisterService(registrationListener)
-//            stopServiceDiscovery(discoveryListener)
-//        }
-//    }
 }
