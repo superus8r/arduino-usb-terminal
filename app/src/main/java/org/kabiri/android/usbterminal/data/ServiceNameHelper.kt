@@ -17,7 +17,6 @@ class ServiceNameHelper(private val context: Context) {
 
     companion object {
         private const val KEY_LOCAL_NETWORK_SERVICE_IDENTIFIER = "local_net_service_id"
-        private const val TAG = "ServiceNameHelper"
     }
 
     lateinit var tPrefs: SharedPreferences // used for mocking in unit tests.
@@ -26,21 +25,18 @@ class ServiceNameHelper(private val context: Context) {
             return if (::tPrefs.isInitialized) tPrefs
             else PreferenceManager.getDefaultSharedPreferences(context)
         }
-    lateinit var serviceName: String
 
-    init {
-        // check if there is a uuid available, if not, create one.
-        var uuid = mPrefs.getString(KEY_LOCAL_NETWORK_SERVICE_IDENTIFIER, "")
-        if (uuid.isNullOrEmpty()) with(mPrefs.edit()) {
-            // if there are no uuid, create one and save it.
-            uuid = "${Constants.SERVICE_NAME_PREFIX}_${UUID.randomUUID()}"
-            putString(KEY_LOCAL_NETWORK_SERVICE_IDENTIFIER, uuid)
-            apply()
+    val serviceName: String
+        get() {
+            // check if there is a service available and return it.
+            return mPrefs.getString(KEY_LOCAL_NETWORK_SERVICE_IDENTIFIER, null) ?: run {
+                with(mPrefs.edit()) {
+                    // create a new name and save it.
+                    val newName = "${Constants.SERVICE_NAME_PREFIX}_${UUID.randomUUID()}"
+                    putString(KEY_LOCAL_NETWORK_SERVICE_IDENTIFIER, newName)
+                    apply()
+                    newName
+                }
+            }
         }
-        uuid?.let {
-            serviceName = it
-        } ?: run {
-            Log.e(TAG, "Service name could not be generated or fetched")
-        }
-    }
 }
