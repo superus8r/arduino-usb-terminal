@@ -5,6 +5,11 @@ package org.kabiri.android.usbterminal
  */
 class Constants {
     companion object {
-        const val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
+        // permissions
+        const val ACTION_USB_PERMISSION = "org.kabiri.android.USB_PERMISSION"
+
+        // service constants
+        const val SERVICE_NAME_PREFIX = "NsdArduino"
+        const val SERVICE_TYPE = "_nsdarduino._tcp."
     }
 }
