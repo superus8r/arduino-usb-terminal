@@ -12,22 +12,36 @@ import org.kabiri.android.usbterminal.R
  * using a simple lambda.
  */
 
-class SettingsReader(private val context: Context) {
-    var discoveryEnabled = { _: Boolean -> Unit }
+class SettingsReader {
+    constructor(context: Context) { mContext = context; registerListener() }
+    constructor(context: Context, prefs: SharedPreferences) {
+        // only used in unit tests.
+        mContext = context
+        tPrefs = prefs
+        registerListener()
+    }
 
-    private val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+    private lateinit var mContext: Context
+    private lateinit var tPrefs: SharedPreferences // used for mocking in unit tests.
+    private val mPrefs: SharedPreferences
+        get() {
+            return if (::tPrefs.isInitialized) tPrefs
+            else PreferenceManager.getDefaultSharedPreferences(mContext)
+        }
+
+    var discoveryEnabled = { _: Boolean -> Unit }
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener {
             sharedPrefs, key ->
-            if (key == context.getString(R.string.settings_key_discovery)) {
+            if (key == mContext.getString(R.string.settings_key_discovery)) {
                 // discovery switched on by the user.
                 val mDiscovery = sharedPrefs?.getBoolean(
-                    context.getString(R.string.settings_key_discovery), false) ?: false
+                    mContext.getString(R.string.settings_key_discovery), false) ?: false
                 discoveryEnabled(mDiscovery)
             }
         }
 
-    init {
+    private fun registerListener() {
         // register the shared preferences change listener
-        prefs.registerOnSharedPreferenceChangeListener(listener)
+        mPrefs.registerOnSharedPreferenceChangeListener(listener)
     }
 }
