@@ -4,6 +4,9 @@ import android.content.Context
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
+import org.kabiri.android.usbterminal.Constants.Companion.SERVICE_NAME_PREFIX
+import org.kabiri.android.usbterminal.Constants.Companion.SERVICE_TYPE
+import java.util.*
 
 /**
  * Created by Ali Kabiri on 12.05.20.
@@ -13,8 +16,6 @@ class NsdHelper {
 
     companion object {
         private const val TAG = "NsdHelper"
-        const val SERVICE_TYPE = "_nsdarduino._tcp."
-        const val SERVICE_NAME = "NsdArduino"
     }
 
     private lateinit var nsdManager: NsdManager
@@ -33,7 +34,11 @@ class NsdHelper {
         val serviceInfo = NsdServiceInfo().apply {
             // The name is subject to change based on conflicts
             // with other services advertised on the same network.
-            serviceName = SERVICE_NAME
+
+            // TODO - change this logic to store the UUID somewhere for this device
+            val uuid = UUID.randomUUID().toString()
+
+            serviceName = SERVICE_NAME_PREFIX + "_$uuid"
             serviceType = SERVICE_TYPE
             setPort(port)
         }
