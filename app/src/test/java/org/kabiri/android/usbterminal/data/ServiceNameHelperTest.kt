@@ -9,16 +9,20 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 
+/**
+ * Created by Ali Kabiri on 16.04.20.
+ */
 class ServiceNameHelperTest {
 
     private val mockContext = mockk<Context>()
-    private val sut = ServiceNameHelper(mockContext)
 
+    private lateinit var sut: ServiceNameHelper
     private lateinit var spyEditor: SharedPreferences.Editor
     private lateinit var spyPrefs: SharedPreferences
 
     @Before
     fun setup() {
+        sut = ServiceNameHelper(mockContext)
         spyEditor = spyk()
         spyPrefs = spyk {
             every { edit() } returns spyEditor
