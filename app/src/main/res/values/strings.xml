@@ -3,6 +3,8 @@
     <!--NON-TRANSLATABLE-->
     <string name="next_line" translatable="false">\n</string>
     <string name="settings_key_discovery" translatable="false">settings_discovery</string>
+    <string name="settings_key_server_name" translatable="false">settings_server_name</string>
+    <string name="settings_key_selected_server" translatable="false">settings_selected_server</string>
 
     <!--TRANSLATABLE-->
     <string name="app_name">USBTerminal</string>
@@ -35,17 +37,12 @@
     <string name="breceiver_info_device_detached">\nDevice detached</string>
     <string name="title_activity_settings">Settings</string>
 
+    <!-- Preference Group Titles -->
+    <string name="settings_group_title_discovery_options">Discovery Options</string>
+    <string name="settings_group_title_connection_options">Connection Options</string>
+
     <!-- Preference Titles -->
-    <string name="settings_header_client">Messages</string>
-    <string name="settings_connection">Connection Settings</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
     <string name="settings_title_discovery">Enable Discovery</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="setting_title_server_name">Server Name (If this is a server)</string>
+    <string name="settings_title_selected_server">Selected Server (Connect to another server)</string>
 </resources>
