@@ -6,8 +6,11 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import org.kabiri.android.usbterminal.data.SettingsReader
 import org.kabiri.android.usbterminal.network.wifi.NsdHelper
+import org.kabiri.android.usbterminal.ui.adapter.DeviceAdapter
 
 /**
  * Created by Ali Kabiri on 12.05.20.
@@ -36,6 +39,12 @@ class SettingsActivity : AppCompatActivity() {
             else helper.unregisterService()
 
             helper.discoverService()
+        }
+
+        val rvDevices = findViewById<RecyclerView>(R.id.rvDevices).apply {
+            setHasFixedSize(false)
+            layoutManager = LinearLayoutManager(this@SettingsActivity)
+            adapter = DeviceAdapter(arrayListOf())
         }
     }
 
