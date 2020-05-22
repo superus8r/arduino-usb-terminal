@@ -4,21 +4,23 @@ import android.content.Context
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
-import org.kabiri.android.usbterminal.Constants.Companion.SERVICE_NAME_PREFIX
 import org.kabiri.android.usbterminal.Constants.Companion.SERVICE_TYPE
-import java.util.*
+import org.kabiri.android.usbterminal.data.ServiceNameHelper
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 /**
  * Created by Ali Kabiri on 12.05.20.
  */
 
-class NsdHelper {
+class NsdHelper: KoinComponent {
 
     companion object {
         private const val TAG = "NsdHelper"
     }
 
     private lateinit var nsdManager: NsdManager
+    private val serviceNameHelper by inject<ServiceNameHelper>()
     private var registrationListener: NsdManager.RegistrationListener? = null
     private var discoveryListener: NsdManager.DiscoveryListener? = null
 
@@ -34,11 +36,7 @@ class NsdHelper {
         val serviceInfo = NsdServiceInfo().apply {
             // The name is subject to change based on conflicts
             // with other services advertised on the same network.
-
-            // TODO - change this logic to store the UUID somewhere for this device
-            val uuid = UUID.randomUUID().toString()
-
-            serviceName = SERVICE_NAME_PREFIX + "_$uuid"
+            serviceName = serviceNameHelper.serviceName
             serviceType = SERVICE_TYPE
             setPort(port)
         }
