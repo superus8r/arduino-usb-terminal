@@ -33,10 +33,11 @@ class SettingsActivity : AppCompatActivity() {
         // TODO - This will be removed from here: testing the settings reader
         val settings = SettingsReader(this)
         val helper = NsdHelper()
-        settings.discoveryEnabled = {
+        settings.discoveryEnabledListener = {
             Log.d(TAG, "enabled:$it")
-            if (it) helper.registerService(this, 999)
-            else helper.unregisterService()
+            // TODO - change the hardcoded font
+            if (it) helper.registerService(this, 999) // register the service
+            else helper.unregisterService() // unregister the service.
 
             helper.discoverService()
         }

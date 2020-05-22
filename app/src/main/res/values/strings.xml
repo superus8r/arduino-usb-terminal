@@ -3,7 +3,7 @@
     <!--NON-TRANSLATABLE-->
     <string name="next_line" translatable="false">\n</string>
     <string name="settings_key_discovery" translatable="false">settings_discovery</string>
-    <string name="settings_key_server_name" translatable="false">settings_server_name</string>
+    <string name="settings_key_custom_server_name" translatable="false">settings_server_name</string>
     <string name="settings_key_selected_server" translatable="false">settings_selected_server</string>
 
     <!--TRANSLATABLE-->

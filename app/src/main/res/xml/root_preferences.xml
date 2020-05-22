@@ -12,7 +12,7 @@
     <PreferenceCategory app:title="@string/settings_group_title_discovery_options">
 
         <EditTextPreference
-            app:key="@string/settings_key_server_name"
+            app:key="@string/settings_key_custom_server_name"
             android:title="@string/setting_title_server_name"
             app:useSimpleSummaryProvider="true"/>
 
