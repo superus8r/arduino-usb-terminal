@@ -15,7 +15,7 @@ import org.kabiri.android.usbterminal.R
 class SettingsReader {
     constructor(context: Context) { mContext = context; registerListener() }
     constructor(context: Context, prefs: SharedPreferences) {
-        // only used in unit tests.
+        // only used in unit tests to make mocking easier.
         mContext = context
         tPrefs = prefs
         registerListener()
@@ -29,14 +29,25 @@ class SettingsReader {
             else PreferenceManager.getDefaultSharedPreferences(mContext)
         }
 
-    var discoveryEnabled = { _: Boolean -> Unit }
+    var discoveryEnabledListener = { _: Boolean -> Unit }
+    val discoveryEnabledValue: Boolean
+        get() = mPrefs.getBoolean(mContext.getString(R.string.settings_key_discovery), false)
+    var customServerNameListener = { _: String -> Unit }
+    val customServerNameValue: String?
+        get() = mPrefs.getString(mContext.getString(R.string.settings_key_custom_server_name), null)
+
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener {
             sharedPrefs, key ->
             if (key == mContext.getString(R.string.settings_key_discovery)) {
                 // discovery switched on by the user.
                 val mDiscovery = sharedPrefs?.getBoolean(
                     mContext.getString(R.string.settings_key_discovery), false) ?: false
-                discoveryEnabled(mDiscovery)
+                discoveryEnabledListener.invoke(mDiscovery)
+            }
+            if (key == mContext.getString(R.string.settings_key_custom_server_name)) {
+                val mServerName = sharedPrefs?.getString(
+                    mContext.getString(R.string.settings_key_custom_server_name), "") ?: ""
+                customServerNameListener(mServerName)
             }
         }
 
