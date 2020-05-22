@@ -2,7 +2,6 @@ package org.kabiri.android.usbterminal.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.preference.PreferenceManager
 import org.kabiri.android.usbterminal.Constants
 import java.util.*
@@ -10,7 +9,7 @@ import java.util.*
 /**
  * Created by Ali Kabiri on 16.05.20.
  *
- * This class wraps up the process reading the uuid from the Shared Preferences.
+ * This class wraps up the process of reading the uuid from the Shared Preferences.
  */
 
 class ServiceNameHelper(private val context: Context) {
@@ -25,18 +24,32 @@ class ServiceNameHelper(private val context: Context) {
             return if (::tPrefs.isInitialized) tPrefs
             else PreferenceManager.getDefaultSharedPreferences(context)
         }
+    lateinit var tSettings: SettingsReader // used for mocking in tests.
+    private val mSettings: SettingsReader
+        get() {
+            return if (::tSettings.isInitialized) tSettings
+            else SettingsReader(context)
+        }
 
     val serviceName: String
         get() {
-            // check if there is a service available and return it.
-            return mPrefs.getString(KEY_LOCAL_NETWORK_SERVICE_IDENTIFIER, null) ?: run {
-                with(mPrefs.edit()) {
-                    // create a new name and save it.
-                    val newName = "${Constants.SERVICE_NAME_PREFIX}_${UUID.randomUUID()}"
-                    putString(KEY_LOCAL_NETWORK_SERVICE_IDENTIFIER, newName)
-                    apply()
-                    newName
-                }
-            }
+            val customName = mSettings.customServerNameValue ?: ""
+            // create a new identifier and save it.
+            return createIdentifierAndSaveFor(customName = customName)
         }
+
+    /**
+     * create a new service identifier and save it.
+     */
+    private fun createIdentifierAndSaveFor(customName: String): String {
+        val newIdentifier = "${Constants.SERVICE_NAME_PREFIX}_" +
+                if (customName.isNotBlank()) "${customName}_" else "" +
+                        "${UUID.randomUUID()}"
+        with(mPrefs.edit()) {
+            // create a new service identifier and save it.
+            putString(KEY_LOCAL_NETWORK_SERVICE_IDENTIFIER, newIdentifier)
+            apply()
+        }
+        return newIdentifier
+    }
 }
