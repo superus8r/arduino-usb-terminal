@@ -39,6 +39,7 @@ class DiscoveryListener(
             service.serviceName.contains(serviceNameHelper.serviceName) -> {// determine the connection info
                 // for that discovered service
                 nsdManager.resolveService(service, resolveListener)
+                Log.d(TAG, "resolved service: ${service.host}")
             }
         }
     }
