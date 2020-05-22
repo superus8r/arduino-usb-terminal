@@ -1,6 +1,6 @@
 <img src=".github/images/logo.png" width="128">
 
-# arduino-usb-terminal 
+# arduino-usb-terminal
  Terminal emulator for sending commands to Arduino via USB
 
  
@@ -16,14 +16,17 @@
 
   <a href='https://play.google.com/store/apps/details?id=org.kabiri.android.usbterminal&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="128"/></a>
 
- ## Current Features in the app:
+ ## Current Features:
  - #### Terminal Emulator
     A Simple terminal page which does what it is supposed to do interacting with an Arduino manually through the USB cable.
 
  ## Upcoming features:
 - #### Remote Terminal Support using [P2P connections with Wi-fi Direct](https://developer.android.com/training/connect-devices-wirelessly/wifi-direct).
 
-    This allows a second device to control the Arduino wirelessly. The first device which is connected to the Arduino via USB forwards the commands coming from the second device by Wi-Fi.
+<img src=".github/images/remote_usage_figure.png" width="90%">
+
+This allows a second device to control the Arduino wirelessly. The first device which is connected to the Arduino via USB is considered as the server, and the second device is a client which gets the user input.
+
 - #### JoyStick Page (Probably).
  
  ## Tests
@@ -47,7 +50,7 @@
  
  
  ### Knows Issues
- _Still unknown! :) 
+ Please let me know! :) :beer: 
  
  Suggestions and PRs are welcome! :)
  
