@@ -62,11 +62,13 @@ class NsdHelper: KoinComponent {
         registrationListener?.let {
             nsdManager.unregisterService(registrationListener)
             registrationListener = null
+            Log.d(TAG, "registration listener cleared.")
         } ?: run { Log.e(TAG, "registration listener was null," +
                 " probably it was unregistered before.") }
         discoveryListener?.let {
             nsdManager.stopServiceDiscovery(discoveryListener)
             discoveryListener = null
+            Log.d(TAG, "discovery listener cleared.")
         } ?: run { Log.e(TAG, "discovery listener was null," +
                 " probably it was unregistered before.") }
     }
