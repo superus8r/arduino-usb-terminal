@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import org.kabiri.android.usbterminal.databinding.FragmentWifiDeviceListBinding
-import org.kabiri.android.usbterminal.model.WifiDevice
 import org.kabiri.android.usbterminal.ui.adapter.WifiDeviceAdapter
 import org.kabiri.android.usbterminal.viewmodel.WifiDeviceListViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -32,6 +31,11 @@ class WifiDeviceListFragment: Fragment() {
         subscribeUi(adapter)
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.discoverWifiDevices(requireContext())
     }
 
     private fun subscribeUi(adapter: WifiDeviceAdapter) {
