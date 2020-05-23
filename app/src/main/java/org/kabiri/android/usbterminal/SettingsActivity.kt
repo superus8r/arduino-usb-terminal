@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.kabiri.android.usbterminal.data.SettingsReader
 import org.kabiri.android.usbterminal.network.wifi.NsdHelper
-import org.kabiri.android.usbterminal.ui.adapter.DeviceAdapter
+import org.kabiri.android.usbterminal.ui.adapter.WifiDeviceAdapter
 
 /**
  * Created by Ali Kabiri on 12.05.20.
@@ -28,25 +28,12 @@ class SettingsActivity : AppCompatActivity() {
             .beginTransaction()
             .replace(R.id.settings, SettingsFragment())
             .commit()
+        // show the wifi device list fragment
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.settings_devices, WifiDeviceListFragment())
+            .commit()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        // TODO - This will be removed from here: testing the settings reader
-        val settings = SettingsReader(this)
-        val helper = NsdHelper()
-        settings.discoveryEnabledListener = {
-            Log.d(TAG, "enabled:$it")
-            // TODO - change the hardcoded font
-            if (it) helper.registerService(this, 999) // register the service
-            else helper.unregisterService() // unregister the service.
-
-            helper.discoverService()
-        }
-
-        val rvDevices = findViewById<RecyclerView>(R.id.rvDevices).apply {
-            setHasFixedSize(false)
-            layoutManager = LinearLayoutManager(this@SettingsActivity)
-            adapter = DeviceAdapter(arrayListOf())
-        }
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
