@@ -8,7 +8,8 @@ import org.kabiri.android.usbterminal.model.WifiDevice
 class WifiDeviceRepository private constructor(private val wifiDeviceDao: WifiDeviceDao) {
 
     fun getWifiDevices() = wifiDeviceDao.getWifiDevices()
-    suspend fun insert(wifiDevice: WifiDevice) = wifiDeviceDao.insert(wifiDevice)
+    fun insert(wifiDevice: WifiDevice) = wifiDeviceDao.insert(wifiDevice)
+    fun deleteAll() = wifiDeviceDao.deleteAll()
 
     companion object {
 

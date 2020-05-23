@@ -1,10 +1,7 @@
 package org.kabiri.android.usbterminal.data
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import org.kabiri.android.usbterminal.model.WifiDevice
 
 /**
@@ -20,5 +17,8 @@ interface WifiDeviceDao {
     suspend fun insertAll(wifiDevices: List<WifiDevice>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(wifiDevice: WifiDevice)
+    fun insert(wifiDevice: WifiDevice)
+
+    @Query("DELETE FROM wifiDevices")
+    fun deleteAll()
 }
