@@ -13,7 +13,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
-import org.kabiri.android.usbterminal.Constants
+import org.kabiri.android.usbterminal.ACTION_USB_PERMISSION
 import org.kabiri.android.usbterminal.R
 
 
@@ -53,10 +53,10 @@ class ArduinoHelper(private val context: Context,
                     val permissionIntent = PendingIntent.getBroadcast(
                         context,
                         0,
-                        Intent(Constants.ACTION_USB_PERMISSION),
+                        Intent(ACTION_USB_PERMISSION),
                         0
                     )
-                    val filter = IntentFilter(Constants.ACTION_USB_PERMISSION)
+                    val filter = IntentFilter(ACTION_USB_PERMISSION)
                     context.registerReceiver(arduinoPermReceiver, filter) // register the broadcast receiver
                     usbManager.requestPermission(device.value, permissionIntent)
                     _liveInfoOutput.postValue(context.getString(R.string.helper_info_usb_permission_requested))

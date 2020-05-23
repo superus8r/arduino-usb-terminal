@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
-import org.kabiri.android.usbterminal.Constants.Companion.SERVICE_TYPE
+import org.kabiri.android.usbterminal.SERVICE_TYPE
 import org.kabiri.android.usbterminal.data.ServiceNameHelper
 import org.koin.core.KoinComponent
 import org.koin.core.inject

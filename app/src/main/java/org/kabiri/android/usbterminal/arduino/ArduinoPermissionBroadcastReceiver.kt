@@ -8,7 +8,7 @@ import android.hardware.usb.UsbManager
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import org.kabiri.android.usbterminal.Constants
+import org.kabiri.android.usbterminal.ACTION_USB_PERMISSION
 import org.kabiri.android.usbterminal.R
 
 /**
@@ -39,7 +39,7 @@ class ArduinoPermissionBroadcastReceiver: BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         when (intent?.action) {
-            Constants.ACTION_USB_PERMISSION -> {
+            ACTION_USB_PERMISSION -> {
 
                 val device: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
                 val permissionGranted = intent

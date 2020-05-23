@@ -3,7 +3,7 @@ package org.kabiri.android.usbterminal.network.wifi
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
-import org.kabiri.android.usbterminal.Constants
+import org.kabiri.android.usbterminal.SERVICE_TYPE
 import org.kabiri.android.usbterminal.data.ServiceNameHelper
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -30,7 +30,7 @@ class DiscoveryListener(
         // A service was found! Do something with it.
         Log.d(TAG, "Service discovery success $service")
         when {
-            service.serviceType != Constants.SERVICE_TYPE -> // Service type is the string containing the protocol and
+            service.serviceType != SERVICE_TYPE -> // Service type is the string containing the protocol and
                 // transport layer for this service.
                 Log.d(TAG, "Unknown Service Type: ${service.serviceType}")
             service.serviceName == serviceNameHelper.serviceName -> // The name of the service tells the user what they'd be
