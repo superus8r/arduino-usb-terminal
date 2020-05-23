@@ -1,11 +1,14 @@
 package org.kabiri.android.usbterminal.data
 
+import org.kabiri.android.usbterminal.model.WifiDevice
+
 /**
  *  Created by Ali Kabiri on 23.05.20.
  */
 class WifiDeviceRepository private constructor(private val wifiDeviceDao: WifiDeviceDao) {
 
     fun getWifiDevices() = wifiDeviceDao.getWifiDevices()
+    suspend fun insert(wifiDevice: WifiDevice) = wifiDeviceDao.insert(wifiDevice)
 
     companion object {
 

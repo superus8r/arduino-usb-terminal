@@ -18,4 +18,7 @@ interface WifiDeviceDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(wifiDevices: List<WifiDevice>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(wifiDevice: WifiDevice)
 }
