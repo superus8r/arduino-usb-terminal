@@ -1,0 +1,21 @@
+package org.kabiri.android.usbterminal.data
+
+/**
+ *  Created by Ali Kabiri on 23.05.20.
+ */
+class WifiDeviceRepository private constructor(private val wifiDeviceDao: WifiDeviceDao) {
+
+    fun getWifiDevices() = wifiDeviceDao.getWifiDevices()
+
+    companion object {
+
+        // for singleton instantiation during tests
+        @Volatile private var instance: WifiDeviceRepository? = null
+
+        fun getInstance(wifiDeviceDao: WifiDeviceDao) =
+            instance ?: synchronized(this) {
+                // create a new instance if it is already not created.
+                instance ?: WifiDeviceRepository(wifiDeviceDao).also { instance = it }
+            }
+    }
+}
