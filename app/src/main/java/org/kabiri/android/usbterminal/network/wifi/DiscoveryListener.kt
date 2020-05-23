@@ -5,40 +5,53 @@ import android.net.nsd.NsdServiceInfo
 import android.util.Log
 import org.kabiri.android.usbterminal.SERVICE_TYPE
 import org.kabiri.android.usbterminal.data.ServiceNameHelper
+import org.kabiri.android.usbterminal.data.WifiDeviceRepository
+import org.kabiri.android.usbterminal.model.WifiDevice
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 /**
  * Created by Ali Kabiri on 13.05.20.
+ *
+ * Whenever a service is found on the network, onServiceFound() method will be called.
  */
 class DiscoveryListener(
     private val nsdManager: NsdManager,
-    private val resolveListener: NsdManager.ResolveListener): NsdManager.DiscoveryListener, KoinComponent {
+    private val resolveListener: NsdManager.ResolveListener
+) : NsdManager.DiscoveryListener, KoinComponent {
 
     companion object {
         const val TAG = "DiscoveryListener"
     }
 
     private val serviceNameHelper by inject<ServiceNameHelper>()
+    private val wifiDeviceRepository by inject<WifiDeviceRepository>()
 
     // Called as soon as service discovery begins.
     override fun onDiscoveryStarted(regType: String) {
         Log.d(TAG, "Service discovery started")
+        // remove the old results from the db.
+        wifiDeviceRepository.deleteAll()
     }
 
     override fun onServiceFound(service: NsdServiceInfo) {
         // A service was found! Do something with it.
-        Log.d(TAG, "Service discovery success $service")
+        Log.d(TAG, "Service discovered: $service")
         when {
-            service.serviceType != SERVICE_TYPE -> // Service type is the string containing the protocol and
-                // transport layer for this service.
+            service.serviceType != SERVICE_TYPE -> {
+                // Service type is the string containing
+                // the protocol and transport layer for this service.
                 Log.d(TAG, "Unknown Service Type: ${service.serviceType}")
-            service.serviceName == serviceNameHelper.serviceName -> // The name of the service tells the user what they'd be
-                // connecting to.
+            }
+            service.serviceName == serviceNameHelper.serviceName -> {
+                // The name of the service tells the user what they'd be connecting to.
+                insertWifiDevice(service)
                 Log.d(TAG, "Same machine: ${service.serviceName}")
-            service.serviceName.contains(serviceNameHelper.serviceName) -> {// determine the connection info
-                // for that discovered service
+            }
+            service.serviceName.contains(serviceNameHelper.serviceName) -> {
+                // determine the connection info for that discovered service
                 nsdManager.resolveService(service, resolveListener)
+                insertWifiDevice(service)
                 Log.d(TAG, "resolved service: ${service.host}")
             }
         }
@@ -62,5 +75,15 @@ class DiscoveryListener(
     override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
         Log.e(TAG, "Discovery failed: Error code:$errorCode")
         nsdManager.stopServiceDiscovery(this)
+    }
+
+    private fun insertWifiDevice(service: NsdServiceInfo) {
+        wifiDeviceRepository.insert(
+            WifiDevice(
+                // avoid calling toString on null object.
+                serviceId = (service.host ?: "").toString(),
+                name = service.serviceName ?: ""
+            )
+        )
     }
 }
