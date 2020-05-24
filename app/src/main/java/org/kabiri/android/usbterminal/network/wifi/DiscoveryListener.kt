@@ -45,10 +45,13 @@ class DiscoveryListener(
             }
             service.serviceName == serviceNameHelper.serviceName -> {
                 // The name of the service tells the user what they'd be connecting to.
-                insertWifiDevice(service)
+                // same device in this case.
                 Log.d(TAG, "Same machine: ${service.serviceName}")
             }
-            service.serviceName.contains(serviceNameHelper.serviceName) -> {
+            service.serviceType == SERVICE_TYPE  -> {
+                // service type is similar, but names are different.
+                // it means another device is running the app and has discovery on.
+
                 // determine the connection info for that discovered service
                 nsdManager.resolveService(service, resolveListener)
                 insertWifiDevice(service)
