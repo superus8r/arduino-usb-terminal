@@ -1,6 +1,5 @@
 package org.kabiri.android.usbterminal.koin
 
-import androidx.lifecycle.SavedStateHandle
 import org.kabiri.android.usbterminal.arduino.ArduinoHelper
 import org.kabiri.android.usbterminal.arduino.ArduinoPermissionBroadcastReceiver
 import org.kabiri.android.usbterminal.arduino.ArduinoSerialReceiver

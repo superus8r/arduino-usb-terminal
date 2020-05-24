@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "wifiDevices")
 data class WifiDevice (
-    @PrimaryKey @ColumnInfo(name = "serviceId") val serviceId: String,
-    val name: String
+    @PrimaryKey @ColumnInfo(name = "serviceId") val serviceName: String,
+    val simpleName: String
 )

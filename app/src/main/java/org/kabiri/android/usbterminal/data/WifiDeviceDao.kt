@@ -10,7 +10,7 @@ import org.kabiri.android.usbterminal.model.WifiDevice
  */
 @Dao
 interface WifiDeviceDao {
-    @Query("SELECT * FROM wifiDevices ORDER BY name")
+    @Query("SELECT * FROM wifiDevices ORDER BY simpleName")
     fun getWifiDevices(): LiveData<List<WifiDevice>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

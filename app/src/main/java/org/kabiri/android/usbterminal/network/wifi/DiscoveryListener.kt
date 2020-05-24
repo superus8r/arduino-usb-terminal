@@ -81,8 +81,8 @@ class DiscoveryListener(
         wifiDeviceRepository.insert(
             WifiDevice(
                 // avoid calling toString on null object.
-                serviceId = (service.host ?: "").toString(),
-                name = service.serviceName ?: ""
+                serviceName = (service.serviceName ?: "").toString(),
+                simpleName = service.serviceName ?: ""
             )
         )
     }

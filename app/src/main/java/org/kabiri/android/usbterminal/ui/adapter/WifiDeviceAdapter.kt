@@ -33,7 +33,7 @@ class WifiDeviceAdapter : ListAdapter<WifiDevice, RecyclerView.ViewHolder>(Devic
             binding.setClickListener {
                 binding.wifiDevice?.let { device ->
                     // TODO - connect to device
-                    Log.d(this.javaClass.simpleName, "wifi device clicked: ${device.name}")
+                    Log.d(this.javaClass.simpleName, "wifi device clicked: ${device.simpleName}")
                 }
             }
         }
@@ -50,7 +50,7 @@ class WifiDeviceAdapter : ListAdapter<WifiDevice, RecyclerView.ViewHolder>(Devic
 private class DeviceDiffCallback : DiffUtil.ItemCallback<WifiDevice>() {
 
     override fun areItemsTheSame(oldItem: WifiDevice, newItem: WifiDevice): Boolean {
-        return oldItem.name == newItem.name
+        return oldItem.serviceName == newItem.serviceName
     }
 
     override fun areContentsTheSame(oldItem: WifiDevice, newItem: WifiDevice): Boolean {
