@@ -78,11 +78,12 @@ class DiscoveryListener(
     }
 
     private fun insertWifiDevice(service: NsdServiceInfo) {
+        val serviceName = service.serviceName ?: ""
         wifiDeviceRepository.insert(
             WifiDevice(
                 // avoid calling toString on null object.
-                serviceName = (service.serviceName ?: "").toString(),
-                simpleName = service.serviceName ?: ""
+                serviceName = serviceName,
+                simpleName = serviceName.substringBefore('-')
             )
         )
     }
