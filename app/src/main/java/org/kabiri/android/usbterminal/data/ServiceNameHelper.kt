@@ -34,20 +34,20 @@ class ServiceNameHelper(private val context: Context) {
         get() {
             val customName = mSettings.customServerNameValue ?: ""
             // create a new identifier and save it.
-            return createIdentifierAndSaveFor(customName = customName)
+            return createServiceNameAndSaveFor(customName = customName)
         }
 
     /**
      * create a new service identifier and save it.
      */
-    private fun createIdentifierAndSaveFor(customName: String): String {
-        val newIdentifier =
+    private fun createServiceNameAndSaveFor(customName: String): String {
+        val newServiceName =
             (if (customName.isNotBlank()) "${customName}-" else "") + "${UUID.randomUUID()}"
         with(mPrefs.edit()) {
             // create a new service identifier and save it.
-            putString(KEY_LOCAL_NETWORK_SERVICE_IDENTIFIER, newIdentifier)
+            putString(KEY_LOCAL_NETWORK_SERVICE_IDENTIFIER, newServiceName)
             apply()
         }
-        return newIdentifier
+        return newServiceName
     }
 }
