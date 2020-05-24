@@ -3,7 +3,6 @@ package org.kabiri.android.usbterminal.data
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import org.kabiri.android.usbterminal.SERVICE_NAME_PREFIX
 import java.util.*
 
 /**
@@ -42,9 +41,8 @@ class ServiceNameHelper(private val context: Context) {
      * create a new service identifier and save it.
      */
     private fun createIdentifierAndSaveFor(customName: String): String {
-        val newIdentifier = "${SERVICE_NAME_PREFIX}_" +
-                if (customName.isNotBlank()) "${customName}_" else "" +
-                        "${UUID.randomUUID()}"
+        val newIdentifier =
+            (if (customName.isNotBlank()) "${customName}-" else "") + "${UUID.randomUUID()}"
         with(mPrefs.edit()) {
             // create a new service identifier and save it.
             putString(KEY_LOCAL_NETWORK_SERVICE_IDENTIFIER, newIdentifier)
