@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="device_mode_entries">
+        <item>@string/settings_entry_device_mode_server</item>
+        <item>@string/settings_entry_device_mode_client</item>
+        <item>@string/settings_entry_device_mode_offline</item>
+    </string-array>
+
+    <string-array name="device_mode_values">
+        <item>@string/settings_value_device_mode_server</item>
+        <item>@string/settings_value_device_mode_client</item>
+        <item>@string/settings_value_device_mode_offline</item>
+    </string-array>
+</resources>

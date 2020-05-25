@@ -1,26 +1,22 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/settings_group_title_connection_options">
-
-        <SwitchPreferenceCompat
-            app:key="@string/settings_key_discovery"
-            app:title="@string/settings_title_discovery" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory app:title="@string/settings_group_title_discovery_options">
+    <PreferenceCategory app:title="@string/settings_group_title_device_options">
 
         <EditTextPreference
-            app:key="@string/settings_key_custom_server_name"
-            android:title="@string/setting_title_server_name"
+            app:key="@string/settings_key_custom_device_name"
+            android:title="@string/setting_title_custom_device_name"
             app:useSimpleSummaryProvider="true"/>
 
         <ListPreference
-            app:key="@string/settings_key_selected_server"
-            app:title="@string/settings_title_selected_server"
+            app:key="@string/settings_key_device_mode"
+            app:title= "@string/settings_title_device_mode"
+            app:entries="@array/device_mode_entries"
+            app:entryValues="@array/device_mode_values"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/settings_group_title_remote_devices" />
 
 </PreferenceScreen>

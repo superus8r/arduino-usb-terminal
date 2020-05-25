@@ -2,9 +2,11 @@
 
     <!--NON-TRANSLATABLE-->
     <string name="next_line" translatable="false">\n</string>
-    <string name="settings_key_discovery" translatable="false">settings_discovery</string>
-    <string name="settings_key_custom_server_name" translatable="false">settings_server_name</string>
-    <string name="settings_key_selected_server" translatable="false">settings_selected_server</string>
+    <string name="settings_key_custom_device_name" translatable="false">settings_device_name</string>
+    <string name="settings_key_device_mode" translatable="false">settings_device_mode</string>
+    <string name="settings_value_device_mode_server" translatable="false">mode_server</string>
+    <string name="settings_value_device_mode_client" translatable="false">mode_client</string>
+    <string name="settings_value_device_mode_offline" translatable="false">mode_offline</string>
 
     <!--TRANSLATABLE-->
     <string name="app_name">USBTerminal</string>
@@ -38,11 +40,13 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Preference Group Titles -->
-    <string name="settings_group_title_discovery_options">Discovery Options</string>
-    <string name="settings_group_title_connection_options">Connection Options</string>
+    <string name="settings_group_title_remote_devices">Servers To Connect</string>
+    <string name="settings_group_title_device_options">This Device Options</string>
 
     <!-- Preference Titles -->
-    <string name="settings_title_discovery">Enable Discovery</string>
-    <string name="setting_title_server_name">Server Name (If this is a server)</string>
-    <string name="settings_title_selected_server">Selected Server (Connect to another server)</string>
+    <string name="setting_title_custom_device_name">Device Name</string>
+    <string name="settings_title_device_mode">Device Mode</string>
+    <string name="settings_entry_device_mode_server">Server</string>
+    <string name="settings_entry_device_mode_client">Client</string>
+    <string name="settings_entry_device_mode_offline">Offline</string>
 </resources>

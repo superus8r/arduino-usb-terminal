@@ -29,24 +29,24 @@ class SettingsReader {
             else PreferenceManager.getDefaultSharedPreferences(mContext)
         }
 
-    var discoveryEnabledListener = { _: Boolean -> Unit }
-    val discoveryEnabledValue: Boolean
-        get() = mPrefs.getBoolean(mContext.getString(R.string.settings_key_discovery), false)
+    var deviceModeListener = { _: String -> Unit }
+    val deviceModeValue: String?
+        get() = mPrefs.getString(mContext.getString(R.string.settings_key_device_mode), null)
     var customServerNameListener = { _: String -> Unit }
     val customServerNameValue: String?
-        get() = mPrefs.getString(mContext.getString(R.string.settings_key_custom_server_name), null)
+        get() = mPrefs.getString(mContext.getString(R.string.settings_key_custom_device_name), null)
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener {
             sharedPrefs, key ->
-            if (key == mContext.getString(R.string.settings_key_discovery)) {
-                // discovery switched on by the user.
-                val mDiscovery = sharedPrefs?.getBoolean(
-                    mContext.getString(R.string.settings_key_discovery), false) ?: false
-                discoveryEnabledListener.invoke(mDiscovery)
+            if (key == mContext.getString(R.string.settings_key_device_mode)) {
+                // device mode changed by the user.
+                val mDeviceMode = sharedPrefs?.getString(
+                    mContext.getString(R.string.settings_key_device_mode), "") ?: ""
+                deviceModeListener.invoke(mDeviceMode)
             }
-            if (key == mContext.getString(R.string.settings_key_custom_server_name)) {
+            if (key == mContext.getString(R.string.settings_key_custom_device_name)) {
                 val mServerName = sharedPrefs?.getString(
-                    mContext.getString(R.string.settings_key_custom_server_name), "") ?: ""
+                    mContext.getString(R.string.settings_key_custom_device_name), "") ?: ""
                 customServerNameListener(mServerName)
             }
         }

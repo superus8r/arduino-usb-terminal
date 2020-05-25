@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.SettingsActivity
 import org.kabiri.android.usbterminal.data.SettingsReader
 import org.kabiri.android.usbterminal.data.WifiDeviceRepository
@@ -28,15 +29,20 @@ class WifiDeviceListViewModel internal constructor(
         // TODO - This will be removed from here: testing the settings reader
         val helper = NsdHelper()
 
-        settings.discoveryEnabledListener = {
+        settings.deviceModeListener = {
             Log.d(SettingsActivity.TAG, "enabled:$it")
 
             // TODO - change the hardcoded font
-            if (it) {
-                helper.registerService(context, 999)
-                helper.discoverService()
-            } // register the service
-            else helper.unregisterService() // unregister the service.
+            when (it) {
+                context.getString(R.string.settings_value_device_mode_server) -> {
+                    helper.registerService(context, 999)
+                }
+                context.getString(R.string.settings_value_device_mode_client) -> {
+                    helper.registerService(context, 999)
+                    helper.discoverService()
+                }
+                else -> helper.unregisterService()
+            }
         }
     }
 }
