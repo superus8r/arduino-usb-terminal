@@ -44,11 +44,10 @@ class WifiDeviceListViewModel internal constructor(
             when (it) {
                 context.getString(R.string.settings_value_device_mode_server) -> {
                     _showRemoteServers.postValue(false)
-                    mNsdHelper.registerService(context, 999)
+                    mNsdHelper.registerService(context)
                 }
                 context.getString(R.string.settings_value_device_mode_client) -> {
                     _showRemoteServers.postValue(true)
-                    mNsdHelper.registerService(context, 999)
                     mNsdHelper.discoverService()
                 }
                 else -> {
