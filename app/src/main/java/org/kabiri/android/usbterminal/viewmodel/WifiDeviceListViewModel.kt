@@ -3,6 +3,7 @@ package org.kabiri.android.usbterminal.viewmodel
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.SettingsActivity
@@ -21,27 +22,39 @@ class WifiDeviceListViewModel internal constructor(
     wifiDeviceRepository: WifiDeviceRepository
 ): ViewModel(), KoinComponent {
 
-    private val settings by inject<SettingsReader>()
+    lateinit var tNsdHelper: NsdHelper
+    private var mNsdHelper = NsdHelper()
+        get() { return if (::tNsdHelper.isInitialized) tNsdHelper else field }
 
+    private val settings by inject<SettingsReader>()
     val wifiDevices: LiveData<List<WifiDevice>> = wifiDeviceRepository.getWifiDevices()
 
-    fun discoverWifiDevices(context: Context) {
-        // TODO - This will be removed from here: testing the settings reader
-        val helper = NsdHelper()
+    private val _showRemoteServers = MutableLiveData<Boolean>().apply { postValue(false) }
+    val showRemoteServers: LiveData<Boolean> // avoid having public mutable live data.
+        get() = _showRemoteServers
+
+    /**
+     * checks which device mode is selected by the user in the settings and
+     * registers and discovers the service if necessary.
+     */
+    fun handleDeviceMode(context: Context) {
 
         settings.deviceModeListener = {
-            Log.d(SettingsActivity.TAG, "enabled:$it")
-
-            // TODO - change the hardcoded font
+            Log.d(SettingsActivity.TAG, "device mode selected: $it")
             when (it) {
                 context.getString(R.string.settings_value_device_mode_server) -> {
-                    helper.registerService(context, 999)
+                    _showRemoteServers.postValue(false)
+                    mNsdHelper.registerService(context, 999)
                 }
                 context.getString(R.string.settings_value_device_mode_client) -> {
-                    helper.registerService(context, 999)
-                    helper.discoverService()
+                    _showRemoteServers.postValue(true)
+                    mNsdHelper.registerService(context, 999)
+                    mNsdHelper.discoverService()
                 }
-                else -> helper.unregisterService()
+                else -> {
+                    _showRemoteServers.postValue(false)
+                    mNsdHelper.unregisterService()
+                }
             }
         }
     }

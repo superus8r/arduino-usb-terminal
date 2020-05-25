@@ -49,4 +49,5 @@
     <string name="settings_entry_device_mode_server">Server</string>
     <string name="settings_entry_device_mode_client">Client</string>
     <string name="settings_entry_device_mode_offline">Offline</string>
+    <string name="settings_message_device_not_in_client_mode">This device is currently not a Client; To show remote servers, please choose Client as Device Mode in Device Options.</string>
 </resources>

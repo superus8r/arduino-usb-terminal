@@ -3,13 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/wifi_device_list"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:context=".SettingsActivity"
-        tools:listitem="@layout/list_item_wifi_device" />
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_place_holder_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_message_device_not_in_client_mode"
+            android:layout_marginStart="72dp"
+            android:layout_marginEnd="16dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/wifi_device_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:context=".SettingsActivity"
+            tools:listitem="@layout/list_item_wifi_device"
+            android:visibility="gone"/>
+
+    </FrameLayout>
 
 </layout>
