@@ -23,6 +23,7 @@ class NsdHelper: KoinComponent {
     private val serviceNameHelper by inject<ServiceNameHelper>()
     private var registrationListener: NsdManager.RegistrationListener? = null
     private var discoveryListener: NsdManager.DiscoveryListener? = null
+    private var resolveListener: ResolveListener? = null
 
     fun registerService(context: Context, port: Int) {
 
@@ -82,8 +83,10 @@ class NsdHelper: KoinComponent {
         }
 
         // prepare the discovery listener.
-        val resolveListener = ResolveListener()
-        discoveryListener = DiscoveryListener(nsdManager, resolveListener)
+        resolveListener = ResolveListener()
+        resolveListener?.let {
+            discoveryListener = DiscoveryListener(nsdManager, it)
+        }
 
         // register the discovery callBack and discover services.
         nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener)
