@@ -101,7 +101,7 @@ class NsdHelper: KoinComponent {
         }
 
         // prepare the discovery listener.
-        resolveListener = ResolveListener()
+        resolveListener = ResolveListener() ?: run { return }
         resolveListener?.let {
             discoveryListener = DiscoveryListener(nsdManager, it)
         }
