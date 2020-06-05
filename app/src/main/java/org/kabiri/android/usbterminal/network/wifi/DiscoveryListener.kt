@@ -3,6 +3,7 @@ package org.kabiri.android.usbterminal.network.wifi
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import org.kabiri.android.usbterminal.SERVICE_TYPE
 import org.kabiri.android.usbterminal.data.ServiceNameHelper
 import org.kabiri.android.usbterminal.data.WifiDeviceRepository
@@ -17,7 +18,7 @@ import org.koin.core.inject
  */
 class DiscoveryListener(
     private val nsdManager: NsdManager,
-    private val resolveListener: NsdManager.ResolveListener
+    private val discoveredServices: MutableLiveData<ArrayList<NsdServiceInfo>>
 ) : NsdManager.DiscoveryListener, KoinComponent {
 
     companion object {
@@ -53,9 +54,8 @@ class DiscoveryListener(
                 // it means another device is running the app and has discovery on.
 
                 // determine the connection info for that discovered service
-                nsdManager.resolveService(service, resolveListener)
-                insertWifiDevice(service)
-                Log.d(TAG, "resolved service: ${service.host}")
+                discoveredServices.postItem(service)
+                Log.d(TAG, "discovered service: ${service.host}")
             }
         }
     }
@@ -80,14 +80,8 @@ class DiscoveryListener(
         nsdManager.stopServiceDiscovery(this)
     }
 
-    private fun insertWifiDevice(service: NsdServiceInfo) {
-        val serviceName = service.serviceName ?: ""
-        wifiDeviceRepository.insert(
-            WifiDevice(
-                // avoid calling toString on null object.
-                serviceName = serviceName,
-                simpleName = serviceName.substringBefore('-')
-            )
-        )
+    private fun<T> MutableLiveData<ArrayList<T>>.postItem(newItem: T) {
+        value?.add(newItem)
+        this.postValue(value)
     }
 }

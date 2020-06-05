@@ -4,8 +4,12 @@ import android.content.Context
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import org.kabiri.android.usbterminal.SERVICE_TYPE
 import org.kabiri.android.usbterminal.data.ServiceNameHelper
+import org.kabiri.android.usbterminal.data.WifiDeviceRepository
+import org.kabiri.android.usbterminal.model.WifiDevice
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import java.net.ServerSocket
@@ -23,10 +27,15 @@ class NsdHelper: KoinComponent {
     private lateinit var nsdManager: NsdManager
     private lateinit var serverSocket: ServerSocket
     private val serviceNameHelper by inject<ServiceNameHelper>()
+    private val wifiDeviceRepository by inject<WifiDeviceRepository>()
     private var registrationListener: NsdManager.RegistrationListener? = null
     private var discoveryListener: NsdManager.DiscoveryListener? = null
     private var resolveListener: ResolveListener? = null
+
     private var mLocalPort: Int? = null
+    private val _discoveredServices = MutableLiveData<ArrayList<NsdServiceInfo>>()
+    val discoveredServices: LiveData<ArrayList<NsdServiceInfo>>
+        get() = _discoveredServices
 
     fun registerService(context: Context) {
 
@@ -101,12 +110,26 @@ class NsdHelper: KoinComponent {
         }
 
         // prepare the discovery listener.
-        resolveListener = ResolveListener() ?: run { return }
-        resolveListener?.let {
-            discoveryListener = DiscoveryListener(nsdManager, it)
-        }
+        resolveListener = ResolveListener()
+        discoveryListener = DiscoveryListener(nsdManager, _discoveredServices)
 
         // register the discovery callBack and discover services.
         nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener)
+    }
+
+    fun resolveService(service : NsdServiceInfo) {
+        nsdManager.resolveService(service, resolveListener)
+        insertWifiDevice(service)
+    }
+
+    private fun insertWifiDevice(service: NsdServiceInfo) {
+        val serviceName = service.serviceName ?: ""
+        wifiDeviceRepository.insert(
+            WifiDevice(
+                // avoid calling toString on null object.
+                serviceName = serviceName,
+                simpleName = serviceName.substringBefore('-')
+            )
+        )
     }
 }

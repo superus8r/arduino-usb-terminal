@@ -31,8 +31,7 @@ class ResolveListener: NsdManager.ResolveListener, KoinComponent {
             Log.d(TAG, "Same IP.")
             return
         }
-        val mService = serviceInfo
-        serviceInfo.port
+        val mServiceName = serviceInfo.serviceName 
         val port: Int = serviceInfo.port
         val host: InetAddress = serviceInfo.host
     }
