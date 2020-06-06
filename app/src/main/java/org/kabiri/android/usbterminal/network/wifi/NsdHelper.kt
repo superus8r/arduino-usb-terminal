@@ -4,8 +4,6 @@ import android.content.Context
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import org.kabiri.android.usbterminal.SERVICE_TYPE
 import org.kabiri.android.usbterminal.data.ServiceNameHelper
 import org.kabiri.android.usbterminal.data.WifiDeviceRepository
@@ -33,7 +31,7 @@ class NsdHelper: KoinComponent {
     private var resolveListener: ResolveListener? = null
 
     private var mLocalPort: Int? = null
-    var discoveredDeviceListener = { discoveredDevice: NsdServiceInfo -> Unit }
+    var discoveredDeviceListener = { _: NsdServiceInfo -> Unit }
 
     fun registerService(context: Context) {
 
