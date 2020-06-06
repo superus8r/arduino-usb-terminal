@@ -18,7 +18,7 @@ import org.koin.core.inject
  */
 class DiscoveryListener(
     private val nsdManager: NsdManager,
-    private val discoveredServices: MutableLiveData<ArrayList<NsdServiceInfo>>
+    private val discoveredDeviceListener: (NsdServiceInfo) -> Unit
 ) : NsdManager.DiscoveryListener, KoinComponent {
 
     companion object {
@@ -54,8 +54,8 @@ class DiscoveryListener(
                 // it means another device is running the app and has discovery on.
 
                 // determine the connection info for that discovered service
-                discoveredServices.postItem(service)
-                Log.d(TAG, "discovered service: ${service.host}")
+                discoveredDeviceListener(service)
+                Log.d(TAG, "Service discovered, same type, another device: $service")
             }
         }
     }
@@ -78,10 +78,5 @@ class DiscoveryListener(
     override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
         Log.e(TAG, "Discovery failed: Error code:$errorCode")
         nsdManager.stopServiceDiscovery(this)
-    }
-
-    private fun<T> MutableLiveData<ArrayList<T>>.postItem(newItem: T) {
-        value?.add(newItem)
-        this.postValue(value)
     }
 }

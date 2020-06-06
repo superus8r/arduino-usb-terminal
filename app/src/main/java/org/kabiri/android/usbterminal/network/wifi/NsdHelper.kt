@@ -33,9 +33,7 @@ class NsdHelper: KoinComponent {
     private var resolveListener: ResolveListener? = null
 
     private var mLocalPort: Int? = null
-    private val _discoveredServices = MutableLiveData<ArrayList<NsdServiceInfo>>()
-    val discoveredServices: LiveData<ArrayList<NsdServiceInfo>>
-        get() = _discoveredServices
+    var discoveredDeviceListener = { discoveredDevice: NsdServiceInfo -> Unit }
 
     fun registerService(context: Context) {
 
@@ -120,11 +118,14 @@ class NsdHelper: KoinComponent {
 
     fun discoverService(context: Context) {
         initializeNsdManager(context)
-        val nsdManager = nsdManager ?: return
+        val nsdManager = nsdManager ?: run {
+            Log.e(TAG, "Discovery failed: Could not initialize NsdManager")
+            return
+        }
 
         // prepare the discovery listener.
         resolveListener = ResolveListener()
-        discoveryListener = DiscoveryListener(nsdManager, _discoveredServices)
+        discoveryListener = DiscoveryListener(nsdManager, discoveredDeviceListener)
 
         // register the discovery callBack and discover services.
         nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener)
