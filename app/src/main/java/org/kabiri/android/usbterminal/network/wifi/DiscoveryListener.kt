@@ -3,11 +3,9 @@ package org.kabiri.android.usbterminal.network.wifi
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import org.kabiri.android.usbterminal.SERVICE_TYPE
 import org.kabiri.android.usbterminal.data.ServiceNameHelper
 import org.kabiri.android.usbterminal.data.WifiDeviceRepository
-import org.kabiri.android.usbterminal.model.WifiDevice
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 

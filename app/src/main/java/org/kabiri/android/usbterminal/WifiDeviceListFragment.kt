@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import org.kabiri.android.usbterminal.databinding.FragmentWifiDeviceListBinding
-import org.kabiri.android.usbterminal.model.WifiDevice
 import org.kabiri.android.usbterminal.ui.adapter.WifiDeviceAdapter
 import org.kabiri.android.usbterminal.viewmodel.WifiDeviceListViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
