@@ -24,7 +24,7 @@ class NsdHelper: KoinComponent {
         private const val TAG = "NsdHelper"
     }
 
-    private lateinit var nsdManager: NsdManager
+    private var nsdManager: NsdManager? = null
     private lateinit var serverSocket: ServerSocket
     private val serviceNameHelper by inject<ServiceNameHelper>()
     private val wifiDeviceRepository by inject<WifiDeviceRepository>()
@@ -39,9 +39,9 @@ class NsdHelper: KoinComponent {
 
     fun registerService(context: Context) {
 
-        if (::nsdManager.isInitialized) {
-            Log.e(TAG, "NsdManager already initialized, " +
-                    "probably the service was not unregistered properly.")
+        initializeNsdManager(context)
+        val nsdManager = nsdManager ?: run {
+            Log.e(TAG, "Register service failed: NsdManager was not initialized.")
             return
         }
 
@@ -63,8 +63,9 @@ class NsdHelper: KoinComponent {
 
         registrationListener = RegistrationListener()
 
+        // register the service on the network.
         try {
-            nsdManager = (context.getSystemService(Context.NSD_SERVICE) as NsdManager).apply {
+            nsdManager.apply {
                 registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD, registrationListener)
             }
         } catch (e: Exception) {
@@ -73,12 +74,23 @@ class NsdHelper: KoinComponent {
         }
     }
 
-    fun unregisterService() {
-        if (!::nsdManager.isInitialized) {
-            Log.e(TAG, "NsdManager not initialized, " +
+    /**
+     * Unregisters the registration listener and or the discovery listener is they exist.
+     */
+    fun unregisterService(context: Context) {
+        if (nsdManager == null) {
+            Log.e(TAG, "Unregistering: NsdManager not initialized, " +
                     "probably the service was not registered or was already unregistered.")
+        } else {
+            Log.d(TAG, "Unregistering: initializing NsdManager to force unregistering.")
+            initializeNsdManager(context)
+        }
+
+        val nsdManager = nsdManager ?: run {
+            Log.e(TAG, "Unregistering: failed: NsdManager was not/could not be initialized.")
             return
         }
+
         registrationListener?.let {
             nsdManager.unregisterService(registrationListener)
             registrationListener = null
@@ -91,9 +103,14 @@ class NsdHelper: KoinComponent {
             Log.d(TAG, "discovery listener cleared.")
         } ?: run { Log.e(TAG, "discovery listener was null," +
                 " probably it was unregistered before.") }
+        this.nsdManager = null
     }
 
-    fun initializeServerSocket() {
+    private fun initializeNsdManager(context: Context) {
+        nsdManager = (context.getSystemService(Context.NSD_SERVICE) as NsdManager)
+    }
+
+    private fun initializeServerSocket() {
         // Initialize a server socket on the next available port.
         serverSocket = ServerSocket(0).also { socket ->
             // Store the port to use it with service discovery.
@@ -101,13 +118,9 @@ class NsdHelper: KoinComponent {
         }
     }
 
-    fun discoverService() {
-        if (!::nsdManager.isInitialized) {
-            Log.e(TAG, "NsdManager not initialized, " +
-                    "probably the service was not registered or was already unregistered." +
-                    " - Discovery aborted.")
-            return // return if nsdManager is not initialized.
-        }
+    fun discoverService(context: Context) {
+        initializeNsdManager(context)
+        val nsdManager = nsdManager ?: return
 
         // prepare the discovery listener.
         resolveListener = ResolveListener()
@@ -118,6 +131,10 @@ class NsdHelper: KoinComponent {
     }
 
     fun resolveService(service : NsdServiceInfo) {
+        val nsdManager = nsdManager ?: run {
+            Log.e(TAG, "Resolve failed: NsdManager was not initialized.")
+            return
+        }
         nsdManager.resolveService(service, resolveListener)
         insertWifiDevice(service)
     }
