@@ -21,10 +21,7 @@ import org.koin.java.KoinJavaComponent.inject
 class MainActivityViewModel(private val arduinoHelper: ArduinoHelper): ViewModel(), KoinComponent {
 
     private val settings by inject<SettingsReader>()
-
-    lateinit var tNsdHelper: NsdHelper // used for tests,
-    private var mNsdHelper = NsdHelper()
-        get() { return if (::tNsdHelper.isInitialized) tNsdHelper else field }
+    private val mNsdHelper by inject<NsdHelper>()
 
     fun askForConnectionPermission() = arduinoHelper.askForConnectionPermission()
     fun getGrantedDevice() = arduinoHelper.getGrantedDevice()
@@ -85,13 +82,15 @@ class MainActivityViewModel(private val arduinoHelper: ArduinoHelper): ViewModel
     private fun handleServiceFor(deviceMode: String, context: Context) {
         when (deviceMode) {
             context.getString(R.string.settings_value_device_mode_server) -> {
+                mNsdHelper.unregisterService(context)
                 mNsdHelper.registerService(context)
             }
             context.getString(R.string.settings_value_device_mode_client) -> {
-                mNsdHelper.discoverService()
+                mNsdHelper.unregisterService(context)
+                mNsdHelper.discoverService(context)
             }
             else -> {
-                mNsdHelper.unregisterService()
+                mNsdHelper.unregisterService(context)
             }
         }
     }
