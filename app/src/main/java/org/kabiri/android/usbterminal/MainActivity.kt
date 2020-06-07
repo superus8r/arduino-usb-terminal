@@ -53,6 +53,9 @@ class MainActivity : AppCompatActivity() {
                 etInput.setText("") // clear the terminal input.
             else Log.e(TAG, "The message was not sent to Arduino")
         }
+
+        // handle the device mode.
+        viewModel.handleDeviceMode(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
