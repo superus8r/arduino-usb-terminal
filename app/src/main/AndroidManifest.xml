@@ -16,7 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-<!--        <meta-data android:name="io.sentry.dsn" android:value="@string/sentry_dsn" />-->
+        <!-- sentry: replace the empty value with @string/sentry_dsn -->
+        <meta-data android:name="io.sentry.dsn" android:value="" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
