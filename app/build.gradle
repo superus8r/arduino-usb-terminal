@@ -18,8 +18,8 @@ android {
         applicationId "org.kabiri.android.usbterminal"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 7
-        versionName "0.7.0"
+        versionCode 8
+        versionName "0.7.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
