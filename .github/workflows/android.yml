@@ -10,8 +10,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: set up Ruby to install fastlane
     - uses: actions/setup-ruby@v1
-      - with:
-          ruby-version: '2.7'
+      with:
+        ruby-version: '2.7'
 #    - name: set up JDK 1.8
 #      uses: actions/setup-java@v1
 #      with:
@@ -24,7 +24,7 @@ jobs:
         run: bundle exec fastlane android test
     - name: Unit tests results
     - uses: actions/upload-artifact@v1
-      - with:
+      with:
         name: unit-test-results
         path: app/build/reports/tests/testDebugUnitTest/index.html
 
