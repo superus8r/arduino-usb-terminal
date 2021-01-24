@@ -87,3 +87,5 @@ app/src/main/res/values/api_keys.xml
 .idea/compiler.xml
 .idea/jarRepositories.xml
 .idea/misc.xml
+app/build.gradle
+.idea/misc.xml
