@@ -2,6 +2,7 @@
 
 # arduino-usb-terminal 
  Terminal-like app to send commands to Arduino through USB
+
 ![Android CI](https://github.com/k4biri/arduino-usb-terminal/workflows/Android%20CI/badge.svg)
 
  
