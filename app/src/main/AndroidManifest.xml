@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data android:name="io.sentry.dsn" android:value="@string/sentry_dsn" />
+<!--        <meta-data android:name="io.sentry.dsn" android:value="@string/sentry_dsn" />-->
 
         <activity android:name=".MainActivity">
             <intent-filter>
