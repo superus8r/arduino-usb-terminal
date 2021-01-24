@@ -17,7 +17,7 @@ default_platform(:android)
 
 platform :android do
   desc "Runs all the tests"
-  lane :test do
+  lane :run_unit_tests do
     gradle(task: "testDebugUnitTest --stacktrace")
   end
 

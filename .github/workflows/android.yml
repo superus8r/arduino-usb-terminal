@@ -18,7 +18,7 @@ jobs:
         java-version: 1.8
     - name: setup fastlane
       run: bundle install
-    - name: distribute to firebase
+    - name: run unit tests
       run: bundle exec fastlane android run_unit_tests
     - name: run unit tests
       run: bundle exec fastlane android test
