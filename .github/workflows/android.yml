@@ -20,8 +20,6 @@ jobs:
       run: bundle install
     - name: run unit tests
       run: bundle exec fastlane android run_unit_tests
-    - name: run unit tests
-      run: bundle exec fastlane android test
     - name: Unit tests results
       uses: actions/upload-artifact@v1
       with:
