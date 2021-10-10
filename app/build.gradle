@@ -3,7 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'koin'
 
 repositories {
-    jcenter()
 }
 
 android {
@@ -18,9 +17,8 @@ android {
         applicationId "org.kabiri.android.usbterminal"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 8
-        versionName "0.7.1"
-
+        versionCode 9
+        versionName "0.7.9"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
