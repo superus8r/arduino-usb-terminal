@@ -3,7 +3,8 @@
 # arduino-usb-terminal 
  Terminal-like app to send commands to Arduino through USB
 
- 
+![Android CI](https://github.com/k4biri/arduino-usb-terminal/workflows/Android%20CI/badge.svg)
+
  
  This app simplifies testing your Arduino components that work with direct usb commands by giving you the ability to send custom commands and view the returned message from your Arduino device.
  
@@ -23,7 +24,8 @@
  The Joystick is removed for the first release.
  
  ## Tests
- Under Construction
+ Currently, there are some basic tests to run on the CI, but needs improvements.
+ UI tests will be completed once the project is migrated to Jetpack Compose.
  
  ## Sentry Reports
  The project uses Sentry for the crash reports, if this is not needed, you can remove the following line in `AndroidManifest.xml`:

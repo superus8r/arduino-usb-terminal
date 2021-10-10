@@ -8,9 +8,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import io.sentry.core.Sentry
-import kotlinx.android.synthetic.main.activity_main.*
+import org.kabiri.android.usbterminal.databinding.ActivityMainBinding
 import org.kabiri.android.usbterminal.viewmodel.MainActivityViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -22,34 +20,36 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val viewModel: MainActivityViewModel by viewModel()
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
+        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         // make the text view scrollable:
-        tvOutput.movementMethod = ScrollingMovementMethod()
+        binding.tvOutput.movementMethod = ScrollingMovementMethod()
 
         // open the device and port when the permission is granted by user.
-        viewModel.getGrantedDevice().observe(this, Observer { device ->
+        viewModel.getGrantedDevice().observe(this, { device ->
             viewModel.openDeviceAndPort(device)
         })
 
-        viewModel.getLiveOutput().observe(this, Observer {
+        viewModel.getLiveOutput().observe(this, {
             val spannable = SpannableString(it.text)
             spannable.setSpan(
                 it.getAppearance(this),
                 0,
                 it.text.length,
                 SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
-            tvOutput.append(it.text)
+            binding.tvOutput.append(it.text)
         })
 
         // send the command to device when the button is clicked.
-        btEnter.setOnClickListener {
-            val input = etInput.text.toString()
+        binding.btEnter.setOnClickListener {
+            val input = binding.etInput.text.toString()
             if (viewModel.serialWrite(input))
-                etInput.setText("") // clear the terminal input.
+                binding.etInput.setText("") // clear the terminal input.
             else Log.e(TAG, "The message was not sent to Arduino")
         }
     }
