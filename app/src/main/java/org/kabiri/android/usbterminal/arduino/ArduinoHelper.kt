@@ -62,7 +62,17 @@ class ArduinoHelper(private val context: Context,
                     _liveInfoOutput.postValue(context.getString(R.string.helper_info_usb_permission_requested))
                 } else {
                     _liveErrorOutput.postValue(context.getString(R.string.helper_error_device_not_found))
-                    connection.close()
+                    try {
+                        connection.close()
+                    } catch (e: UninitializedPropertyAccessException) {
+                        _liveErrorOutput.postValue(context.getString(
+                            R.string.helper_error_connection_not_ready_to_close))
+                        _liveErrorOutput.postValue(e.message)
+                    } catch (e: Exception) {
+                        _liveErrorOutput.postValue(context.getString(
+                            R.string.helper_error_connection_failed_to_close))
+                        _liveErrorOutput.postValue(e.message)
+                    }
                 }
             }
         } else {

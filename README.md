@@ -24,7 +24,8 @@
  The Joystick is removed for the first release.
  
  ## Tests
- Under Construction
+ Currently, there are some basic tests to run on the CI, but needs improvements.
+ UI tests will be completed once the project is migrated to Jetpack Compose.
  
  ## Sentry Reports
  The project uses Sentry for the crash reports, if this is not needed, you can remove the following line in `AndroidManifest.xml`:
