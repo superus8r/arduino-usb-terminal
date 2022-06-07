@@ -118,7 +118,7 @@ GEM
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httpclient (2.8.3)
-    jmespath (1.4.0)
+    jmespath (1.6.1)
     json (2.5.1)
     jwt (2.2.2)
     memoist (0.16.2)
@@ -160,6 +160,7 @@ GEM
     uber (0.1.0)
     unf (0.1.4)
       unf_ext
+    unf_ext (0.0.7.7)
     unf_ext (0.0.7.7-x64-mingw32)
     unicode-display_width (1.7.0)
     word_wrap (1.0.0)
@@ -176,6 +177,7 @@ GEM
 
 PLATFORMS
   x64-mingw32
+  x86_64-linux
 
 DEPENDENCIES
   fastlane
