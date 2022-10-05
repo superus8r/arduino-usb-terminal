@@ -1,6 +1,7 @@
 package org.kabiri.android.usbterminal
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import android.text.SpannableString
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
@@ -8,18 +9,18 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
 import org.kabiri.android.usbterminal.databinding.ActivityMainBinding
 import org.kabiri.android.usbterminal.viewmodel.MainActivityViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "MainActivity"
     }
 
-    private val viewModel: MainActivityViewModel by viewModel()
+    private val viewModel by viewModels<MainActivityViewModel>()
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

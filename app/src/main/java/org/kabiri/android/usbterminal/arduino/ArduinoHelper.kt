@@ -15,6 +15,7 @@ import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
 import org.kabiri.android.usbterminal.Constants
 import org.kabiri.android.usbterminal.R
+import javax.inject.Inject
 
 
 /**
@@ -24,9 +25,13 @@ import org.kabiri.android.usbterminal.R
  * Info: The `askForConnectionPermission()` method
  *  registers the Arduino Permission Broadcast Receiver.
  */
-class ArduinoHelper(private val context: Context,
-                    private val arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
-                    private val arduinoSerialReceiver: ArduinoSerialReceiver) {
+
+class ArduinoHelper
+@Inject constructor(
+    private val context: Context,
+    private val arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
+    private val arduinoSerialReceiver: ArduinoSerialReceiver
+) {
 
     companion object {
         private const val TAG = "ArduinoHelper"

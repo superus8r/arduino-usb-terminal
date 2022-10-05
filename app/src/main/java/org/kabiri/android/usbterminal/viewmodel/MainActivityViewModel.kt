@@ -2,14 +2,20 @@ package org.kabiri.android.usbterminal.viewmodel
 
 import android.hardware.usb.UsbDevice
 import androidx.lifecycle.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.arduino.ArduinoHelper
 import org.kabiri.android.usbterminal.model.OutputText
+import javax.inject.Inject
 
 /**
  * Created by Ali Kabiri on 12.04.20.
  */
-class MainActivityViewModel(private val arduinoHelper: ArduinoHelper): ViewModel() {
+@HiltViewModel
+class MainActivityViewModel
+@Inject constructor(
+    private val arduinoHelper: ArduinoHelper,
+): ViewModel() {
 
     fun askForConnectionPermission() = arduinoHelper.askForConnectionPermission()
     fun getGrantedDevice() = arduinoHelper.getGrantedDevice()
