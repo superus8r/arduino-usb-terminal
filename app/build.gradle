@@ -6,7 +6,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -16,10 +16,23 @@ android {
     defaultConfig {
         applicationId "org.kabiri.android.usbterminal"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 9
         versionName "0.7.9"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        // read release credentials from keystore.properties file
+        def ksProp = new Properties()
+        // load keys inside the ksProp file
+        loadKeyStore(ksProp)
+        release {
+            keyAlias ksProp.getProperty("release.keyAlias")
+            keyPassword ksProp.getProperty("release.keyPassword")
+            storeFile file(ksProp.getProperty("release.file"))
+            storePassword ksProp.getProperty("release.storePassword")
+        }
     }
 
     buildTypes {
@@ -32,7 +45,17 @@ android {
     buildFeatures {
         viewBinding true
     }
+    namespace 'org.kabiri.android.usbterminal'
 
+}
+
+private void loadKeyStore(Properties ksProp) {
+    def ksPropFile = file("keystore.properties")
+    if (ksPropFile.exists()) {
+        ksProp.load(new FileInputStream(ksPropFile))
+    } else {
+        println 'ERROR: local keystore file not found'
+    }
 }
 
 dependencies {
