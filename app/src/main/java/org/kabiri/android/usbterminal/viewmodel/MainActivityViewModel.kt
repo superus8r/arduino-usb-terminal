@@ -17,12 +17,20 @@ class MainActivityViewModel
     private val arduinoHelper: ArduinoHelper,
 ): ViewModel() {
 
+    val _outputLive = MutableLiveData("")
+    val output = _outputLive
+
     fun askForConnectionPermission() = arduinoHelper.askForConnectionPermission()
+
+    fun disconnect() = arduinoHelper.disconnect()
     fun getGrantedDevice() = arduinoHelper.getGrantedDevice()
     fun openDeviceAndPort(device: UsbDevice) = viewModelScope.launch {
         arduinoHelper.openDeviceAndPort(device)
     }
-    fun serialWrite(command: String) = arduinoHelper.serialWrite(command)
+    fun serialWrite(command: String): Boolean {
+        _outputLive.value = output.value + '\n' + command + '\n'
+        return arduinoHelper.serialWrite(command)
+    }
 
     /**
      * Transforms the outputs from ArduinoHelper into spannable text
@@ -35,14 +43,17 @@ class MainActivityViewModel
         val liveErrorOutput = arduinoHelper.getLiveErrorOutput()
 
         val liveSpannedOutput: LiveData<OutputText> = Transformations.map(liveOutput) {
+            _outputLive.value = _outputLive.value + it
             return@map OutputText(it, OutputText.OutputType.TYPE_NORMAL)
         }
 
         val liveSpannedInfoOutput: LiveData<OutputText> = Transformations.map(liveInfoOutput) {
+            _outputLive.value = _outputLive.value + it
             return@map OutputText(it, OutputText.OutputType.TYPE_INFO)
         }
 
         val liveSpannedErrorOutput: LiveData<OutputText> = Transformations.map(liveErrorOutput) {
+            _outputLive.value = _outputLive.value + it
             return@map OutputText(it, OutputText.OutputType.TYPE_ERROR)
         }
 

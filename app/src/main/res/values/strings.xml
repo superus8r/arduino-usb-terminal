@@ -6,14 +6,22 @@
     <!--TRANSLATABLE-->
     <string name="app_name">USBTerminal</string>
     <string name="title_connect">Connect</string>
+    <string name="title_disconnect">Disconnect</string>
 
+    <!-- Home Screen -->
+    <string name="home_bt_enter">Enter</string>
+    <string name="home_et_hint">Type a command …</string>
+
+    <!-- Joystick Screen (upcoming) -->
     <string name="bt_joystick_forward">Go Forward</string>
     <string name="bt_joystick_left">Turn Left</string>
     <string name="bt_joystick_right">Turn Right</string>
     <string name="bt_joystick_backward">Go Backward</string>
 
+    <!-- Messages -->
     <string name="helper_error_serial_port_is_null">Serial Port is null: The device might be disconnected.\n</string>
-    <string name="helper_error_device_not_found">\nArduino Device not found</string>
+    <string name="helper_error_device_not_found">\nArduino Device not found (or the device might be a clone).</string>
+    <string name="helper_error_connecting_anyway">\nConnecting anyway (may misbehave)…</string>
     <string name="helper_error_usb_devices_not_attached">\nNo USB devices are attached</string>
     <string name="helper_error_serial_connection_not_opened">\nPort not opened - There might be a problem with the serial connection to Arduino</string>
     <string name="helper_error_write_problem">Serial Write encountered an error:</string>
@@ -21,6 +29,7 @@
     <string name="helper_error_connection_not_ready_to_close">No device connection to close</string>
     <string name="helper_error_connection_failed_to_close">Device connection failed to close</string>
     <string name="helper_info_serial_connection_opened">\nSerial Connection Opened</string>
+    <string name="helper_info_serial_connection_closed">\nSerial Connection Closed</string>
     <string name="helper_info_usb_permission_requested">Requested permission to access the USB device…</string>
     <string name="helper_info_checking_attached_usb_devices">\nChecking attached USB devices…</string>
 

@@ -55,34 +55,50 @@ class ArduinoHelper
             for (device in usbDevices) {
                 val deviceVID = device.value.vendorId
                 if (deviceVID == 0x2341) { // Arduino vendor ID
-                    val permissionIntent = PendingIntent.getBroadcast(
-                        context,
-                        0,
-                        Intent(Constants.ACTION_USB_PERMISSION),
-                        0
-                    )
-                    val filter = IntentFilter(Constants.ACTION_USB_PERMISSION)
-                    context.registerReceiver(arduinoPermReceiver, filter) // register the broadcast receiver
-                    usbManager.requestPermission(device.value, permissionIntent)
-                    _liveInfoOutput.postValue(context.getString(R.string.helper_info_usb_permission_requested))
+                    connect(device)
                 } else {
                     _liveErrorOutput.postValue(context.getString(R.string.helper_error_device_not_found))
-                    try {
-                        connection.close()
-                    } catch (e: UninitializedPropertyAccessException) {
-                        _liveErrorOutput.postValue(context.getString(
-                            R.string.helper_error_connection_not_ready_to_close))
-                        _liveErrorOutput.postValue(e.message)
-                    } catch (e: Exception) {
-                        _liveErrorOutput.postValue(context.getString(
-                            R.string.helper_error_connection_failed_to_close))
-                        _liveErrorOutput.postValue(e.message)
-                    }
+                    _liveErrorOutput.postValue(context.getString(R.string.helper_error_connecting_anyway))
+                    connect(device)
                 }
             }
         } else {
             _liveErrorOutput.postValue(context.getString(R.string.helper_error_usb_devices_not_attached))
         }
+    }
+
+    fun disconnect() {
+        try {
+            connection.close()
+            _liveOutput.postValue(context.getString(R.string.helper_info_serial_connection_closed))
+        } catch (e: UninitializedPropertyAccessException) {
+            _liveErrorOutput.postValue(
+                context.getString(
+                    R.string.helper_error_connection_not_ready_to_close
+                )
+            )
+            _liveErrorOutput.postValue(e.message)
+        } catch (e: Exception) {
+            _liveErrorOutput.postValue(
+                context.getString(
+                    R.string.helper_error_connection_failed_to_close
+                )
+            )
+            _liveErrorOutput.postValue(e.message)
+        }
+    }
+
+    private fun connect(device: MutableMap.MutableEntry<String, UsbDevice>) {
+        val permissionIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            Intent(Constants.ACTION_USB_PERMISSION),
+            PendingIntent.FLAG_MUTABLE // it is necessary for connecting to the device.
+        )
+        val filter = IntentFilter(Constants.ACTION_USB_PERMISSION)
+        context.registerReceiver(arduinoPermReceiver, filter) // register the broadcast receiver
+        usbManager.requestPermission(device.value, permissionIntent)
+        _liveInfoOutput.postValue(context.getString(R.string.helper_info_usb_permission_requested))
     }
 
     /**
