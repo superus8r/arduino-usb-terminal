@@ -1,5 +1,7 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
@@ -65,6 +67,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Firebase
+    implementation platform("com.google.firebase:firebase-bom:$firebase_bom_version")
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
 
     // Dependency Injection
     implementation "com.google.dagger:hilt-android:$hilt_version"

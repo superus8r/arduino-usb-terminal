@@ -17,7 +17,7 @@ class MainActivityViewModel
     private val arduinoHelper: ArduinoHelper,
 ): ViewModel() {
 
-    val _outputLive = MutableLiveData("")
+    private val _outputLive = MutableLiveData("")
     val output = _outputLive
 
     fun askForConnectionPermission() = arduinoHelper.askForConnectionPermission()
@@ -28,7 +28,7 @@ class MainActivityViewModel
         arduinoHelper.openDeviceAndPort(device)
     }
     fun serialWrite(command: String): Boolean {
-        _outputLive.value = output.value + '\n' + command + '\n'
+        _outputLive.value = "${output.value}\n$command\n"
         return arduinoHelper.serialWrite(command)
     }
 
