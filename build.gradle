@@ -3,7 +3,7 @@
 buildscript {
     ext {
         kotlin_version = '1.7.10'
-        hilt_version = '2.43.2'
+        hilt_version = '2.44'
         firebase_bom_version = '30.5.0'
     }
     repositories {

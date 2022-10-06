@@ -61,12 +61,12 @@ jobs:
           DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: echo $DATA > app/google-services.json
       - name: Lint
-        run: bash ./gradlew lint --stacktrace
+        run: bash ./gradlew lintDebug
       - name: Lint results
         uses: actions/upload-artifact@v1
         with:
           name: app
-          path: app/build/reports/lint-results.html
+          path: app/build/reports/lint-results-debug.html
 
   ui-test:
     runs-on: macOS-latest
