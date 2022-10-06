@@ -23,6 +23,12 @@ jobs:
         python-version: '3.10'
     - name: generate ksProp file
       run: python scripts/generateKsPropFile.py
+    - name: create google-services.json file
+      run: cat app/google-services.json | base64
+    - name: update google-services.json file
+      env:
+        DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+      run: echo $DATA > app/google-services.json
     - name: setup fastlane
       run: bundle install
     - name: run unit tests
@@ -48,6 +54,12 @@ jobs:
           python-version: '3.10'
       - name: generate ksProp file
         run: python scripts/generateKsPropFile.py
+      - name: create google-services.json file
+        run: cat app/google-services.json | base64
+      - name: update google-services.json file
+        env:
+          DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo $DATA > app/google-services.json
       - name: Lint
         run: bash ./gradlew lint --stacktrace
       - name: Lint results
@@ -67,6 +79,12 @@ jobs:
           python-version: '3.10'
       - name: generate ksProp file
         run: python scripts/generateKsPropFile.py
+      - name: create google-services.json file
+        run: cat app/google-services.json | base64
+      - name: update google-services.json file
+        env:
+          DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo $DATA > app/google-services.json
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
