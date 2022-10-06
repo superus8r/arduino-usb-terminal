@@ -17,6 +17,12 @@ jobs:
       with:
         distribution: 'zulu'
         java-version: '11'
+    - name: set up Python
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: generate ksProp file
+      run: python scripts/generateKsPropFile.py
     - name: setup fastlane
       run: bundle install
     - name: run unit tests
@@ -36,6 +42,12 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
+      - name: set up Python
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: generate ksProp file
+        run: python scripts/generateKsPropFile.py
       - name: Lint
         run: bash ./gradlew lint --stacktrace
       - name: Lint results
@@ -49,6 +61,12 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      - name: set up Python
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: generate ksProp file
+        run: python scripts/generateKsPropFile.py
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
