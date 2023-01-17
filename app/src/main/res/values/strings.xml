@@ -20,21 +20,23 @@
 
     <!-- Messages -->
     <string name="helper_error_serial_port_is_null">Serial Port is null: The device might be disconnected.\n</string>
-    <string name="helper_error_device_not_found">\nArduino Device not found (or the device might be a clone).</string>
-    <string name="helper_error_connecting_anyway">\nConnecting anyway (may misbehave)…</string>
-    <string name="helper_error_usb_devices_not_attached">\nNo USB devices are attached</string>
-    <string name="helper_error_serial_connection_not_opened">\nPort not opened - There might be a problem with the serial connection to Arduino</string>
-    <string name="helper_error_write_problem">Serial Write encountered an error:</string>
-    <string name="helper_error_connection_closed_unexpectedly">Device connection was closed unexpectedly</string>
-    <string name="helper_error_connection_not_ready_to_close">No device connection to close</string>
-    <string name="helper_error_connection_failed_to_close">Device connection failed to close</string>
-    <string name="helper_info_serial_connection_opened">\nSerial Connection Opened</string>
-    <string name="helper_info_serial_connection_closed">\nSerial Connection Closed</string>
-    <string name="helper_info_usb_permission_requested">Requested permission to access the USB device…</string>
-    <string name="helper_info_checking_attached_usb_devices">\nChecking attached USB devices…</string>
+    <string name="helper_error_device_not_found">Arduino Device not found (or the device might be a clone).\n</string>
+    <string name="helper_error_connecting_anyway">Connecting anyway (may misbehave)…\n</string>
+    <string name="helper_error_usb_devices_not_attached">No USB devices are attached\n</string>
+    <string name="helper_error_serial_connection_not_opened">Port not opened - There might be a problem with the serial connection to Arduino\n</string>
+    <string name="helper_error_write_problem">Serial Write encountered an error:\n</string>
+    <string name="helper_error_connection_closed_unexpectedly">Device connection was closed unexpectedly\n</string>
+    <string name="helper_error_connection_failed_to_open">Failed to open device connection. Please make sure the device is connected and the USB cable and the port are healthy.\n</string>
+    <string name="helper_error_connection_failed_to_open_unknown">Failed to open device connection.\n</string>
+    <string name="helper_error_connection_not_ready_to_close">No device connection to close\n</string>
+    <string name="helper_error_connection_failed_to_close">Device connection failed to close\n</string>
+    <string name="helper_info_serial_connection_opened">Serial Connection Opened\n</string>
+    <string name="helper_info_serial_connection_closed">Serial Connection Closed\n</string>
+    <string name="helper_info_usb_permission_requested">Requested permission to access the USB device…\n</string>
+    <string name="helper_info_checking_attached_usb_devices">Checking attached USB devices…\n</string>
 
-    <string name="breceiver_info_usb_permission_granted">"\nPermission granted for: "</string>
-    <string name="breceiver_error_usb_permission_denied">\npermission denied for device:</string>
-    <string name="breceiver_info_device_attached">\nDevice attached</string>
-    <string name="breceiver_info_device_detached">\nDevice detached</string>
+    <string name="breceiver_info_usb_permission_granted">"Permission granted for: \n"</string>
+    <string name="breceiver_error_usb_permission_denied">permission denied for device:\n</string>
+    <string name="breceiver_info_device_attached">Device attached\n</string>
+    <string name="breceiver_info_device_detached">Device detached\n</string>
 </resources>
