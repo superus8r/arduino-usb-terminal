@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: set up Ruby to install fastlane
-      uses: actions/setup-ruby@v1
+    - uses: actions/setup-ruby@v1
       with:
         ruby-version: '3.0'
         bundler-cache: true # run "bundle install" and cache the installed gems
