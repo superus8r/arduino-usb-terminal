@@ -11,7 +11,8 @@ jobs:
     - name: set up Ruby to install fastlane
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: '2.7'
+        ruby-version: '3.0'
+        bundler-cache: true # run "bundle install" and cache the installed gems
     - name: set up JDK 11
       uses: actions/setup-java@v1
       with:
