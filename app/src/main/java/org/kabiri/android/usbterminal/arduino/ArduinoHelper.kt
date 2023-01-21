@@ -77,14 +77,14 @@ class ArduinoHelper
                     R.string.helper_error_connection_not_ready_to_close
                 )
             )
-            _liveErrorOutput.postValue(e.message)
+            _liveErrorOutput.postValue("${e.localizedMessage}\n")
         } catch (e: Exception) {
             _liveErrorOutput.postValue(
                 context.getString(
                     R.string.helper_error_connection_failed_to_close
                 )
             )
-            _liveErrorOutput.postValue(e.message)
+            _liveErrorOutput.postValue("${e.localizedMessage}\n")
         }
     }
 
@@ -93,7 +93,8 @@ class ArduinoHelper
             context,
             0,
             Intent(Constants.ACTION_USB_PERMISSION),
-            PendingIntent.FLAG_MUTABLE // it is necessary for connecting to the device.
+            // it is necessary for connecting to the device.
+            PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         val filter = IntentFilter(Constants.ACTION_USB_PERMISSION)
         context.registerReceiver(arduinoPermReceiver, filter) // register the broadcast receiver
@@ -118,6 +119,14 @@ class ArduinoHelper
         } catch (e: IllegalStateException) {
             Log.e(TAG, "${e.message}")
             _liveErrorOutput.postValue(context.getString(R.string.helper_error_connection_closed_unexpectedly))
+        } catch (e: NullPointerException) {
+            Log.e(TAG, "${e.message}")
+            _liveErrorOutput.postValue(context.getString(
+                R.string.helper_error_connection_failed_to_open))
+        } catch (e: Exception) {
+            Log.e(TAG, "${e.message}")
+            _liveErrorOutput.postValue(context.getString(
+                R.string.helper_error_connection_failed_to_open_unknown))
         }
 
         if (::serialPort.isInitialized)
@@ -164,7 +173,9 @@ class ArduinoHelper
                 false
             }
         } catch (e: Exception) {
-            _liveErrorOutput.postValue("${context.getString(R.string.helper_error_write_problem)} ${e.localizedMessage}")
+            _liveErrorOutput.postValue(
+                context.getString(R.string.helper_error_write_problem) +
+                    " \n${e.localizedMessage}\n")
             Log.e(TAG, "$e")
             false
         }

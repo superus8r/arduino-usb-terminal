@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
+import org.kabiri.android.usbterminal.extensions.scrollToLastLine
 import org.kabiri.android.usbterminal.viewmodel.MainActivityViewModel
 
 @AndroidEntryPoint
@@ -51,7 +52,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.output.observe(this) {
-            tvOutput.apply { text = it }
+            tvOutput.apply {
+                text = it
+                scrollToLastLine()
+            }
         }
 
         // send the command to device when the button is clicked.
