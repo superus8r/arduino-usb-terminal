@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  my-job:
+  android-test:
     machine:
       image: ubuntu-2004:current
     resource_class: arm.medium
