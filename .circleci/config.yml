@@ -1,57 +1,48 @@
 version: 2.1
 
+commands:
+  restore_gradle_cache:
+    steps:
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ arch }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle" }}
+
+  save_gradle_cache:
+    steps:
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper
+          key: v1-gradle-wrapper-{{ arch }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle" }}
+
 jobs:
   android-test:
-    macos:
-      xcode: "11.2.0"
-    working_directory: ~/repo/App
+    machine:
+      image: android:2022.12.1
+    resource_class: large
     steps:
-      - checkout:
-          path: ~/repo
-
-      - run:
-          name: set ANDROID_SDK_ROOT
-          command: |
-            echo 'export ANDROID_SDK_ROOT=$HOME/android-tools'  >> $BASH_ENV
-
-      - restore_cache:
-          key: android=tools-v1-{{ checksum "scripts/install-android-tools.sh" }}-{{ arch }}
-
-      - run:
-          name: install android tools
-          command: |
-            sh scripts/install-android-tools.sh
-            echo 'export PATH=$ANDROID_SDK_ROOT/tools/bin:$PATH'  >> $BASH_ENV
-            echo 'export PATH=$ANDROID_SDK_ROOT/tools:$PATH'  >> $BASH_ENV
-            echo 'export PATH=$ANDROID_SDK_ROOT/platform-tools:$PATH'  >> $BASH_ENV
-            echo 'export PATH=$ANDROID_SDK_ROOT/emulator:$PATH'  >> $BASH_ENV
-            source $BASH_ENV
-            sdkmanager --list
-
-      - save_cache:
-          key: android=tools-v1-{{ checksum "scripts/install-android-tools.sh" }}-{{ arch }}
-          paths:
-            - /Users/distiller/android-tools
-
-      - run:
-          name: create AVD
-          command: make create-avd
-
-      - run:
-          name: start AVD
-          command: emulator-headless -avd android-tablet
-          background: true
-
-      - run:
-          name: wait for emulator
-          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'
-
-      - run: adb shell screencap -p > screenshots/before.png
-
-      # (insert testing here)
-
+      - run: lsb_release -a
+      - checkout
+      - run: python3 scripts/generateKsPropFile.py
+      - run: python3 scripts/generateGoogleServicesJson.py
+      - restore_gradle_cache
+      - run: ./gradlew tasks
+      - save_gradle_cache
+      - run: sdkmanager --list
+      - run: (yes || true) | sdkmanager "tools" "platform-tools" "build-tools;33.0.2" "platforms;android-33" "system-images;android-30;google_atd;x86"
+      - run: (yes || true) | sdkmanager --licenses
+      - run: ./gradlew assembleDebug --stacktrace
+      - run: ./gradlew pixel2api30DebugAndroidTest --stacktrace
+      - run: ./gradlew testDebugUnitTest --stacktrace
+      - run: ./gradlew jacocoTestReport --stacktrace
       - store_artifacts:
-          path: screenshots
+          path: app/build/mergedReportDir
+      - store_test_results:
+          path: app/build/test-results/testDebugUnitTest
 
 workflows:
   workflow:
