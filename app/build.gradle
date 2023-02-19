@@ -5,6 +5,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id "jacoco"
 }
 
 repositories {
@@ -46,10 +47,52 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            testCoverageEnabled = true
+        }
+    }
+
+    testOptions {
+
+        animationsDisabled = true
+
+        managedDevices {
+            devices {
+                pixel2api30 (com.android.build.api.dsl.ManagedVirtualDevice) {
+                    device = "Pixel 2"
+                    apiLevel = 30
+                    systemImageSource = "google_atd"
+                }
+            }
+        }
     }
 
     namespace 'org.kabiri.android.usbterminal'
 
+}
+
+jacoco {
+    toolVersion = jacoco_version
+    reportsDirectory.set(layout.buildDirectory.dir("mergedReportDir"))
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'pixel2api30DebugAndroidTest']) {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+    def debugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/kotlin"
+
+    sourceDirectories.from(files([mainSrc]))
+    classDirectories.from(files([debugTree]))
+    executionData.from(fileTree(dir: "$buildDir", includes: [
+            "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+            "outputs/managed_device_code_coverage/pixel2api30/coverage.ec"
+    ]))
 }
 
 private void loadKeyStore(Properties ksProp) {
