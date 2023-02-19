@@ -4,7 +4,8 @@
  Terminal-like app to send commands to Arduino through USB
 
 ![Android CI](https://github.com/k4biri/arduino-usb-terminal/workflows/Android%20CI/badge.svg)
-
+[![superus8r](https://circleci.com/gh/superus8r/arduino-usb-terminal.svg?style=shield)](https://circleci.com/gh/superus8r/arduino-usb-terminal)
+[![codecov](https://codecov.io/gh/superus8r/arduino-usb-terminal/branch/develop/graph/badge.svg?token=RYIUU345QG)](https://codecov.io/gh/superus8r/arduino-usb-terminal)
  
  This app simplifies testing your Arduino components that work with direct usb commands by giving you the ability to send custom commands and view the returned message from your Arduino device.
  
