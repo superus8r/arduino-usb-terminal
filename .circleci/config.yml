@@ -43,7 +43,7 @@ jobs:
       - run: ./gradlew jacocoTestReport --stacktrace
       - run:
           name: Analyze on SonarCloud
-          command: ./gradlew assembleDebug lint sonar
+          command: ./gradlew assembleDebug lintDebug sonar
       - codecov/upload:
           file: app/build/mergedReportDir/jacocoTestReport/jacocoTestReport.xml
       - store_test_results:
