@@ -54,4 +54,5 @@ jobs:
 workflows:
   workflow:
     jobs:
-      - android-test
+      - android-test:
+          context: SonarCloud
