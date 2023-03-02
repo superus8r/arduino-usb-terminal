@@ -41,6 +41,9 @@ jobs:
       - run: ./gradlew pixel2api30DebugAndroidTest --stacktrace
       - run: ./gradlew testDebugUnitTest --stacktrace
       - run: ./gradlew jacocoTestReport --stacktrace
+      - run:
+          name: Analyze on SonarCloud
+          command: ./gradlew assembleDebug lint sonar
       - codecov/upload:
           file: app/build/mergedReportDir/jacocoTestReport/jacocoTestReport.xml
       - store_test_results:
