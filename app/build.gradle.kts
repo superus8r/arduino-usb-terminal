@@ -9,6 +9,7 @@ plugins {
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("jacoco")
+    id ("org.sonarqube") version "3.5.0.2730"
 }
 
 repositories {
@@ -101,6 +102,14 @@ tasks.register<JacocoReport>("jacocoTestReport") {
             "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
             "outputs/managed_device_code_coverage/pixel2api30/coverage.ec"
     ))})
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", System.getenv("SONAR_PROJECT_KEY"))
+        property("sonar.organization", System.getenv("SONAR_ORGANIZATION"))
+        property("sonar.host.url", System.getenv("SONAR_HOST_URL"))
+    }
 }
 
 fun loadKeyStore(ksProp: Properties) {
