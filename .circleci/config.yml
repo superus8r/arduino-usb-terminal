@@ -27,13 +27,10 @@ jobs:
       image: android:2022.12.1
     resource_class: large
     steps:
-      - run: lsb_release -a
       - checkout
       - run: python3 scripts/generateKsPropFile.py
       - run: python3 scripts/generateGoogleServicesJson.py
       - restore_gradle_cache
-      - run: ./gradlew tasks
-      - save_gradle_cache
       - run: sdkmanager --list
       - run: (yes || true) | sdkmanager "tools" "platform-tools" "build-tools;33.0.2" "platforms;android-33" "system-images;android-30;google_atd;x86"
       - run: (yes || true) | sdkmanager --licenses
@@ -41,6 +38,7 @@ jobs:
       - run: ./gradlew pixel2api30DebugAndroidTest --stacktrace
       - run: ./gradlew testDebugUnitTest --stacktrace
       - run: ./gradlew jacocoTestReport --stacktrace
+      - save_gradle_cache
       - run:
           name: Analyze on SonarCloud
           command: ./gradlew lintDebug sonar
