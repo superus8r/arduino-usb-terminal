@@ -1,15 +1,22 @@
 <img src=".github/images/logo.png" width="128">
 
 # arduino-usb-terminal 
- Terminal-like app to send commands to Arduino through USB
+Simplify testing your IoT projects by using your Android device to send commands to Arduino through USB.
 
 ![Android CI](https://github.com/k4biri/arduino-usb-terminal/workflows/Android%20CI/badge.svg)
 [![superus8r](https://circleci.com/gh/superus8r/arduino-usb-terminal.svg?style=shield)](https://circleci.com/gh/superus8r/arduino-usb-terminal)
 [![codecov](https://codecov.io/gh/superus8r/arduino-usb-terminal/branch/develop/graph/badge.svg?token=RYIUU345QG)](https://codecov.io/gh/superus8r/arduino-usb-terminal)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=superus8r_arduino-usb-terminal&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=superus8r_arduino-usb-terminal)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=superus8r_arduino-usb-terminal&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=superus8r_arduino-usb-terminal)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=superus8r_arduino-usb-terminal&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=superus8r_arduino-usb-terminal)
+
+ Ever thought of testing your Arduino project on the go without using a LapTop?
+
+ Sometimes, you just want to send simple commands to an Arduino through USB without getting that 1.4 kilogram laptop out of the bag! 😉
  
- This app simplifies testing your Arduino components that work with direct usb commands by giving you the ability to send custom commands and view the returned message from your Arduino device.
+ Especially if the Android phone in your pocket has enough resources to do that!
  
- This is being done as a hobby, and for experimenting, so probably there might be some flaws; As an example, the vendor ID of Arduino is hardcoded to only work with Arduino devices, but this is my use case and please feel free to change it to match your needs.
+ This is being done as a hobby, and for experimenting, so probably there might be some flaws; As an example, the vendor ID of Arduino is set to only work with Arduino devices, but this is my use case and please feel free to change it to match your needs. Or if you have a great idea to make this dynamic wile keeping the app simple, please feel free to open a pull request!
  
  # Build and Run
  The app is available for free on Google Play Store (Arduino USB Terminal).
@@ -17,32 +24,45 @@
  Please read the **Sentry Reports** part on this page before running the project to avoid build failures. 
 
   <a href='https://play.google.com/store/apps/details?id=org.kabiri.android.usbterminal&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="128"/></a>
+
+
+ # Tests
+ You can run all the instrumented tests using a Gradle Managed Device in one line:
+```
+./gradlew pixel2api30DebugAndroidTest
+```
+This command will run an Android emulator on the background and run all the tests.
+After a successful run, the test coverage file will be available in your build folder:
+```
+app/build/outputs/managed_device_code_coverage/pixel2api30/coverage.ec
+```
+To create a unified coverage report you can use the Jacoco task:
+```
+./gradlew jacocoTestReport
+// Jacoco HTML and XML output will be under the following path:
+app/build/mergedReportDir/jacocoTestReport
+```
+More info about Gradle managed devices in official Android testing docs: [Scale your tests with Gradle Managed Devices](https://developer.android.com/studio/test/gradle-managed-devices)
+
+
  
- ## Terminal
- A Simple terminal page which does what it is supposed to do interacting with an Arduino manually through the USB cable.
+ ## Firebase Crashlytics Reports
+ The project uses Firebase Crashlytics for the crash reports, therefore you will need to create a free Firebase project to use it.
+ - Once you create a Firebase project, Firebase will provide you with a config file (`google-services.json`).
+ - Place your `google-services.json` file under the `app/` directory and build the project to activate it.
  
- ## Joystick
- The Joystick is removed for the first release.
+ More info on [Firebase official docs for getting started with Firebase Crashlytics](https://firebase.google.com/docs/crashlytics/get-started?platform=android)
  
- ## Tests
- Currently, there are some basic tests to run on the CI, but needs improvements.
- UI tests will be completed once the project is migrated to Jetpack Compose.
- 
- ## Sentry Reports
- The project uses Sentry for the crash reports, if this is not needed, you can remove the following line in `AndroidManifest.xml`:
- `<meta-data android:name="io.sentry.dsn" android:value="@string/sentry_dsn" />`
- But if it is needed, you need to [create a Sentry dsn value](https://docs.sentry.io/platforms/android/) to put under the following path:
- `app/src/main/res/values/api_keys.xml`
- The file contents might look like similar to this:
- `<?xml version="1.0" encoding="utf-8"?>
-  <resources>
-      <string name="sentry_dsn" translatable="false">YOUR_SENTRY_SPECIFIC_VALUE</string>
-  </resources>`
+ If this is not needed, you can remove the crashlytics dependency in project leve and app level build.gradle files.
+ - remove `classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.4"` from `build.gradle` file
+ - remove `implementation("com.google.firebase:firebase-crashlytics-ktx")` from `app/build.gradle.kts` file
  
  
- ### Knows Issues
- _Still unknown! :) 
+ ## Knows Issues
+- Please feel free inform me about new issues
+ 
  
  Suggestions and PRs are welcome! :)
  
+---
  ### More comes as the project evolves...
