@@ -10,7 +10,7 @@ Simplify testing your IoT projects by using your Android device to send commands
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=superus8r_arduino-usb-terminal&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=superus8r_arduino-usb-terminal)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=superus8r_arduino-usb-terminal&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=superus8r_arduino-usb-terminal)
 
- Ever thought of testing your Arduino project on the go without using a LapTop?
+ Ever thought of testing your Arduino project on the go without using a lap top?
 
  Sometimes, you just want to send simple commands to an Arduino through USB without getting that 1.4 kilogram laptop out of the bag! 😉
  
@@ -42,6 +42,9 @@ To create a unified coverage report you can use the Jacoco task:
 // Jacoco HTML and XML output will be under the following path:
 app/build/mergedReportDir/jacocoTestReport
 ```
+Gradle automatically recognizes your environment and configures, runs, and closes the emulator in the background.
+This has been tested on environments with Arm (Apple M1) and Intel CPUs.
+
 More info about Gradle managed devices in official Android testing docs: [Scale your tests with Gradle Managed Devices](https://developer.android.com/studio/test/gradle-managed-devices)
 
 
