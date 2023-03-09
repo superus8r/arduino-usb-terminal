@@ -9,14 +9,13 @@ plugins {
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("jacoco")
-    id ("org.sonarqube") version "3.5.0.2730"
 }
 
 repositories {
 }
 
 android {
-    compileSdkVersion(33)
+    compileSdk = 33
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -25,8 +24,8 @@ android {
 
     defaultConfig {
         applicationId = "org.kabiri.android.usbterminal"
-        minSdkVersion(23)
-        targetSdkVersion(33)
+        minSdk = 23
+        targetSdk = 33
         versionCode = 13
         versionName = "0.9.12"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -125,7 +124,6 @@ val firebase_bom_version: String by project
 val hilt_version: String by project
 dependencies {
 
-//    implementation fileTree("libs") { include(setOf("*.jar")) }
     implementation("androidx.appcompat:appcompat:1.6.0")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
