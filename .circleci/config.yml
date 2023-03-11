@@ -42,11 +42,13 @@ jobs:
       - run: ./gradlew assembleDebug --stacktrace
       - ruby/install:
           version: '3.0'
+      - ruby/install-deps:
+          with-cache: true
       - run:
           name: Fastlane - run all tests with coverage report
           command: |
-            sudo gem install bundler
-            sudo bundle update
+#            sudo gem install bundler
+#            sudo bundle update
             bundle exec fastlane testDev
       - save_gradle_cache
       - run:
