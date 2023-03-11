@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   codecov: codecov/codecov@3.2.4
+  ruby: circleci/ruby@2.0.0
 
 commands:
   restore_gradle_cache:
@@ -36,12 +37,11 @@ jobs:
     steps:
       - checkout
       - restore_gradle_cache
-      - run: sdkmanager --list
-      - run: (yes || true) | sdkmanager "tools" "platform-tools" "build-tools;33.0.2" "platforms;android-33" "system-images;android-30;google_atd;x86"
-      - run: (yes || true) | sdkmanager --licenses
       - run: ./gradlew generateKsPropFile
       - run: ./gradlew generateGoogleServicesJson
       - run: ./gradlew assembleDebug --stacktrace
+      - ruby/install:
+          version: '3.0'
       - run:
           name: Fastlane - run all tests with coverage report
           command: |
@@ -66,9 +66,7 @@ jobs:
       - restore_gradle_cache
       - run:
           name: Prepare Fastlane
-          command: |
-            sudo bundle update
-            ./gradlew assembleDebug
+          command: sudo bundle update
       - run:
           name: Distribute to Firebase AppTester
           command: bundle exec fastlane distDev
