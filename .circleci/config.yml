@@ -64,8 +64,6 @@ jobs:
           name: Prepare Fastlane
           command: |
             sudo bundle update
-            ./gradlew generateKsPropFile
-            ./gradlew generateGoogleServicesJson
             ./gradlew assembleDebug
       - run:
           name: Distribute to Firebase AppTester
