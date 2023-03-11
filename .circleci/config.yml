@@ -37,8 +37,8 @@ jobs:
     steps:
       - checkout
       - restore_gradle_cache
-      - ruby/install:
-          version: '3.0'
+#      - ruby/install:
+#          version: '3.0'
       - ruby/install-deps:
           with-cache: true
       - run:
