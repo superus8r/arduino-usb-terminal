@@ -58,6 +58,7 @@ jobs:
 
   distribute-dev:
     executor: android-docker
+    resource_class: large
     steps:
       - checkout
       - restore_gradle_cache
