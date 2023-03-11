@@ -15,7 +15,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion(33)
+    compileSdk = 33
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -24,29 +24,30 @@ android {
 
     defaultConfig {
         applicationId = "org.kabiri.android.usbterminal"
-        minSdkVersion(23)
-        targetSdkVersion(33)
-        versionCode = 13
-        versionName = "0.9.12"
+        minSdk = 23
+        targetSdk = 33
+        versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 13
+        versionName = "0.9.12${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
-        // read release credentials from keystore.properties file
-        val ksProp = Properties()
-        // load keys inside the ksProp file
-        loadKeyStore(ksProp)
-        create("release") {
-            keyAlias = ksProp.getProperty("release.keyAlias")
-            keyPassword = ksProp.getProperty("release.keyPassword")
-            storeFile = file(ksProp.getProperty("release.file"))
-            storePassword = ksProp.getProperty("release.storePassword")
+
+        val ksName = "keystore.properties"
+        val ksProp = loadKeyStore(ksName)
+        ksProp?.let {
+            create("release") {
+                keyAlias = ksProp.getProperty("release.keyAlias")
+                keyPassword = ksProp.getProperty("release.keyPassword")
+                storeFile = file(ksProp.getProperty("release.file"))
+                storePassword = ksProp.getProperty("release.storePassword")
+            }
         }
     }
 
     buildTypes {
         named("release") {
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -103,12 +104,63 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     ))})
 }
 
-fun loadKeyStore(ksProp: Properties) {
-    val ksPropFile = file("keystore.properties")
-    if (ksPropFile.exists()) {
+sonarqube {
+    properties {
+        property("sonar.projectKey", System.getenv("SONAR_PROJECT_KEY"))
+        property("sonar.organization", System.getenv("SONAR_ORGANIZATION"))
+        property("sonar.host.url", System.getenv("SONAR_HOST_URL"))
+    }
+}
+
+tasks.register("generateGoogleServicesJson") {
+    doLast {
+        val jsonFileName = "google-services.json"
+        val fileContent = System.getenv("GOOGLE_SERVICES_JSON")
+        File(projectDir, jsonFileName).apply {
+            createNewFile(); writeText(fileContent)
+            println("generated $jsonFileName")
+        }
+    }
+}
+
+tasks.register("generateKsPropFile") {
+    doLast {
+        val configFileName = "keystore.properties"
+        File(projectDir, configFileName).apply {
+            createNewFile()
+            writeText("""
+                # Gradle signing properties for app module
+                release.file=${System.getenv("KS_PATH")}
+                release.storePassword=${System.getenv("KS_PASSWORD")}
+                release.keyAlias=${System.getenv("KS_KEY_ALIAS")}
+                release.keyPassword=${System.getenv("KS_KEY_PASSWORD")}
+                """.trimIndent())
+            println("generated ${this.path}")
+        }
+    }
+}
+
+tasks.register("generateAppDistKey") {
+    doLast {
+        val jsonFileName = "app-dist-key.json"
+        val fileContent = System.getenv("GOOGLE_APP_DIST_FASTLANE_SERVICE_ACCOUNT")
+        File(rootDir, jsonFileName).apply {
+                createNewFile()
+                writeText(fileContent)
+                println("generated ${this.path}")
+        }
+    }
+}
+
+fun loadKeyStore(name: String): Properties? {
+    val ksProp = Properties()
+    val ksPropFile = file(name)
+    return if (ksPropFile.exists()) {
         ksProp.load(FileInputStream(ksPropFile))
+        ksProp
     } else {
         println("ERROR: local keystore file not found")
+        null
     }
 }
 
@@ -116,7 +168,6 @@ val firebase_bom_version: String by project
 val hilt_version: String by project
 dependencies {
 
-//    implementation fileTree("libs") { include(setOf("*.jar")) }
     implementation("androidx.appcompat:appcompat:1.6.0")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
