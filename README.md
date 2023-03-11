@@ -59,6 +59,18 @@ More info about Gradle managed devices in official Android testing docs: [Scale 
  If this is not needed, you can remove the crashlytics dependency in project leve and app level build.gradle files.
  - remove `classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.4"` from `build.gradle` file
  - remove `implementation("com.google.firebase:firebase-crashlytics-ktx")` from `app/build.gradle.kts` file
+
+
+## Sonar Cloud Analysis
+The project uses Sonar Cloud manual analysis to detect code smells and potential bugs
+To run the manual analysis locally, use the gradle `sonar` task:
+```
+./gradlew sonar
+```
+Since this uses the gradle scanner, the sonar properties are defined in root project's `build.gradle` file. 
+On one hand, the Sonar scanner requires local paths for `sonar.sources` and `sonar.binaries` properties, on the other hand it requires absolute path for `sonar.androidLint.reportPaths` and `sonar.coverage.jacoco.xmlReportPaths`.
+More info on official Sonar docs: [SonarScanner for Gradle](https://docs.sonarcloud.io/advanced-setup/ci-based-analysis/sonarscanner-for-gradle/) 
+
  
  
  ## Knows Issues
