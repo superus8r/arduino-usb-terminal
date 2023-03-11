@@ -125,16 +125,16 @@ tasks.register("generateGoogleServicesJson") {
 tasks.register("generateKsPropFile") {
     doLast {
         val configFileName = "keystore.properties"
-        File("$projectDir, $configFileName").apply {
+        File(projectDir, configFileName).apply {
             createNewFile()
             writeText("""
                 # Gradle signing properties for app module
-                release.file=${System.getenv("KS_PATH") ?: "empty"}
-                release.storePassword=${System.getenv("KS_PASSWORD") ?: "empty"}
-                release.keyAlias=${System.getenv("KS_KEY_ALIAS") ?: "empty"}
-                release.keyPassword=${System.getenv("KS_KEY_PASSWORD") ?: "empty"}
+                release.file=${System.getenv("KS_PATH")}
+                release.storePassword=${System.getenv("KS_PASSWORD")}
+                release.keyAlias=${System.getenv("KS_KEY_ALIAS")}
+                release.keyPassword=${System.getenv("KS_KEY_PASSWORD")}
                 """.trimIndent())
-            println("generated $configFileName")
+            println("generated ${this.path}")
         }
     }
 }
