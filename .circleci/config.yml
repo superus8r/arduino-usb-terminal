@@ -42,9 +42,7 @@ jobs:
       - run: ./gradlew generateKsPropFile
       - run: ./gradlew generateGoogleServicesJson
       - run: ./gradlew assembleDebug --stacktrace
-      - run: ./gradlew pixel2api30DebugAndroidTest --stacktrace
-      - run: ./gradlew testDebugUnitTest --stacktrace
-      - run: ./gradlew jacocoTestReport --stacktrace
+      - run: bundle exec fastlane testDev
       - save_gradle_cache
       - run:
           name: Analyze on SonarCloud

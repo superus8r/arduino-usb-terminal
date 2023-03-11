@@ -22,6 +22,11 @@ platform :android do
     gradle(task: "testDebugUnitTest --stacktrace")
   end
 
+  desc "Runs all the tests with coverage"
+  lane :testDev do
+    gradle(task: "pixel2api30DebugAndroidTest testDebugUnitTest jacocoTestReport --stacktrace")
+  end
+
   desc "Deploy to Firebase AppTester channel"
   lane :distDev do
     gradle(task: "generateKsPropFile generateGoogleServicesJson generateAppDistKey clean assembleDebug")
