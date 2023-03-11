@@ -21,10 +21,17 @@ commands:
             - ~/.gradle/caches
           key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle" }}
 
-jobs:
-  android-test:
+executors:
+  android-machine:
     machine:
       image: android:2022.12.1
+  android-docker:
+    docker:
+      - image: cimg/android:2023.02
+
+jobs:
+  android-test:
+    executor: android-machine
     resource_class: large
     steps:
       - checkout
@@ -49,8 +56,28 @@ jobs:
       - store_artifacts:
           path: app/build/mergedReportDir
 
+  distribute-dev:
+    executor: android-docker
+    steps:
+      - checkout
+      - restore_gradle_cache
+      - run:
+          name: Prepare Fastlane
+          command: |
+            sudo bundle update
+            ./gradlew generateKsPropFile
+            ./gradlew generateGoogleServicesJson
+            ./gradlew assembleDebug
+      - run:
+          name: Distribute to Firebase AppTester
+          command: bundle exec fastlane distDev
+      - store_artifacts:
+          path: /home/circleci/project/app/build/outputs/apk/debug/app-debug.apk
+          destination: fastlane-output-debug
+
 workflows:
   workflow:
     jobs:
       - android-test:
           context: SonarCloud
+      - distribute-dev

@@ -26,8 +26,8 @@ android {
         applicationId = "org.kabiri.android.usbterminal"
         minSdk = 23
         targetSdk = 33
-        versionCode = 13
-        versionName = "0.9.12"
+        versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 13
+        versionName = "0.9.12${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -135,6 +135,18 @@ tasks.register("generateKsPropFile") {
                 release.keyPassword=${System.getenv("KS_KEY_PASSWORD") ?: "empty"}
                 """.trimIndent())
             println("generated ${this.path}")
+        }
+    }
+}
+
+tasks.register("generateAppDistKey") {
+    doLast {
+        val jsonFileName = "app-dist-key.json"
+        val fileContent = System.getenv("GOOGLE_APP_DIST_FASTLANE_SERVICE_ACCOUNT")
+        File(rootDir, jsonFileName).apply {
+                createNewFile()
+                writeText(fileContent)
+                println("generated ${this.path}")
         }
     }
 }
