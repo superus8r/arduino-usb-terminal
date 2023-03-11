@@ -111,6 +111,17 @@ sonarqube {
     }
 }
 
+tasks.register("generateGoogleServicesJson") {
+    doLast {
+        val jsonFileName = "google-services.json"
+        val fileContent = System.getenv("GOOGLE_SERVICES_JSON")
+        File(projectDir, jsonFileName).apply {
+            createNewFile(); writeText(fileContent)
+            println("generated google-services.json")
+        }
+    }
+}
+
 fun loadKeyStore(ksProp: Properties) {
     val ksPropFile = file("keystore.properties")
     if (ksPropFile.exists()) {
