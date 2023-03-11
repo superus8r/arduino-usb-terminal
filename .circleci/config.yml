@@ -28,11 +28,11 @@ jobs:
     resource_class: large
     steps:
       - checkout
-      - run: python3 scripts/generateKsPropFile.py
       - restore_gradle_cache
       - run: sdkmanager --list
       - run: (yes || true) | sdkmanager "tools" "platform-tools" "build-tools;33.0.2" "platforms;android-33" "system-images;android-30;google_atd;x86"
       - run: (yes || true) | sdkmanager --licenses
+      - run: ./gradlew generateKsPropFile
       - run: ./gradlew generateGoogleServicesJson
       - run: ./gradlew assembleDebug --stacktrace
       - run: ./gradlew pixel2api30DebugAndroidTest --stacktrace
