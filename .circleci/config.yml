@@ -42,7 +42,11 @@ jobs:
       - run: ./gradlew generateKsPropFile
       - run: ./gradlew generateGoogleServicesJson
       - run: ./gradlew assembleDebug --stacktrace
-      - run: bundle exec fastlane testDev
+      - run:
+          name: Fastlane - run all tests with coverage report
+          command: |
+            sudo bundle update
+            bundle exec fastlane testDev
       - save_gradle_cache
       - run:
           name: Analyze on SonarCloud
