@@ -3,6 +3,8 @@ package org.kabiri.android.usbterminal.viewmodel
 import android.hardware.usb.UsbDevice
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.arduino.ArduinoHelper
 import org.kabiri.android.usbterminal.model.OutputText
@@ -17,8 +19,9 @@ class MainActivityViewModel
     private val arduinoHelper: ArduinoHelper,
 ): ViewModel() {
 
-    private val _outputLive = MutableLiveData("")
-    val output = _outputLive
+    private val _outputLive = MutableStateFlow("")
+    val output: StateFlow<String>
+        get() = _outputLive
 
     fun askForConnectionPermission() = arduinoHelper.askForConnectionPermission()
 

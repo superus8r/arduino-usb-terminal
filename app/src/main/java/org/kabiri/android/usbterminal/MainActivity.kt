@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import org.kabiri.android.usbterminal.extensions.scrollToLastLine
 import org.kabiri.android.usbterminal.viewmodel.MainActivityViewModel
@@ -51,10 +52,12 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        viewModel.output.observe(this) {
-            tvOutput.apply {
-                text = it
-                scrollToLastLine()
+        lifecycleScope.launchWhenResumed {
+            viewModel.output.collect {
+                tvOutput.apply {
+                    text = it
+                    scrollToLastLine()
+                }
             }
         }
 
