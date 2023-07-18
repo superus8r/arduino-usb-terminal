@@ -3,8 +3,12 @@ package org.kabiri.android.usbterminal.viewmodel
 import android.hardware.usb.UsbDevice
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.arduino.ArduinoHelper
 import org.kabiri.android.usbterminal.model.OutputText
@@ -39,32 +43,35 @@ class MainActivityViewModel
      * Transforms the outputs from ArduinoHelper into spannable text
      * and merges them in one single live data.
      */
-    fun getLiveOutput(): LiveData<OutputText> {
+    suspend fun getLiveOutput(): StateFlow<OutputText> {
 
-        val liveOutput = arduinoHelper.getLiveOutput()
-        val liveInfoOutput = arduinoHelper.getLiveInfoOutput()
-        val liveErrorOutput = arduinoHelper.getLiveErrorOutput()
+        val serialOutput = arduinoHelper.getLiveOutput()
+        val serialInfoOutput = arduinoHelper.getLiveInfoOutput()
+        val serialErrorOutput = arduinoHelper.getLiveErrorOutput()
 
-        val liveSpannedOutput: LiveData<OutputText> = Transformations.map(liveOutput) {
+        val liveSpannedOutput: Flow<OutputText> = serialOutput.map {
             _outputLive.value = _outputLive.value + it
             return@map OutputText(it, OutputText.OutputType.TYPE_NORMAL)
         }
 
-        val liveSpannedInfoOutput: LiveData<OutputText> = Transformations.map(liveInfoOutput) {
+        val liveSpannedInfoOutput: Flow<OutputText> = serialInfoOutput.map {
             _outputLive.value = _outputLive.value + it
             return@map OutputText(it, OutputText.OutputType.TYPE_INFO)
         }
 
-        val liveSpannedErrorOutput: LiveData<OutputText> = Transformations.map(liveErrorOutput) {
+        val liveSpannedErrorOutput: Flow<OutputText> = serialErrorOutput.map {
             _outputLive.value = _outputLive.value + it
             return@map OutputText(it, OutputText.OutputType.TYPE_ERROR)
         }
 
-        val liveDataMerger = MediatorLiveData<OutputText>()
-        liveDataMerger.addSource(liveSpannedOutput) { liveDataMerger.value = it }
-        liveDataMerger.addSource(liveSpannedInfoOutput) { liveDataMerger.value = it }
-        liveDataMerger.addSource(liveSpannedErrorOutput) { liveDataMerger.value = it }
+//        val liveDataMerger = MediatorLiveData<OutputText>()
+//        liveDataMerger.addSource(liveSpannedOutput) { liveDataMerger.value = it }
+//        liveDataMerger.addSource(liveSpannedInfoOutput) { liveDataMerger.value = it }
+//        liveDataMerger.addSource(liveSpannedErrorOutput) { liveDataMerger.value = it }
 
-        return liveDataMerger
+        return liveSpannedOutput
+            .combine(liveSpannedInfoOutput) { a, b -> b }
+            .combine(liveSpannedErrorOutput) { a, b -> b }
+            .stateIn(viewModelScope)
     }
 }

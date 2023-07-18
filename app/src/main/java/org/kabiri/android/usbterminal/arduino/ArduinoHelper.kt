@@ -8,11 +8,11 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import org.kabiri.android.usbterminal.Constants
 import org.kabiri.android.usbterminal.R
 import javax.inject.Inject
@@ -37,9 +37,9 @@ class ArduinoHelper
         private const val TAG = "ArduinoHelper"
     }
 
-    private val _liveOutput = MutableLiveData<String>()
-    private val _liveInfoOutput = MutableLiveData<String>()
-    private val _liveErrorOutput = MutableLiveData<String>()
+    private val _liveOutput = MutableStateFlow("")
+    private val _liveInfoOutput = MutableStateFlow("")
+    private val _liveErrorOutput = MutableStateFlow("")
 
     private var usbManager: UsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
     private lateinit var connection: UsbDeviceConnection
@@ -50,41 +50,39 @@ class ArduinoHelper
      */
     fun askForConnectionPermission() {
         val usbDevices = usbManager.deviceList
-        _liveInfoOutput.postValue(context.getString(R.string.helper_info_checking_attached_usb_devices))
+        _liveInfoOutput.value =
+            context.getString(R.string.helper_info_checking_attached_usb_devices)
         if (usbDevices.isNotEmpty()) {
             for (device in usbDevices) {
                 val deviceVID = device.value.vendorId
                 if (deviceVID == 0x2341) { // Arduino vendor ID
                     connect(device)
                 } else {
-                    _liveErrorOutput.postValue(context.getString(R.string.helper_error_device_not_found))
-                    _liveErrorOutput.postValue(context.getString(R.string.helper_error_connecting_anyway))
+                    _liveErrorOutput.value =
+                        context.getString(R.string.helper_error_device_not_found)
+                    _liveErrorOutput.value = context.getString(R.string.helper_error_connecting_anyway)
                     connect(device)
                 }
             }
         } else {
-            _liveErrorOutput.postValue(context.getString(R.string.helper_error_usb_devices_not_attached))
+            _liveErrorOutput.value = context.getString(R.string.helper_error_usb_devices_not_attached)
         }
     }
 
     fun disconnect() {
         try {
             connection.close()
-            _liveOutput.postValue(context.getString(R.string.helper_info_serial_connection_closed))
+            _liveOutput.value = context.getString(R.string.helper_info_serial_connection_closed)
         } catch (e: UninitializedPropertyAccessException) {
-            _liveErrorOutput.postValue(
-                context.getString(
-                    R.string.helper_error_connection_not_ready_to_close
-                )
-            )
-            _liveErrorOutput.postValue("${e.localizedMessage}\n")
+            _liveErrorOutput.value =
+                context.getString(R.string.helper_error_connection_not_ready_to_close)
+
+            _liveErrorOutput.value = "${e.localizedMessage}\n"
         } catch (e: Exception) {
-            _liveErrorOutput.postValue(
-                context.getString(
+            _liveErrorOutput.value = context.getString(
                     R.string.helper_error_connection_failed_to_close
                 )
-            )
-            _liveErrorOutput.postValue("${e.localizedMessage}\n")
+            _liveErrorOutput.value = "${e.localizedMessage}\n"
         }
     }
 
@@ -99,7 +97,7 @@ class ArduinoHelper
         val filter = IntentFilter(Constants.ACTION_USB_PERMISSION)
         context.registerReceiver(arduinoPermReceiver, filter) // register the broadcast receiver
         usbManager.requestPermission(device.value, permissionIntent)
-        _liveInfoOutput.postValue(context.getString(R.string.helper_info_usb_permission_requested))
+        _liveInfoOutput.value = context.getString(R.string.helper_info_usb_permission_requested)
     }
 
     /**
@@ -118,21 +116,21 @@ class ArduinoHelper
             serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection)
         } catch (e: IllegalStateException) {
             Log.e(TAG, "${e.message}")
-            _liveErrorOutput.postValue(context.getString(R.string.helper_error_connection_closed_unexpectedly))
+            _liveErrorOutput.value = context.getString(R.string.helper_error_connection_closed_unexpectedly)
         } catch (e: NullPointerException) {
             Log.e(TAG, "${e.message}")
-            _liveErrorOutput.postValue(context.getString(
-                R.string.helper_error_connection_failed_to_open))
+            _liveErrorOutput.value = context.getString(
+                R.string.helper_error_connection_failed_to_open)
         } catch (e: Exception) {
             Log.e(TAG, "${e.message}")
-            _liveErrorOutput.postValue(context.getString(
-                R.string.helper_error_connection_failed_to_open_unknown))
+            _liveErrorOutput.value =
+                context.getString(R.string.helper_error_connection_failed_to_open_unknown)
         }
 
         if (::serialPort.isInitialized)
             prepareSerialPort(serialPort)
         else {
-            _liveInfoOutput.postValue(context.getString(R.string.helper_error_serial_port_is_null))
+            _liveInfoOutput.value = context.getString(R.string.helper_error_serial_port_is_null)
             connection.close()
         }
     }
@@ -151,9 +149,10 @@ class ArduinoHelper
                 it.setParity(UsbSerialInterface.PARITY_NONE)
                 it.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF)
                 it.read(arduinoSerialReceiver) // messages will be received from the receiver.
-                _liveInfoOutput.postValue(context.getString(R.string.helper_info_serial_connection_opened))
+                _liveInfoOutput.value = context.getString(R.string.helper_info_serial_connection_opened)
             } else { // serial port not opened.
-                _liveErrorOutput.postValue(context.getString(R.string.helper_error_serial_connection_not_opened))
+                _liveErrorOutput.value =
+                    context.getString(R.string.helper_error_serial_connection_not_opened)
             }
         }
     }
@@ -166,49 +165,39 @@ class ArduinoHelper
             if (::serialPort.isInitialized && command.isNotBlank()) {
                 serialPort.write(command.toByteArray())
                 // go to next line because the answer might be sent in more than one part.
-                _liveOutput.postValue(context.getString(R.string.next_line))
+                _liveOutput.value = context.getString(R.string.next_line)
                 true
             } else {
-                _liveErrorOutput.postValue(context.getString(R.string.helper_error_serial_port_is_null))
+                _liveErrorOutput.value = context.getString(R.string.helper_error_serial_port_is_null)
                 false
             }
         } catch (e: Exception) {
-            _liveErrorOutput.postValue(
-                context.getString(R.string.helper_error_write_problem) +
-                    " \n${e.localizedMessage}\n")
+            _liveErrorOutput.value = context.getString(R.string.helper_error_write_problem) +
+                    " \n${e.localizedMessage}\n"
             Log.e(TAG, "$e")
             false
         }
     }
 
-    fun getLiveOutput(): LiveData<String> {
-
-        val liveDataMerger = MediatorLiveData<String>()
-        liveDataMerger.addSource(_liveOutput) { liveDataMerger.value = it }
-        liveDataMerger.addSource(arduinoPermReceiver.liveOutput) { liveDataMerger.value = it }
-        liveDataMerger.addSource(arduinoSerialReceiver.liveOutput) { liveDataMerger.value = it }
-
-        return liveDataMerger
+    fun getLiveOutput(): Flow<String> {
+        
+        return _liveOutput
+            .combine(arduinoPermReceiver.liveOutput) { a, b -> a + b }
+            .combine(arduinoSerialReceiver.liveOutput) { a, b -> a + b }
     }
 
-    fun getLiveInfoOutput(): LiveData<String> {
+    fun getLiveInfoOutput(): Flow<String> {
 
-        val liveDataMerger = MediatorLiveData<String>()
-        liveDataMerger.addSource(_liveInfoOutput) { liveDataMerger.value = it }
-        liveDataMerger.addSource(arduinoPermReceiver.liveInfoOutput) { liveDataMerger.value = it }
-        liveDataMerger.addSource(arduinoSerialReceiver.liveInfoOutput) { liveDataMerger.value = it }
-
-        return liveDataMerger
+        return _liveInfoOutput
+            .combine(arduinoPermReceiver.liveInfoOutput) { a, b -> a + b }
+            .combine(arduinoSerialReceiver.liveInfoOutput) { a, b -> a + b }
     }
 
-    fun getLiveErrorOutput(): LiveData<String> {
+    fun getLiveErrorOutput(): Flow<String> {
 
-        val liveDataMerger = MediatorLiveData<String>()
-        liveDataMerger.addSource(_liveErrorOutput) { liveDataMerger.value = it }
-        liveDataMerger.addSource(arduinoPermReceiver.liveErrorOutput) { liveDataMerger.value = it }
-        liveDataMerger.addSource(arduinoSerialReceiver.liveErrorOutput) { liveDataMerger.value = it }
-
-        return liveDataMerger
+        return _liveErrorOutput
+            .combine(arduinoPermReceiver.liveErrorOutput) { a, b -> a + b }
+            .combine(arduinoSerialReceiver.liveErrorOutput) { a, b -> a + b }
     }
 
 }

@@ -8,6 +8,8 @@ import android.hardware.usb.UsbManager
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.kabiri.android.usbterminal.Constants
 import org.kabiri.android.usbterminal.R
 
@@ -22,15 +24,15 @@ class ArduinoPermissionBroadcastReceiver: BroadcastReceiver() {
         private const val TAG = "ArduinoPermReceiver"
     }
 
-    private val _liveOutput = MutableLiveData<String>()
-    private val _liveInfoOutput = MutableLiveData<String>()
-    private val _liveErrorOutput = MutableLiveData<String>()
+    private val _liveOutput = MutableStateFlow("")
+    private val _liveInfoOutput = MutableStateFlow("")
+    private val _liveErrorOutput = MutableStateFlow("")
 
-    val liveOutput: LiveData<String>
+    val liveOutput: StateFlow<String>
         get() = _liveOutput
-    val liveInfoOutput: LiveData<String>
+    val liveInfoOutput: StateFlow<String>
         get() = _liveInfoOutput
-    val liveErrorOutput: LiveData<String>
+    val liveErrorOutput: StateFlow<String>
         get() = _liveErrorOutput
 
     private val _liveGrantedDevice = MutableLiveData<UsbDevice>()
@@ -46,20 +48,20 @@ class ArduinoPermissionBroadcastReceiver: BroadcastReceiver() {
                     .getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
 
                 if (permissionGranted) {
-                    _liveInfoOutput.postValue(
+                    _liveInfoOutput.value =
                         "${context?.getString(R.string.breceiver_info_usb_permission_granted)} ${device?.manufacturerName}"
-                    )
                     Log.i(TAG, "USB permission granted by the user")
                     device?.let { _liveGrantedDevice.postValue(it) }
                 } else {
                     Log.e(TAG, "USB permission was probably denied by the user")
-                    _liveErrorOutput.postValue(
+                    _liveErrorOutput.value =
                         "${context?.getString(R.string.breceiver_error_usb_permission_denied)} ${device?.manufacturerName}"
-                    )
                 }
             }
-            UsbManager.ACTION_USB_DEVICE_ATTACHED -> _liveOutput.postValue(context?.getString(R.string.breceiver_info_device_attached))
-            UsbManager.ACTION_USB_DEVICE_DETACHED -> _liveOutput.postValue(context?.getString(R.string.breceiver_info_device_detached))
+            UsbManager.ACTION_USB_DEVICE_ATTACHED -> _liveOutput.value =
+                context?.getString(R.string.breceiver_info_device_attached) ?: ""
+            UsbManager.ACTION_USB_DEVICE_DETACHED -> _liveOutput.value =
+                context?.getString(R.string.breceiver_info_device_detached) ?: ""
         }
     }
 }

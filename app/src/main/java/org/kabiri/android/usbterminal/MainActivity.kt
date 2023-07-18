@@ -42,14 +42,16 @@ class MainActivity : AppCompatActivity() {
             viewModel.openDeviceAndPort(device)
         }
 
-        viewModel.getLiveOutput().observe(this) {
-            val spannable = SpannableString(it.text)
-            spannable.setSpan(
-                it.getAppearance(this),
-                0,
-                it.text.length,
-                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+        lifecycleScope.launchWhenResumed {
+            viewModel.getLiveOutput().collect {
+                val spannable = SpannableString(it.text)
+                spannable.setSpan(
+                    it.getAppearance(this@MainActivity),
+                    0,
+                    it.text.length,
+                    SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
         }
 
         lifecycleScope.launchWhenResumed {
