@@ -45,9 +45,9 @@ class MainActivityViewModel
      */
     suspend fun getLiveOutput(): StateFlow<OutputText> {
 
-        val serialOutput = arduinoHelper.getLiveOutput()
-        val serialInfoOutput = arduinoHelper.getLiveInfoOutput()
-        val serialErrorOutput = arduinoHelper.getLiveErrorOutput()
+        val serialOutput = arduinoHelper.output
+        val serialInfoOutput = arduinoHelper.infoOutput
+        val serialErrorOutput = arduinoHelper.errorOutput
 
         val liveSpannedOutput: Flow<OutputText> = serialOutput.map {
             _outputLive.value = _outputLive.value + it

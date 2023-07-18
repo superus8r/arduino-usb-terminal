@@ -38,8 +38,22 @@ class ArduinoHelper
     }
 
     private val _liveOutput = MutableStateFlow("")
+    val output: Flow<String>
+        get() = _liveOutput
+            .combine(arduinoPermReceiver.liveOutput) { a, b -> a + b }
+            .combine(arduinoSerialReceiver.liveOutput) { a, b -> a + b }
+
     private val _liveInfoOutput = MutableStateFlow("")
+    val infoOutput: Flow<String>
+        get() = _liveInfoOutput
+            .combine(arduinoPermReceiver.liveInfoOutput) { a, b -> a + b }
+            .combine(arduinoSerialReceiver.liveInfoOutput) { a, b -> a + b }
+
     private val _liveErrorOutput = MutableStateFlow("")
+    val errorOutput: Flow<String>
+        get() = _liveErrorOutput
+            .combine(arduinoPermReceiver.liveErrorOutput) { a, b -> a + b }
+            .combine(arduinoSerialReceiver.liveErrorOutput) { a, b -> a + b }
 
     private var usbManager: UsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
     private lateinit var connection: UsbDeviceConnection
@@ -183,26 +197,4 @@ class ArduinoHelper
             false
         }
     }
-
-    fun getLiveOutput(): Flow<String> {
-        
-        return _liveOutput
-            .combine(arduinoPermReceiver.liveOutput) { a, b -> a + b }
-            .combine(arduinoSerialReceiver.liveOutput) { a, b -> a + b }
-    }
-
-    fun getLiveInfoOutput(): Flow<String> {
-
-        return _liveInfoOutput
-            .combine(arduinoPermReceiver.liveInfoOutput) { a, b -> a + b }
-            .combine(arduinoSerialReceiver.liveInfoOutput) { a, b -> a + b }
-    }
-
-    fun getLiveErrorOutput(): Flow<String> {
-
-        return _liveErrorOutput
-            .combine(arduinoPermReceiver.liveErrorOutput) { a, b -> a + b }
-            .combine(arduinoSerialReceiver.liveErrorOutput) { a, b -> a + b }
-    }
-
 }
