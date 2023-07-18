@@ -60,12 +60,14 @@ class ArduinoHelper
                 } else {
                     _liveErrorOutput.value =
                         context.getString(R.string.helper_error_device_not_found)
-                    _liveErrorOutput.value = context.getString(R.string.helper_error_connecting_anyway)
+                    _liveErrorOutput.value =
+                        context.getString(R.string.helper_error_connecting_anyway)
                     connect(device)
                 }
             }
         } else {
-            _liveErrorOutput.value = context.getString(R.string.helper_error_usb_devices_not_attached)
+            _liveErrorOutput.value =
+                context.getString(R.string.helper_error_usb_devices_not_attached)
         }
     }
 
@@ -116,7 +118,8 @@ class ArduinoHelper
             serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection)
         } catch (e: IllegalStateException) {
             Log.e(TAG, "${e.message}")
-            _liveErrorOutput.value = context.getString(R.string.helper_error_connection_closed_unexpectedly)
+            _liveErrorOutput.value =
+                context.getString(R.string.helper_error_connection_closed_unexpectedly)
         } catch (e: NullPointerException) {
             Log.e(TAG, "${e.message}")
             _liveErrorOutput.value = context.getString(
@@ -149,7 +152,8 @@ class ArduinoHelper
                 it.setParity(UsbSerialInterface.PARITY_NONE)
                 it.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF)
                 it.read(arduinoSerialReceiver) // messages will be received from the receiver.
-                _liveInfoOutput.value = context.getString(R.string.helper_info_serial_connection_opened)
+                _liveInfoOutput.value =
+                    context.getString(R.string.helper_info_serial_connection_opened)
             } else { // serial port not opened.
                 _liveErrorOutput.value =
                     context.getString(R.string.helper_error_serial_connection_not_opened)
@@ -168,7 +172,8 @@ class ArduinoHelper
                 _liveOutput.value = context.getString(R.string.next_line)
                 true
             } else {
-                _liveErrorOutput.value = context.getString(R.string.helper_error_serial_port_is_null)
+                _liveErrorOutput.value =
+                    context.getString(R.string.helper_error_serial_port_is_null)
                 false
             }
         } catch (e: Exception) {
