@@ -80,6 +80,7 @@ class ArduinoHelper
                 }
             }
         } else {
+            _liveErrorOutput.value = ""
             _liveErrorOutput.value =
                 context.getString(R.string.helper_error_usb_devices_not_attached)
         }
