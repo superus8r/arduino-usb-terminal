@@ -12,6 +12,12 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import org.kabiri.android.usbterminal.extensions.scrollToLastLine
@@ -33,6 +39,21 @@ class MainActivity : AppCompatActivity() {
         val etInput = findViewById<EditText>(R.id.etInput)
         val tvOutput = findViewById<TextView>(R.id.tvOutput)
         val btEnter = findViewById<Button>(R.id.btEnter)
+        val composeView = findViewById<ComposeView>(R.id.composeView)
+
+        composeView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+
+            setContent {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    for (item in viewModel.output2) {
+                        item {
+                            BasicText(text = item.text)
+                        }
+                    }
+                }
+            }
+        }
 
         // make the text view scrollable:
         tvOutput.movementMethod = ScrollingMovementMethod()

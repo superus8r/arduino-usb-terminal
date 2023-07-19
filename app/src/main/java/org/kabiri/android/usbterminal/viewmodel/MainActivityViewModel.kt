@@ -1,6 +1,8 @@
 package org.kabiri.android.usbterminal.viewmodel
 
 import android.hardware.usb.UsbDevice
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +28,7 @@ class MainActivityViewModel
     private val _outputLive = MutableStateFlow("")
     val output: StateFlow<String>
         get() = _outputLive
+    val output2 = SnapshotStateList<OutputText>()
 
     fun askForConnectionPermission() = arduinoHelper.askForConnectionPermission()
 
@@ -51,23 +54,24 @@ class MainActivityViewModel
 
         val liveSpannedOutput: Flow<OutputText> = serialOutput.map {
             _outputLive.value = _outputLive.value + it
-            return@map OutputText(it, OutputText.OutputType.TYPE_NORMAL)
+            val outputText = OutputText(it, OutputText.OutputType.TYPE_NORMAL)
+            output2.add(outputText)
+            return@map outputText
         }
 
         val liveSpannedInfoOutput: Flow<OutputText> = serialInfoOutput.map {
             _outputLive.value = _outputLive.value + it
-            return@map OutputText(it, OutputText.OutputType.TYPE_INFO)
+            val outputText = OutputText(it, OutputText.OutputType.TYPE_INFO)
+            output2.add(outputText)
+            return@map outputText
         }
 
         val liveSpannedErrorOutput: Flow<OutputText> = serialErrorOutput.map {
             _outputLive.value = _outputLive.value + it
-            return@map OutputText(it, OutputText.OutputType.TYPE_ERROR)
+            val outputText = OutputText(it, OutputText.OutputType.TYPE_ERROR)
+            output2.add(outputText)
+            return@map outputText
         }
-
-//        val liveDataMerger = MediatorLiveData<OutputText>()
-//        liveDataMerger.addSource(liveSpannedOutput) { liveDataMerger.value = it }
-//        liveDataMerger.addSource(liveSpannedInfoOutput) { liveDataMerger.value = it }
-//        liveDataMerger.addSource(liveSpannedErrorOutput) { liveDataMerger.value = it }
 
         return liveSpannedOutput
             .combine(liveSpannedInfoOutput) { a, b -> b }

@@ -7,6 +7,7 @@
     <string name="app_name">USBTerminal</string>
     <string name="title_connect">Connect</string>
     <string name="title_disconnect">Disconnect</string>
+    <string name="title_settings">Settings</string>
 
     <!-- Home Screen -->
     <string name="home_bt_enter">Enter</string>

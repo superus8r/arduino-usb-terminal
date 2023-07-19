@@ -15,12 +15,21 @@
         android:gravity="bottom"
         android:scrollbars="vertical"
         android:text="@{viewModel.output}"
-        app:layout_constraintBottom_toTopOf="@+id/etInput"
+        app:layout_constraintBottom_toTopOf="@+id/composeView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/composeView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvOutput"
+        app:layout_constraintBottom_toTopOf="@id/etInput"/>
 
     <Button
         android:id="@+id/btEnter"
