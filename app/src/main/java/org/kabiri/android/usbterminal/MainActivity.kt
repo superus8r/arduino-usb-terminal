@@ -12,12 +12,20 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import org.kabiri.android.usbterminal.extensions.scrollToLastLine
@@ -44,13 +52,25 @@ class MainActivity : AppCompatActivity() {
         composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 
-            setContent {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
+            setContent() {
+                val columnState = rememberLazyListState()
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    state = columnState,
+                    contentPadding = PaddingValues(0.dp),
+                    verticalArrangement = Arrangement.spacedBy(0.dp),
+                ) {
                     for (item in viewModel.output2) {
                         item {
-                            BasicText(text = item.text)
+                            Text(
+                                modifier = Modifier.background(color = Color.Blue),
+                                text = item.text,
+                                )
                         }
                     }
+                }
+                LaunchedEffect(viewModel.output2) {
+                    columnState.animateScrollToItem(viewModel.output2.size-1)
                 }
             }
         }

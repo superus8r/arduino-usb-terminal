@@ -49,7 +49,24 @@ platform :android do
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+    gradle(
+        task: 'bundle',
+        build_type: 'Release'
+    )
+    upload_to_play_store(
+             track: 'internal',
+             release_status: 'draft',
+             aab: './app/build/outputs/bundle/release/app-release.aab',
+             skip_upload_apk: 'true',
+             skip_upload_metadata: 'true',
+             skip_upload_changelogs: 'true',
+             skip_upload_images: 'true',
+             skip_upload_screenshots: 'true',
+             json_key: ENV['SERVICE_ACCOUNT_USB_TERMINAL_PLAY_STORE']
+    )
+#     upload_to_play_store_internal_app_sharing(
+#         aab: './app/build/outputs/bundle/release/app-release.aab',
+#         json_key: ENV['SERVICE_ACCOUNT_USB_TERMINAL_PLAY_STORE']
+#     )
   end
 end
