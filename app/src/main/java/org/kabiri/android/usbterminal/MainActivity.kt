@@ -16,9 +16,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import org.kabiri.android.usbterminal.extensions.scrollToLastLine
+import org.kabiri.android.usbterminal.ui.theme.UsbTerminalTheme
 import org.kabiri.android.usbterminal.viewmodel.MainActivityViewModel
 
 @AndroidEntryPoint
@@ -52,25 +53,28 @@ class MainActivity : AppCompatActivity() {
         composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 
-            setContent() {
+            setContent {
                 val columnState = rememberLazyListState()
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    state = columnState,
-                    contentPadding = PaddingValues(0.dp),
-                    verticalArrangement = Arrangement.spacedBy(0.dp),
-                ) {
-                    for (item in viewModel.output2) {
-                        item {
-                            Text(
-                                modifier = Modifier.background(color = Color.Blue),
-                                text = item.text,
+
+                UsbTerminalTheme(darkTheme = true) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        state = columnState,
+                        contentPadding = PaddingValues(0.dp),
+                        verticalArrangement = Arrangement.spacedBy(0.dp),
+                    ) {
+                        for (item in viewModel.output2) {
+                            item {
+                                Text(
+                                    text = item.text,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                 )
+                                LaunchedEffect(viewModel.output2) {
+                                    columnState.animateScrollToItem(viewModel.output2.size-1)
+                                }
+                            }
                         }
                     }
-                }
-                LaunchedEffect(viewModel.output2) {
-                    columnState.animateScrollToItem(viewModel.output2.size-1)
                 }
             }
         }
