@@ -31,6 +31,7 @@
     <string name="helper_error_connection_failed_to_open_unknown">Failed to open device connection.\n</string>
     <string name="helper_error_connection_not_ready_to_close">No device connection to close\n</string>
     <string name="helper_error_connection_failed_to_close">Device connection failed to close\n</string>
+    <string name="helper_error_updating_baud_rate">Failed to update baud rate…\n</string>
     <string name="helper_info_serial_connection_opened">Serial Connection Opened\n</string>
     <string name="helper_info_serial_connection_closed">Serial Connection Closed\n</string>
     <string name="helper_info_usb_permission_requested">Requested permission to access the USB device…\n</string>
