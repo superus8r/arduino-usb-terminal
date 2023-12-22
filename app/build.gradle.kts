@@ -179,6 +179,7 @@ fun loadKeyStore(name: String): Properties? {
 
 val firebase_bom_version: String by project
 val hilt_version: String by project
+val coroutines_version: String by project
 dependencies {
 
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -212,6 +213,9 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.activity:activity-compose:1.8.1")
 
+    // data
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
     // hilt testing
     // more info:
     // https://developer.android.com/training/dependency-injection/hilt-testing
@@ -226,6 +230,8 @@ dependencies {
     androidTestImplementation("androidx.test:core:1.5.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
+    androidTestImplementation("androidx.test.ext:truth:1.5.0")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
     // Espresso
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     // Hamcrest for view matching
