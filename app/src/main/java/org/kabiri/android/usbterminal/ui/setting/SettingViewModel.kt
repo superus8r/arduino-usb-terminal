@@ -1,4 +1,4 @@
-package org.kabiri.android.usbterminal.ui.theme.setting
+package org.kabiri.android.usbterminal.ui.setting
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

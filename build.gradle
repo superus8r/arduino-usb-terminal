@@ -1,10 +1,11 @@
 buildscript {
     ext {
         coroutines_version = "1.6.4"
-        kotlin_version = "1.8.10"
-        hilt_version = "2.44"
         firebase_bom_version = "30.5.0"
+        hilt_version = "2.44"
         jacoco_version = "0.8.8"
+        kotlin_version = "1.8.10"
+        material_version = "1.11.0"
     }
     dependencies {
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"

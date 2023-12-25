@@ -8,6 +8,7 @@
     <color name="textColorPrimary">#212121</color>
     <color name="textColorSecondary">#757575</color>
 
+    <color name="bg_modal_bottom_sheet">#FFFFFF</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
 

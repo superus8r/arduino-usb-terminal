@@ -180,6 +180,7 @@ fun loadKeyStore(name: String): Properties? {
 val firebase_bom_version: String by project
 val hilt_version: String by project
 val coroutines_version: String by project
+val material_version: String by project
 dependencies {
 
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -212,6 +213,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.activity:activity-compose:1.8.1")
+
+    // Other UI Libraries
+    implementation("com.google.android.material:material:$material_version")
+
 
     // data
     implementation("androidx.datastore:datastore-preferences:1.0.0")

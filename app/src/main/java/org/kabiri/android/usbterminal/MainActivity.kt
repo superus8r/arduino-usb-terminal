@@ -12,26 +12,15 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.unit.dp
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import org.kabiri.android.usbterminal.extensions.scrollToLastLine
-import org.kabiri.android.usbterminal.ui.theme.UsbTerminalTheme
+import org.kabiri.android.usbterminal.ui.setting.SettingModalBottomSheet
+import org.kabiri.android.usbterminal.ui.setting.SettingViewModel
 import org.kabiri.android.usbterminal.viewmodel.MainActivityViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -40,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val viewModel by viewModels<MainActivityViewModel>()
+    private val settingViewModel by viewModels<SettingViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,36 +38,6 @@ class MainActivity : AppCompatActivity() {
         val etInput = findViewById<EditText>(R.id.etInput)
         val tvOutput = findViewById<TextView>(R.id.tvOutput)
         val btEnter = findViewById<Button>(R.id.btEnter)
-        val composeView = findViewById<ComposeView>(R.id.composeView)
-
-        composeView.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-
-            setContent {
-                val columnState = rememberLazyListState()
-
-                UsbTerminalTheme(darkTheme = true) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        state = columnState,
-                        contentPadding = PaddingValues(0.dp),
-                        verticalArrangement = Arrangement.spacedBy(0.dp),
-                    ) {
-                        for (item in viewModel.output2) {
-                            item {
-                                Text(
-                                    text = item.text,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                                LaunchedEffect(viewModel.output2) {
-                                    columnState.animateScrollToItem(viewModel.output2.size-1)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         // make the text view scrollable:
         tvOutput.movementMethod = ScrollingMovementMethod()
@@ -126,6 +86,11 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.actionDisconnect -> {
                 viewModel.disconnect()
+                true
+            }
+            R.id.actionSettings -> {
+                SettingModalBottomSheet(viewModel = settingViewModel)
+                    .show(supportFragmentManager, TAG)
                 true
             }
             else -> false

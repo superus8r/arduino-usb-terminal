@@ -2,20 +2,27 @@ package org.kabiri.android.usbterminal.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 
 private val darkColorTheme = darkColorScheme(
-    primary = Color.Black,
+    primary = ColorPrimaryNight,
+    onPrimary = ColorPrimaryTextNight,
+    secondary = ColorAccentNight,
+    onSecondary = ColorSecondaryTextNight,
+    background = ColorBackgroundNight,
 )
 
 private val lightColorTheme = lightColorScheme(
+    primary = ColorPrimaryDay,
+    onPrimary = ColorPrimaryTextDay,
+    secondary = ColorAccentDay,
+    onSecondary = ColorSecondaryTextDay,
+    background = ColorBackgroundDay,
 )
 
-private var isLightCustom: Boolean = false
+private var isLightCustom: Boolean = true
 
 @Composable
 fun UsbTerminalTheme(darkTheme: Boolean? = null, content: @Composable () -> Unit) {
