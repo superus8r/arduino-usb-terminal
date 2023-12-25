@@ -10,11 +10,16 @@ import android.hardware.usb.UsbManager
 import android.util.Log
 import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.Constants
 import org.kabiri.android.usbterminal.R
+import org.kabiri.android.usbterminal.domain.IGetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.model.defaultBaudRate
 import javax.inject.Inject
 
 
@@ -26,15 +31,42 @@ import javax.inject.Inject
  *  registers the Arduino Permission Broadcast Receiver.
  */
 
-class ArduinoHelper
+private const val TAG = "ArduinoHelper"
+
+internal class ArduinoHelper
 @Inject constructor(
     private val context: Context,
     private val arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
-    private val arduinoSerialReceiver: ArduinoSerialReceiver
+    private val arduinoSerialReceiver: ArduinoSerialReceiver,
+    private val getBaudRate: IGetCustomBaudRateUseCase,
 ) {
 
-    companion object {
-        private const val TAG = "ArduinoHelper"
+    private var currentBaudRate = defaultBaudRate // Default value
+
+    init {
+        observeBaudRate()
+    }
+
+    private fun observeBaudRate() {
+        CoroutineScope(Dispatchers.IO).launch {
+            getBaudRate().collect { baudRate ->
+                currentBaudRate = baudRate
+                Log.d(TAG, "custom baud rate set = $baudRate")
+                if (::serialPort.isInitialized) {
+                    updateSerialPortBaudRate(baudRate)
+                }
+            }
+        }
+    }
+
+    private fun updateSerialPortBaudRate(baudRate: Int) {
+        try {
+            Log.d(TAG, "updateSerialPortBaudRate, current baud rate = $currentBaudRate")
+            serialPort.setBaudRate(baudRate)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating baud rate: ${e.message}")
+            _liveErrorOutput.value = context.getString(R.string.helper_error_updating_baud_rate)
+        }
     }
 
     private val _liveOutput = MutableStateFlow("")
@@ -161,7 +193,8 @@ class ArduinoHelper
         serialPort.let {
             if (it.open()) {
                 // init the serial port and set connection params.
-                it.setBaudRate(9600)
+                Log.d(TAG, "current baud rate = $currentBaudRate")
+                it.setBaudRate(currentBaudRate)
                 it.setDataBits(UsbSerialInterface.DATA_BITS_8)
                 it.setStopBits(UsbSerialInterface.STOP_BITS_1)
                 it.setParity(UsbSerialInterface.PARITY_NONE)

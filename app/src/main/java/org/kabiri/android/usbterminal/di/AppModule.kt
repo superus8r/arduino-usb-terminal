@@ -17,6 +17,10 @@ import org.kabiri.android.usbterminal.arduino.ArduinoSerialReceiver
 import org.kabiri.android.usbterminal.data.repository.IUserSettingRepository
 import org.kabiri.android.usbterminal.data.repository.USER_SETTING_PREFERENCES_NAME
 import org.kabiri.android.usbterminal.data.repository.UserSettingRepository
+import org.kabiri.android.usbterminal.domain.GetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.domain.IGetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.domain.ISetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.domain.SetCustomBaudRateUseCase
 import javax.inject.Singleton
 
 /**
@@ -42,11 +46,13 @@ internal class AppModule {
         context: Context,
         arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
         arduinoSerialReceiver: ArduinoSerialReceiver,
+        getCustomBaudRateUseCase: IGetCustomBaudRateUseCase,
     ): ArduinoHelper {
         return ArduinoHelper(
             context = context,
             arduinoPermReceiver = arduinoPermReceiver,
             arduinoSerialReceiver = arduinoSerialReceiver,
+            getBaudRate = getCustomBaudRateUseCase,
         )
     }
 
@@ -68,5 +74,19 @@ internal class AppModule {
         dataStore: DataStore<Preferences>
     ): IUserSettingRepository {
         return UserSettingRepository(dataStore)
+    }
+
+    @Provides
+    fun provideGetCustomBaudRateUseCase(
+        userSettingRepository: IUserSettingRepository
+    ): IGetCustomBaudRateUseCase {
+        return GetCustomBaudRateUseCase(userSettingRepository = userSettingRepository)
+    }
+
+    @Provides
+    fun provideSetCustomBaudRateUseCase(
+        userSettingRepository: IUserSettingRepository
+    ): ISetCustomBaudRateUseCase {
+        return SetCustomBaudRateUseCase(userSettingRepository = userSettingRepository)
     }
 }

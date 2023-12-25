@@ -20,7 +20,7 @@ import javax.inject.Inject
  * Created by Ali Kabiri on 12.04.20.
  */
 @HiltViewModel
-class MainActivityViewModel
+internal class MainActivityViewModel
 @Inject constructor(
     private val arduinoHelper: ArduinoHelper,
 ): ViewModel() {
