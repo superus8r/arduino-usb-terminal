@@ -25,7 +25,7 @@ commands:
 executors:
   android-machine:
     machine:
-      image: android:2022.12.1
+      image: android:2024.01.1
   android-docker:
     docker:
       - image: cimg/android:2023.02
