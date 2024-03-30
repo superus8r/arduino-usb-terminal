@@ -10,7 +10,7 @@ import org.kabiri.android.usbterminal.ui.common.CustomBottomSheetDialogFragment
 import org.kabiri.android.usbterminal.ui.theme.UsbTerminalTheme
 
 internal class SettingModalBottomSheet(
-    val onDismissed: () -> Unit = {},
+    val onDismiss: () -> Unit = {},
     val viewModel: SettingViewModel,
 ): CustomBottomSheetDialogFragment() {
 
@@ -25,7 +25,13 @@ internal class SettingModalBottomSheet(
 
         composeView?.setContent {
             UsbTerminalTheme {
-                SettingContent(settingViewModel = viewModel)
+                SettingContent(
+                    settingViewModel = viewModel,
+                    onDismiss = {
+                        onDismiss()
+                        this.dismiss()
+                    }
+                )
             }
         }
 

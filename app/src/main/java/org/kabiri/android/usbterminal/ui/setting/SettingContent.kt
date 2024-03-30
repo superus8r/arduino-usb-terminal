@@ -10,7 +10,8 @@ import org.kabiri.android.usbterminal.model.defaultBaudRate
 @Composable
 internal fun SettingContent(
     modifier: Modifier = Modifier,
-    settingViewModel: SettingViewModel
+    settingViewModel: SettingViewModel,
+    onDismiss: () -> Unit,
 ) {
     val currentBaudRate by settingViewModel.currentBaudRate.collectAsState(defaultBaudRate)
 
@@ -20,6 +21,14 @@ internal fun SettingContent(
         SettingValueItem(
             currentValue = currentBaudRate,
             onNewValue = settingViewModel::setNewBaudRate
+        )
+
+        // Reset Default Button
+        SettingResetDefaultButton(
+            onClick = {
+                settingViewModel.resetDefault()
+                onDismiss()
+            }
         )
     }
 }

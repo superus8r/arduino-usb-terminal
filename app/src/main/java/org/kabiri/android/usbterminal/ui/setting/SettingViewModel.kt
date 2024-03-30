@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.domain.IGetCustomBaudRateUseCase
 import org.kabiri.android.usbterminal.domain.ISetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.model.defaultBaudRate
 import javax.inject.Inject
 
 /**
@@ -23,4 +24,8 @@ internal class SettingViewModel
         get() = getBaudRate()
 
     fun setNewBaudRate(baudRate: Int) = setBaudRate(baudRate)
+
+    fun resetDefault() {
+        setBaudRate(defaultBaudRate)
+    }
 }
