@@ -142,7 +142,7 @@ tasks.register("generateKsFile") {
         val encodedFileContent = System.getenv("KS_USB_TERMINAL_PLAY_STORE_RAW")
         val decodedBytes = Base64.getDecoder().decode(encodedFileContent)
         val fileContent = String(decodedBytes)
-        File(rootDir, jsonFileName).apply {
+        File(projectDir, jsonFileName).apply {
             createNewFile()
             writeText(fileContent)
             println("generated ${this.path}")

@@ -80,7 +80,7 @@ jobs:
           name: Prepare Fastlane
           command: sudo bundle update
       - run:
-          name: Distribute to Firebase AppTester
+          name: Distribute to Google PlayStore Internal Testing
           command: bundle exec fastlane deploy
       - store_artifacts:
           path: /home/circleci/project/app/build/outputs/bundle/release/app-release.aab
