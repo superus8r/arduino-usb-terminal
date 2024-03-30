@@ -73,9 +73,5 @@ platform :android do
              skip_upload_screenshots: 'true',
              json_key: ENV['SERVICE_ACCOUNT_USB_TERMINAL_PLAY_STORE']
     )
-#     upload_to_play_store_internal_app_sharing(
-#         aab: './app/build/outputs/bundle/release/app-release.aab',
-#         json_key: ENV['SERVICE_ACCOUNT_USB_TERMINAL_PLAY_STORE']
-#     )
   end
 end
