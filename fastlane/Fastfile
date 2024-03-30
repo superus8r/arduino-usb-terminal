@@ -60,8 +60,11 @@ platform :android do
         "generateKsPropFile",
         "generateGoogleServicesJson",
         "generateInternalReleaseKey",
-        "bundleRelease"
     ])
+    gradle(
+        task: "bundle",
+        build_type: "Release",
+    )
     upload_to_play_store(
              track: 'internal',
              release_status: 'draft',
