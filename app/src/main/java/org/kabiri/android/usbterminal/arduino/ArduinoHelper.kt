@@ -43,32 +43,6 @@ internal class ArduinoHelper
 
     private var currentBaudRate = defaultBaudRate // Default value
 
-    init {
-        observeBaudRate()
-    }
-
-    private fun observeBaudRate() {
-        CoroutineScope(Dispatchers.IO).launch {
-            getBaudRate().collect { baudRate ->
-                currentBaudRate = baudRate
-                Log.d(TAG, "custom baud rate set = $baudRate")
-                if (::serialPort.isInitialized) {
-                    updateSerialPortBaudRate(baudRate)
-                }
-            }
-        }
-    }
-
-    private fun updateSerialPortBaudRate(baudRate: Int) {
-        try {
-            Log.d(TAG, "updateSerialPortBaudRate, current baud rate = $currentBaudRate")
-            serialPort.setBaudRate(baudRate)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error updating baud rate: ${e.message}")
-            _liveErrorOutput.value = context.getString(R.string.helper_error_updating_baud_rate)
-        }
-    }
-
     private val _liveOutput = MutableStateFlow("")
     val output: Flow<String>
         get() = _liveOutput
@@ -90,6 +64,10 @@ internal class ArduinoHelper
     private var usbManager: UsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
     private lateinit var connection: UsbDeviceConnection
     private lateinit var serialPort: UsbSerialDevice
+
+    init {
+        observeBaudRate()
+    }
 
     /**
      * register the Arduino Permission Broadcast Receiver.
@@ -229,6 +207,38 @@ internal class ArduinoHelper
                     " \n${e.localizedMessage}\n"
             Log.e(TAG, "$e")
             false
+        }
+    }
+
+    /**
+     * Listen for changes in baudRate set by the user
+     */
+    private fun observeBaudRate() {
+        CoroutineScope(Dispatchers.IO).launch {
+            getBaudRate().collect { baudRate ->
+                currentBaudRate = baudRate
+                _liveInfoOutput.value = String.format(
+                    context.getString(R.string.helper_info_baud_rate_applying), baudRate)
+                if (::serialPort.isInitialized) {
+                    updateSerialPortBaudRate(baudRate)
+                    _liveInfoOutput.value = String.format(
+                        context.getString(R.string.helper_info_baud_rate_applied), baudRate)
+                } else {
+                    _liveErrorOutput.value =
+                        context.getString(R.string.helper_error_baud_rate_failed_to_apply_no_connection)
+                }
+            }
+        }
+    }
+
+    /**
+     * Update value of current baud rate to new one from the user
+     */
+    private fun updateSerialPortBaudRate(baudRate: Int) {
+        try {
+            serialPort.setBaudRate(baudRate)
+        } catch (e: Exception) {
+            _liveErrorOutput.value = context.getString(R.string.helper_error_applying_baud_rate)
         }
     }
 }
