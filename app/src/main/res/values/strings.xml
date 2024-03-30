@@ -15,7 +15,10 @@
 
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
+    <string name="settings_subtitle">Type a new value to change setting values</string>
+    <string name="settings_bottom_text">Attention: Clicking on the Default button will quickly reset the settings to their default values.</string>
     <string name="settings_bt_reset_default">Default</string>
+    <string name="settings_bt_dismiss_sheet">Close</string>
     <string name="settings_bt_save">Save</string>
     <string name="settings_label_baud_rate">Baud Rate</string>
     <string name="settings_label_saved">Saved</string>
