@@ -55,10 +55,12 @@ platform :android do
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    gradle(
-        task: 'bundle',
-        build_type: 'Release'
-    )
+    gradle(tasks: [
+        "generateKsPropFile",
+        "generateGoogleServicesJson",
+        "generateInternalReleaseKey",
+        "bundleRelease"
+    ])
     upload_to_play_store(
              track: 'internal',
              release_status: 'draft',

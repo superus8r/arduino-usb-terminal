@@ -165,6 +165,18 @@ tasks.register("generateAppDistKey") {
     }
 }
 
+tasks.register("generateInternalReleaseKey") {
+    doLast {
+        val jsonFileName = "internal-release-key.json"
+        val fileContent = System.getenv("SERVICE_ACCOUNT_USB_TERMINAL_PLAY_STORE_RAW")
+        File(rootDir, jsonFileName).apply {
+            createNewFile()
+            writeText(fileContent)
+            println("generated ${this.path}")
+        }
+    }
+}
+
 fun loadKeyStore(name: String): Properties? {
     val ksProp = Properties()
     val ksPropFile = file(name)

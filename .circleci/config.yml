@@ -70,6 +70,22 @@ jobs:
           path: /home/circleci/project/app/build/outputs/apk/debug/app-debug.apk
           destination: fastlane-output-debug
 
+  distribute-internal-testing:
+    executor: android-docker
+    resource_class: large
+    steps:
+      - checkout
+      - restore_gradle_cache
+      - run:
+          name: Prepare Fastlane
+          command: sudo bundle update
+      - run:
+          name: Distribute to Firebase AppTester
+          command: bundle exec fastlane deploy
+      - store_artifacts:
+          path: /home/circleci/project/app/build/outputs/bundle/release/app-release.aab
+          destination: fastlane-output-release
+
 workflows:
   workflow:
     jobs:
