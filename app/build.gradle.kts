@@ -40,7 +40,7 @@ android {
         minSdk = 23
         targetSdk = 33
         versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 13
-        versionName = "0.9.12${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
+        versionName = "0.9.84${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -143,10 +143,10 @@ tasks.register("generateKsPropFile") {
             createNewFile()
             writeText("""
                 # Gradle signing properties for app module
-                release.file=${System.getenv("KS_PATH")}
-                release.storePassword=${System.getenv("KS_PASSWORD")}
-                release.keyAlias=${System.getenv("KS_KEY_ALIAS")}
-                release.keyPassword=${System.getenv("KS_KEY_PASSWORD")}
+                release.file=${System.getenv("USB_TERMINAL_KS_PATH")}
+                release.storePassword=${System.getenv("USB_TERMINAL_KS_PASSWORD")}
+                release.keyAlias=${System.getenv("USB_TERMINAL_KS_KEY_ALIAS")}
+                release.keyPassword=${System.getenv("USB_TERMINAL_KS_KEY_PASSWORD")}
                 """.trimIndent())
             println("generated ${this.path}")
         }
