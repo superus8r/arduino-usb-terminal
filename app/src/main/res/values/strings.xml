@@ -22,6 +22,7 @@
     <string name="settings_bt_save">Save</string>
     <string name="settings_label_baud_rate">Baud Rate</string>
     <string name="settings_label_saved">Saved</string>
+    <string name="settings_label_error">Enter a Number</string>
 
     <!-- Joystick Screen (upcoming) -->
     <string name="bt_joystick_forward">Go Forward</string>

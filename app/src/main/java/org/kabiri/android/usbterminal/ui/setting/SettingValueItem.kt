@@ -3,6 +3,7 @@ package org.kabiri.android.usbterminal.ui.setting
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.Icon
@@ -19,6 +20,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.kabiri.android.usbterminal.R
@@ -26,15 +28,17 @@ import org.kabiri.android.usbterminal.ui.theme.UsbTerminalTheme
 import org.kabiri.android.usbterminal.ui.setting.SaveState.DEFAULT
 import org.kabiri.android.usbterminal.ui.setting.SaveState.UNSAVED
 import org.kabiri.android.usbterminal.ui.setting.SaveState.SAVED
+import org.kabiri.android.usbterminal.ui.setting.SaveState.ERROR
 
 /**
  * Enum class to represent the save state of the setting value.
  * - DEFAULT: the default state of the setting value when it has not been changed
  * - UNSAVED: the setting value has been changed but not saved
  * - SAVED: the setting value has been saved
+ * - ERROR: the setting value is invalid
  */
 private enum class SaveState {
-    DEFAULT, UNSAVED, SAVED
+    DEFAULT, UNSAVED, SAVED, ERROR,
 }
 
 /**
@@ -53,7 +57,7 @@ internal fun SettingValueItem(
     var saveState by remember { mutableStateOf(DEFAULT) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    fun onClickSaveNewValue(baudRate: Int) {
+    fun onClickSaveNewValue() {
         inputValue.toIntOrNull()?.let { baudRate ->
             onNewValue(baudRate)
             saveState = SAVED
@@ -69,6 +73,11 @@ internal fun SettingValueItem(
     OutlinedTextField(
         value = inputValue,
         onValueChange = { value: String ->
+            val input = value.toIntOrNull()
+            if (input == null) {
+                saveState = ERROR
+                return@OutlinedTextField
+            }
             saveState = if (value.toIntOrNull() != currentValue) UNSAVED else DEFAULT
             inputValue = value
         },
@@ -82,7 +91,7 @@ internal fun SettingValueItem(
                 DEFAULT -> {}
                 UNSAVED -> {
                     IconButton(onClick = {
-                        onClickSaveNewValue(inputValue.toInt())
+                        onClickSaveNewValue()
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.Check,
@@ -96,14 +105,21 @@ internal fun SettingValueItem(
                         modifier = Modifier.padding(end = 16.dp)
                     )
                 }
+                ERROR -> {
+                    Text(
+                        text = stringResource(id = R.string.settings_label_error),
+                        modifier = Modifier.padding(end = 16.dp)
+                    )
+                }
             }
         },
-        isError = inputValue.toIntOrNull() == null,
+        isError = saveState == ERROR,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         keyboardActions = KeyboardActions(
             onDone = {
-                onClickSaveNewValue(inputValue.toInt())
+                onClickSaveNewValue()
             }
-        )
+        ),
     )
 }
 
