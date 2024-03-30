@@ -29,7 +29,13 @@ platform :android do
 
   desc "Deploy to Firebase AppTester channel"
   lane :distDev do
-    gradle(task: "generateKsPropFile generateGoogleServicesJson generateAppDistKey clean assembleDebug")
+    gradle(tasks: [
+        "generateKsPropFile",
+        "generateGoogleServicesJson",
+        "generateAppDistKey",
+        "clean",
+        "assembleDebug"
+    ])
     firebase_app_distribution(
         service_credentials_file: ENV['APP_DIST_SERVICE_ACCOUNT_PATH'],
         app: "1:1032339097117:android:1e333da555ec74a71668f4",
