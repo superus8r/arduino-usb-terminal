@@ -2,6 +2,7 @@ package org.kabiri.android.usbterminal.ui.setting
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.Icon
@@ -14,7 +15,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +43,7 @@ private enum class SaveState {
  * @param currentValue the current value of the setting
  * @param onNewValue a callback that will be called when a new value is set
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun SettingValueItem(
     currentValue: Int,
@@ -47,6 +51,15 @@ internal fun SettingValueItem(
 ) {
     var inputValue by remember { mutableStateOf(currentValue.toString()) }
     var saveState by remember { mutableStateOf(DEFAULT) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    fun onClickSaveNewValue(baudRate: Int) {
+        inputValue.toIntOrNull()?.let { baudRate ->
+            onNewValue(baudRate)
+            saveState = SAVED
+            keyboardController?.hide()
+        }
+    }
 
     // keep baudRateInput updated with currentBaudRate
     LaunchedEffect(currentValue) {
@@ -69,10 +82,7 @@ internal fun SettingValueItem(
                 DEFAULT -> {}
                 UNSAVED -> {
                     IconButton(onClick = {
-                        inputValue.toIntOrNull()?.let { baudRate ->
-                            onNewValue(baudRate)
-                            saveState = SAVED
-                        }
+                        onClickSaveNewValue(inputValue.toInt())
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.Check,
@@ -88,7 +98,12 @@ internal fun SettingValueItem(
                 }
             }
         },
-        isError = inputValue.toIntOrNull() == null
+        isError = inputValue.toIntOrNull() == null,
+        keyboardActions = KeyboardActions(
+            onDone = {
+                onClickSaveNewValue(inputValue.toInt())
+            }
+        )
     )
 }
 
