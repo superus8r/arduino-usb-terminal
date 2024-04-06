@@ -13,9 +13,9 @@ internal fun interface ISetCustomBaudRateUseCase {
 internal class SetCustomBaudRateUseCase
 @Inject constructor(
     private val userSettingRepository: IUserSettingRepository,
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ): ISetCustomBaudRateUseCase {
 
-    private val scope = CoroutineScope(Dispatchers.IO)
     override fun invoke(baudRate: Int) {
         scope.launch {
             userSettingRepository.setBaudRate(baudRate)
