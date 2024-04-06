@@ -159,7 +159,7 @@ internal class ArduinoHelper
             prepareSerialPort(serialPort)
         else {
             _liveInfoOutput.value = context.getString(R.string.helper_error_serial_port_is_null)
-            connection.close()
+            if (::connection.isInitialized) connection.close()
         }
     }
 
