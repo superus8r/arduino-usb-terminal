@@ -1,12 +1,10 @@
 package org.kabiri.android.usbterminal.domain
 
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.kabiri.android.usbterminal.common.getFakeUserSettingRepository
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class SetCustomBaudRateUseCaseAndroidTest {
 
     @Test

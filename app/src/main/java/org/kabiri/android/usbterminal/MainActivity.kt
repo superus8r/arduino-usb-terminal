@@ -12,7 +12,6 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import org.kabiri.android.usbterminal.extensions.scrollToLastLine
@@ -20,7 +19,6 @@ import org.kabiri.android.usbterminal.ui.setting.SettingModalBottomSheet
 import org.kabiri.android.usbterminal.ui.setting.SettingViewModel
 import org.kabiri.android.usbterminal.viewmodel.MainActivityViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 

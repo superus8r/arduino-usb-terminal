@@ -8,7 +8,6 @@ import org.junit.Test
 import org.kabiri.android.usbterminal.common.getFakeUserSettingRepository
 import org.kabiri.android.usbterminal.model.UserSettingPreferences
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class GetCustomBaudRateUseCaseAndroidTest {
 
     @Test

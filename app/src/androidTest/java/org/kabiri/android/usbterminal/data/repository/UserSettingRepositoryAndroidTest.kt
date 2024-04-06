@@ -8,7 +8,6 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -20,7 +19,6 @@ import org.junit.runner.RunWith
 import org.kabiri.android.usbterminal.model.UserSettingPreferences
 
 private const val TEST_DATA_STORE_NAME = "test_data_store"
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class UserSettingRepositoryAndroidTest {
 
