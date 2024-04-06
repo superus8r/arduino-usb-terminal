@@ -98,7 +98,7 @@ internal class ArduinoHelper
 
     fun disconnect() {
         try {
-            connection.close()
+            if (::connection.isInitialized) connection.close()
             _liveOutput.value = context.getString(R.string.helper_info_serial_connection_closed)
         } catch (e: UninitializedPropertyAccessException) {
             _liveErrorOutput.value =
