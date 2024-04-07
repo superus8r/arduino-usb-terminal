@@ -27,7 +27,7 @@ platform :android do
     gradle(task: "generateKsPropFile generateGoogleServicesJson pixel2api30DebugAndroidTest testDebugUnitTest jacocoTestReport --stacktrace")
   end
 
-  desc "Deploy to Firebase AppTester channel"
+  desc "Deploy to Firebase AppTester Dev channel"
   lane :distDev do
     gradle(tasks: [
         "generateKsPropFile",
@@ -41,6 +41,27 @@ platform :android do
         app: "1:1032339097117:android:1e333da555ec74a71668f4",
         groups: "testers",
         release_notes: "",
+    )
+  end
+
+  desc "Deploy to Firebase AppTester Prod channel"
+  lane :distProd do
+    gradle(tasks: [
+        "generateKsFile",
+        "generateKsPropFile",
+        "generateGoogleServicesJson",
+        "generateAppDistKey",
+        "clean",
+    ])
+    gradle(
+        task: "assemble",
+        build_type: "Release",
+    )
+    firebase_app_distribution(
+        service_credentials_file: ENV['APP_DIST_SERVICE_ACCOUNT_PATH'],
+        app: "1:1032339097117:android:1e333da555ec74a71668f4",
+        groups: "testers",
+        release_notes: "prod",
     )
   end
 

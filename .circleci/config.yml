@@ -64,7 +64,7 @@ jobs:
           name: Prepare Fastlane
           command: sudo bundle update
       - run:
-          name: Distribute to Firebase AppTester
+          name: Distribute to Firebase AppTester Dev
           command: bundle exec fastlane distDev
       - store_artifacts:
           path: /home/circleci/project/app/build/outputs/apk/debug/app-debug.apk
@@ -82,6 +82,9 @@ jobs:
       - run:
           name: Distribute to Google PlayStore Internal Testing
           command: bundle exec fastlane deploy
+      - run:
+          name: Distribute to Firebase AppTester Prod
+          command: bundle exec fastlane distProd
       - store_artifacts:
           path: /home/circleci/project/app/build/outputs/bundle/release/app-release.aab
           destination: fastlane-output-release
