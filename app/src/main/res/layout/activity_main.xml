@@ -45,6 +45,7 @@
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btEnter"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:imeOptions="actionSend"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -66,13 +68,26 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // send the command to device when the button is clicked.
-        btEnter.setOnClickListener {
+        fun sendCommand() {
             val input = etInput.text.toString()
             // append the input to console
             if (viewModel.serialWrite(input))
                 etInput.setText("") // clear the terminal input.
             else Log.e(TAG, "The message was not sent to Arduino")
+        }
+
+        // send the command to device when the button is clicked.
+        btEnter.setOnClickListener {
+            sendCommand()
+        }
+
+        etInput.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEND ||
+                (event?.keyCode == KeyEvent.KEYCODE_ENTER &&
+                        event.action == KeyEvent.ACTION_DOWN)) {
+                sendCommand()
+                true
+            } else false
         }
     }
 
