@@ -42,7 +42,7 @@ jobs:
     - name: run unit tests
       run: bundle exec fastlane android run_unit_tests
     - name: Unit tests results
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: unit-test-results
         path: app/build/reports/tests/testDebugUnitTest/index.html
@@ -65,7 +65,7 @@ jobs:
       - name: Lint
         run: bash ./gradlew lintDebug
       - name: Lint results
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: app
           path: app/build/reports/lint-results-debug.html
