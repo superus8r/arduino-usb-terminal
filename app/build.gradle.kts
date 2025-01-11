@@ -38,7 +38,7 @@ android {
     compileSdk = 34
     defaultConfig {
         applicationId = "org.kabiri.android.usbterminal"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 33
         versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 14
         versionName = "0.9.84${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
@@ -274,5 +274,5 @@ dependencies {
      * This library helps to automate some parts of the USB serial connection.
      * For more information, visit: https://github.com/felHR85/UsbSerial
      */
-    implementation("com.github.felHR85:UsbSerial:6.1.0")
+    implementation("com.github.superus8r:UsbSerial:6.1.1")
 }
