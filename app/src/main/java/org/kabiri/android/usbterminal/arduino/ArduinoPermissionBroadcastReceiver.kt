@@ -51,7 +51,6 @@ class ArduinoPermissionBroadcastReceiver: BroadcastReceiver() {
                 }
                 val permissionGranted = intent
                     .getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
-
                 if (permissionGranted) {
                     _liveInfoOutput.value =
                         "${context?.getString(R.string.breceiver_info_usb_permission_granted)} ${device?.manufacturerName}"
