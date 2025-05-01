@@ -15,7 +15,6 @@ repositories {
 }
 
 android {
-    compileSdk = 34
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -35,7 +34,7 @@ android {
         kotlinCompilerExtensionVersion = "1.4.4"
     }
 
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "org.kabiri.android.usbterminal"
         minSdk = 24
