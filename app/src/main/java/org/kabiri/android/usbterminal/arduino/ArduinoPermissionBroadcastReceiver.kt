@@ -43,7 +43,6 @@ class ArduinoPermissionBroadcastReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         when (intent?.action) {
             Constants.ACTION_USB_PERMISSION -> {
-
                 val device: UsbDevice? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     intent.getParcelableExtra(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
                 } else {
@@ -64,8 +63,10 @@ class ArduinoPermissionBroadcastReceiver: BroadcastReceiver() {
                         "${context?.getString(R.string.breceiver_error_usb_permission_denied)} ${device?.manufacturerName}"
                 }
             }
+
             UsbManager.ACTION_USB_DEVICE_ATTACHED -> _liveOutput.value =
                 context?.getString(R.string.breceiver_info_device_attached) ?: ""
+
             UsbManager.ACTION_USB_DEVICE_DETACHED -> _liveOutput.value =
                 context?.getString(R.string.breceiver_info_device_detached) ?: ""
         }
