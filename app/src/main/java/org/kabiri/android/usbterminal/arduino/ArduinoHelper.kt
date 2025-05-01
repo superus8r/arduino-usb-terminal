@@ -8,6 +8,7 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
 import kotlinx.coroutines.CoroutineScope
@@ -119,10 +120,12 @@ internal class ArduinoHelper
             0,
             Intent(Constants.ACTION_USB_PERMISSION),
             // it is necessary for connecting to the device.
-            PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         val filter = IntentFilter(Constants.ACTION_USB_PERMISSION)
-        context.registerReceiver(arduinoPermReceiver, filter) // register the broadcast receiver
+        // register the broadcast receiver
+        ContextCompat.registerReceiver(context, arduinoPermReceiver, filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED)
         usbManager.requestPermission(device.value, permissionIntent)
         _liveInfoOutput.value = context.getString(R.string.helper_info_usb_permission_requested)
     }
