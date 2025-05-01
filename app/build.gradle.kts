@@ -38,7 +38,7 @@ android {
     defaultConfig {
         applicationId = "org.kabiri.android.usbterminal"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 35
         versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 14
         versionName = "0.9.84${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -269,9 +269,8 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation("androidx.test:rules:1.5.0")
 
-    /**
-     * This library helps to automate some parts of the USB serial connection.
-     * For more information, visit: https://github.com/felHR85/UsbSerial
-     */
+    // 3rd party
+
+    // Android Serial Controller
     implementation("com.github.superus8r:UsbSerial:6.1.1")
 }
