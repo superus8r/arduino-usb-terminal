@@ -38,6 +38,16 @@
                 android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
                 android:resource="@xml/accessory_filter" />
         </activity>
+
+        <receiver
+            android:name="org.kabiri.android.usbterminal.arduino.ArduinoPermissionBroadcastReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="org.kabiri.android.usbterminal.ACTION_USB_PERMISSION"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
