@@ -8,12 +8,15 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import org.kabiri.android.usbterminal.extensions.scrollToLastLine
@@ -34,6 +37,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // avoid system navbar or soft keyboard overlapping the content.
+        val rootView = findViewById<View>(R.id.root_view)
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            view.setPadding(0, 0, 0, maxOf(systemBarsInsets.bottom, imeInsets.bottom))
+            insets
+        }
 
         val etInput = findViewById<EditText>(R.id.etInput)
         val tvOutput = findViewById<TextView>(R.id.tvOutput)
