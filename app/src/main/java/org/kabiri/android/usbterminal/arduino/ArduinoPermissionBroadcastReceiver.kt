@@ -56,10 +56,10 @@ class ArduinoPermissionBroadcastReceiver: BroadcastReceiver() {
                 if (permissionGranted) {
                     _liveInfoOutput.value =
                         "${context?.getString(R.string.breceiver_info_usb_permission_granted)} ${device?.manufacturerName}"
-                    Log.i(TAG, "USB permission granted by the user")
+                    Log.i(TAG, "USB permission granted by the user - device:\n$device")
                     device?.let { _liveGrantedDevice.postValue(it) }
                 } else {
-                    Log.e(TAG, "USB permission was probably denied by the user")
+                    Log.e(TAG, "USB permission was probably denied by the user, intent:\n$intent\ndevice:\n$device")
                     _liveErrorOutput.value =
                         "${context?.getString(R.string.breceiver_error_usb_permission_denied)} ${device?.manufacturerName}"
                 }
