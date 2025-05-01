@@ -115,17 +115,21 @@ internal class ArduinoHelper
     }
 
     private fun connect(device: MutableMap.MutableEntry<String, UsbDevice>) {
+        // register the broadcast receiver before requesting permission
+        ContextCompat.registerReceiver(
+            context,
+            arduinoPermReceiver,
+            IntentFilter(Constants.ACTION_USB_PERMISSION),
+            ContextCompat.RECEIVER_EXPORTED
+        )
+
+        // request permission to access the usb device
         val permissionIntent = PendingIntent.getBroadcast(
             context,
             0,
             Intent(Constants.ACTION_USB_PERMISSION),
-            // it is necessary for connecting to the device.
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-        val filter = IntentFilter(Constants.ACTION_USB_PERMISSION)
-        // register the broadcast receiver
-        ContextCompat.registerReceiver(context, arduinoPermReceiver, filter,
-            ContextCompat.RECEIVER_NOT_EXPORTED)
         usbManager.requestPermission(device.value, permissionIntent)
         _liveInfoOutput.value = context.getString(R.string.helper_info_usb_permission_requested)
     }
