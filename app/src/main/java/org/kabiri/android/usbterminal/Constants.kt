@@ -5,6 +5,6 @@ package org.kabiri.android.usbterminal
  */
 class Constants {
     companion object {
-        const val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
+        const val ACTION_USB_PERMISSION = "org.kabiri.android.usbterminal.ACTION_USB_PERMISSION"
     }
 }
