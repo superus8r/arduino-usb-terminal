@@ -24,7 +24,13 @@ platform :android do
 
   desc "Runs all the tests with coverage"
   lane :testDev do
-    gradle(task: "generateKsPropFile generateGoogleServicesJson pixel2api30DebugAndroidTest testDebugUnitTest jacocoTestReport --stacktrace")
+    gradle(tasks: [
+        "generateKsPropFile",
+        "generateGoogleServicesJson",
+        "pixel2api30DebugAndroidTest",
+        "testDebugUnitTest",
+        "jacocoTestReport --stacktrace"
+    ])
   end
 
   desc "Deploy to Firebase AppTester Dev channel"
