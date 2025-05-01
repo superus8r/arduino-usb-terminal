@@ -25,6 +25,7 @@ platform :android do
   desc "Runs all the tests with coverage"
   lane :testDev do
     gradle(tasks: [
+        "generateKsFile",
         "generateKsPropFile",
         "generateGoogleServicesJson",
         "pixel2api30DebugAndroidTest",
