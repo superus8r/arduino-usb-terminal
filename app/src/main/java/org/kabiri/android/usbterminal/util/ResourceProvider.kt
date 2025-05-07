@@ -1,4 +1,4 @@
-package org.kabiri.android.usbterminal.extensions
+package org.kabiri.android.usbterminal.util
 
 import android.content.Context
 import javax.inject.Inject

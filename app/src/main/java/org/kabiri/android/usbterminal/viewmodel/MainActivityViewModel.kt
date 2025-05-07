@@ -15,10 +15,10 @@ import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.domain.IArduinoUseCase
 import org.kabiri.android.usbterminal.domain.IUsbUseCase
-import org.kabiri.android.usbterminal.extensions.IResourceProvider
-import org.kabiri.android.usbterminal.extensions.getArduinoType
-import org.kabiri.android.usbterminal.extensions.isCloneArduinoBoard
-import org.kabiri.android.usbterminal.extensions.isOfficialArduinoBoard
+import org.kabiri.android.usbterminal.util.IResourceProvider
+import org.kabiri.android.usbterminal.util.getArduinoType
+import org.kabiri.android.usbterminal.util.isCloneArduinoBoard
+import org.kabiri.android.usbterminal.util.isOfficialArduinoBoard
 import org.kabiri.android.usbterminal.model.ArduinoDevice.ArduinoType.OFFICIAL
 import org.kabiri.android.usbterminal.model.OutputText
 import javax.inject.Inject

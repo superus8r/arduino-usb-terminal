@@ -27,8 +27,8 @@ import org.kabiri.android.usbterminal.domain.ISetCustomBaudRateUseCase
 import org.kabiri.android.usbterminal.domain.IUsbUseCase
 import org.kabiri.android.usbterminal.domain.SetCustomBaudRateUseCase
 import org.kabiri.android.usbterminal.domain.UsbUseCase
-import org.kabiri.android.usbterminal.extensions.IResourceProvider
-import org.kabiri.android.usbterminal.extensions.ResourceProvider
+import org.kabiri.android.usbterminal.util.IResourceProvider
+import org.kabiri.android.usbterminal.util.ResourceProvider
 import javax.inject.Singleton
 
 /**

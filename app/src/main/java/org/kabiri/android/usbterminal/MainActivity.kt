@@ -19,7 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.kabiri.android.usbterminal.extensions.scrollToLastLine
+import org.kabiri.android.usbterminal.util.scrollToLastLine
 import org.kabiri.android.usbterminal.ui.setting.SettingModalBottomSheet
 import org.kabiri.android.usbterminal.ui.setting.SettingViewModel
 import org.kabiri.android.usbterminal.viewmodel.MainActivityViewModel

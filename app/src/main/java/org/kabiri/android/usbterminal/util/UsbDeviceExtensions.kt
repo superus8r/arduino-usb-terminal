@@ -1,4 +1,4 @@
-package org.kabiri.android.usbterminal.extensions
+package org.kabiri.android.usbterminal.util
 
 import android.hardware.usb.UsbDevice
 import org.kabiri.android.usbterminal.model.ArduinoDevice.ArduinoType
