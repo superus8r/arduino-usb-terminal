@@ -14,13 +14,19 @@ import dagger.hilt.components.SingletonComponent
 import org.kabiri.android.usbterminal.arduino.ArduinoHelper
 import org.kabiri.android.usbterminal.arduino.ArduinoPermissionBroadcastReceiver
 import org.kabiri.android.usbterminal.arduino.ArduinoSerialReceiver
+import org.kabiri.android.usbterminal.data.repository.IUsbRepository
 import org.kabiri.android.usbterminal.data.repository.IUserSettingRepository
 import org.kabiri.android.usbterminal.data.repository.USER_SETTING_PREFERENCES_NAME
+import org.kabiri.android.usbterminal.data.repository.UsbRepository
 import org.kabiri.android.usbterminal.data.repository.UserSettingRepository
+import org.kabiri.android.usbterminal.domain.ArduinoUseCase
 import org.kabiri.android.usbterminal.domain.GetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.domain.IArduinoUseCase
 import org.kabiri.android.usbterminal.domain.IGetCustomBaudRateUseCase
 import org.kabiri.android.usbterminal.domain.ISetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.domain.IUsbUseCase
 import org.kabiri.android.usbterminal.domain.SetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.domain.UsbUseCase
 import javax.inject.Singleton
 
 /**
@@ -71,14 +77,35 @@ internal class AppModule {
 
     @Provides
     fun provideUserSettingRepository(
-        dataStore: DataStore<Preferences>
+        dataStore: DataStore<Preferences>,
     ): IUserSettingRepository {
         return UserSettingRepository(dataStore)
     }
 
     @Provides
+    fun provideUsbRepository(
+        context: Context,
+    ): IUsbRepository {
+        return UsbRepository(context = context)
+    }
+
+    @Provides
+    fun provideUsbUseCase(
+        usbRepository: IUsbRepository,
+    ): IUsbUseCase {
+        return UsbUseCase(usbRepository = usbRepository)
+    }
+
+    @Provides
+    fun provideArduinoUseCase(
+        arduinoHelper: ArduinoHelper,
+    ): IArduinoUseCase {
+        return ArduinoUseCase(arduinoHelper = arduinoHelper)
+    }
+
+    @Provides
     fun provideGetCustomBaudRateUseCase(
-        userSettingRepository: IUserSettingRepository
+        userSettingRepository: IUserSettingRepository,
     ): IGetCustomBaudRateUseCase {
         return GetCustomBaudRateUseCase(userSettingRepository = userSettingRepository)
     }

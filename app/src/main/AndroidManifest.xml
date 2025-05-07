@@ -22,7 +22,8 @@
         <!-- sentry: replace the empty value with @string/sentry_dsn -->
         <meta-data android:name="io.sentry.dsn" android:value="" />
 
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -30,24 +31,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
-                android:resource="@xml/accessory_filter" />
         </activity>
-
-        <receiver
-            android:name="org.kabiri.android.usbterminal.arduino.ArduinoPermissionBroadcastReceiver"
-            android:exported="true"
-            tools:ignore="ExportedReceiver">
-            <intent-filter>
-                <action android:name="org.kabiri.android.usbterminal.ACTION_USB_PERMISSION"/>
-            </intent-filter>
-        </receiver>
-
     </application>
 
 </manifest>

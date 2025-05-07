@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.Constants
 import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.domain.IGetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.extensions.isOfficialArduinoBoard
 import org.kabiri.android.usbterminal.model.defaultBaudRate
 import javax.inject.Inject
 
@@ -73,29 +74,26 @@ internal class ArduinoHelper
     /**
      * register the Arduino Permission Broadcast Receiver.
      */
-    fun askForConnectionPermission() {
-        val usbDevices = usbManager.deviceList
-        _liveInfoOutput.value =
-            context.getString(R.string.helper_info_checking_attached_usb_devices)
-        if (usbDevices.isNotEmpty()) {
-            for (device in usbDevices) {
-                val deviceVID = device.value.vendorId
-                if (deviceVID == 0x2341) { // Arduino vendor ID
-                    connect(device)
-                } else {
-                    _liveErrorOutput.value =
-                        context.getString(R.string.helper_error_device_not_found)
-                    _liveErrorOutput.value =
-                        context.getString(R.string.helper_error_connecting_anyway)
-                    connect(device)
-                }
-            }
-        } else {
-            _liveErrorOutput.value = ""
-            _liveErrorOutput.value =
-                context.getString(R.string.helper_error_usb_devices_not_attached)
-        }
-    }
+//    fun askForConnectionPermission() {
+//        val usbDevices = usbManager.deviceList
+//        _liveInfoOutput.value =
+//            context.getString(R.string.helper_info_checking_attached_usb_devices)
+//        if (usbDevices.isNotEmpty()) {
+//            for (device in usbDevices) {
+//                if (!device.value.isOfficialArduinoBoard()) {
+//                    _liveErrorOutput.value =
+//                        context.getString(R.string.helper_error_device_not_found)
+//                    _liveErrorOutput.value =
+//                        context.getString(R.string.helper_error_connecting_anyway)
+//                }
+//                connect(device)
+//            }
+//        } else {
+//            _liveErrorOutput.value = ""
+//            _liveErrorOutput.value =
+//                context.getString(R.string.helper_error_usb_devices_not_attached)
+//        }
+//    }
 
     fun disconnect() {
         try {
@@ -114,25 +112,27 @@ internal class ArduinoHelper
         }
     }
 
-    private fun connect(device: MutableMap.MutableEntry<String, UsbDevice>) {
-        // register the broadcast receiver before requesting permission
-        ContextCompat.registerReceiver(
-            context,
-            arduinoPermReceiver,
-            IntentFilter(Constants.ACTION_USB_PERMISSION),
-            ContextCompat.RECEIVER_EXPORTED
-        )
-
-        // request permission to access the usb device
-        val permissionIntent = PendingIntent.getBroadcast(
-            context,
-            0,
-            Intent(Constants.ACTION_USB_PERMISSION),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        usbManager.requestPermission(device.value, permissionIntent)
-        _liveInfoOutput.value = context.getString(R.string.helper_info_usb_permission_requested)
-    }
+//    private fun connect(device: MutableMap.MutableEntry<String, UsbDevice>) {
+//        val permissionIntent = PendingIntent.getBroadcast(
+//            context,
+//            0,
+//            Intent(Constants.ACTION_USB_PERMISSION),
+//            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+//        )
+//
+//        ContextCompat.registerReceiver(
+//            context,
+//            arduinoPermReceiver,
+//            IntentFilter(Constants.ACTION_USB_PERMISSION),
+//            ContextCompat.RECEIVER_EXPORTED
+//        )
+//
+//        Log.i(TAG, "receiver:\n$arduinoPermReceiver")
+//        Log.i(TAG, "usb device before request permission:\n${device.value}")
+//        usbManager.requestPermission(device.value, permissionIntent)
+//
+//        _liveInfoOutput.value = context.getString(R.string.helper_info_usb_permission_requested)
+//    }
 
     /**
      * use this live object in activity

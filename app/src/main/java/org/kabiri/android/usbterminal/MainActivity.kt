@@ -54,11 +54,6 @@ class MainActivity : AppCompatActivity() {
         // make the text view scrollable:
         tvOutput.movementMethod = ScrollingMovementMethod()
 
-        // open the device and port when the permission is granted by user.
-        viewModel.getGrantedDevice().observe(this) { device ->
-            viewModel.openDeviceAndPort(device)
-        }
-
         lifecycleScope.launchWhenResumed {
             viewModel.getLiveOutput().collect {
                 val spannable = SpannableString(it.text)
@@ -106,7 +101,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.actionConnect -> {
-                viewModel.askForConnectionPermission()
+                viewModel.connect()
                 true
             }
             R.id.actionDisconnect -> {

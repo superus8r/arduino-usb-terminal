@@ -51,7 +51,7 @@
     <string name="helper_info_baud_rate_applying">Baud rate: %d (can be changed in settings)\n</string>
     <string name="helper_info_baud_rate_applied">Baud rate applied successfully: %d\n</string>
 
-    <string name="breceiver_info_usb_permission_granted">"Permission granted for: \n"</string>
+    <string name="breceiver_info_usb_permission_granted">"USB Permission granted for: \n"</string>
     <string name="breceiver_error_usb_permission_denied">permission denied for device:\n</string>
     <string name="breceiver_info_device_attached">Device attached\n</string>
     <string name="breceiver_info_device_detached">Device detached\n</string>

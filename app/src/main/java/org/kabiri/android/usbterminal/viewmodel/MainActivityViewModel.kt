@@ -1,9 +1,9 @@
 package org.kabiri.android.usbterminal.viewmodel
 
 import android.hardware.usb.UsbDevice
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +12,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.kabiri.android.usbterminal.arduino.ArduinoHelper
+import org.kabiri.android.usbterminal.domain.IArduinoUseCase
+import org.kabiri.android.usbterminal.domain.IUsbUseCase
+import org.kabiri.android.usbterminal.model.ArduinoDevice.ArduinoType.CLONE
+import org.kabiri.android.usbterminal.model.ArduinoDevice.ArduinoType.OFFICIAL
 import org.kabiri.android.usbterminal.model.OutputText
 import javax.inject.Inject
 
@@ -22,24 +25,60 @@ import javax.inject.Inject
 @HiltViewModel
 internal class MainActivityViewModel
 @Inject constructor(
-    private val arduinoHelper: ArduinoHelper,
+    private val arduinoUseCase: IArduinoUseCase,
+    private val usbUseCase: IUsbUseCase
 ): ViewModel() {
+
+    init {
+        // Subscribe to USB device changes.
+        viewModelScope.launch {
+            usbUseCase.usbDevice.collect { device ->
+                device?.let { openDeviceAndPort(it) }
+            }
+        }
+    }
 
     private val _outputLive = MutableStateFlow("")
     val output: StateFlow<String>
         get() = _outputLive
     val output2 = SnapshotStateList<OutputText>()
 
-    fun askForConnectionPermission() = arduinoHelper.askForConnectionPermission()
+    fun connect() {
+        usbUseCase.scanForArduinoDevices { result ->
+            if (result == null) return@scanForArduinoDevices
+            when (result.type) {
+                OFFICIAL -> {
+//                    _liveErrorOutput.value =
+//                        context.getString(R.string.helper_error_device_not_found)
+//                    _liveErrorOutput.value =
+//                        context.getString(R.string.helper_error_connecting_anyway)
+                    usbUseCase.requestPermission(result.device)
+                }
+                CLONE -> {
+//                    _liveErrorOutput.value = ""
+//                    _liveErrorOutput.value =
+//                        context.getString(R.string.helper_error_usb_devices_not_attached)
+                    usbUseCase.requestPermission(result.device)
+                }
+                else -> {
 
-    fun disconnect() = arduinoHelper.disconnect()
-    fun getGrantedDevice() = arduinoHelper.getGrantedDevice()
-    fun openDeviceAndPort(device: UsbDevice) = viewModelScope.launch {
-        arduinoHelper.openDeviceAndPort(device)
+                }
+            }
+        }
     }
+
+    fun disconnect() {
+        usbUseCase.disconnect()
+        arduinoUseCase.disconnect()
+    }
+
+    fun openDeviceAndPort(device: UsbDevice) = viewModelScope.launch {
+        arduinoUseCase.openDeviceAndPort(device)
+    }
+
     fun serialWrite(command: String): Boolean {
         _outputLive.value = "${output.value}\n$command\n"
-        return arduinoHelper.serialWrite(command)
+        return arduinoUseCase.serialWrite(command)
     }
 
     /**
@@ -48,9 +87,9 @@ internal class MainActivityViewModel
      */
     suspend fun getLiveOutput(): StateFlow<OutputText> {
 
-        val serialOutput = arduinoHelper.output
-        val serialInfoOutput = arduinoHelper.infoOutput
-        val serialErrorOutput = arduinoHelper.errorOutput
+        val serialOutput = arduinoUseCase.output
+        val serialInfoOutput = arduinoUseCase.infoOutput
+        val serialErrorOutput = arduinoUseCase.errorOutput
 
         val liveSpannedOutput: Flow<OutputText> = serialOutput.map {
             _outputLive.value = _outputLive.value + it
