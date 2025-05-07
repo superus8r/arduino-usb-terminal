@@ -1,6 +1,7 @@
 package org.kabiri.android.usbterminal.extensions
 
 import android.hardware.usb.UsbDevice
+import org.kabiri.android.usbterminal.model.ArduinoDevice.ArduinoType
 
 internal fun UsbDevice.isOfficialArduinoBoard(): Boolean {
     val vendorId = this.vendorId
@@ -23,5 +24,13 @@ internal fun UsbDevice.isCloneArduinoBoard(): Boolean {
         0x1A86 -> productId in listOf(0x7523, 0x7525)
         0x0403 -> productId in listOf(0x6001, 0x6015)
         else -> false
+    }
+}
+
+internal fun UsbDevice.getArduinoType(): ArduinoType? {
+    return when {
+        isOfficialArduinoBoard() -> ArduinoType.OFFICIAL
+        isCloneArduinoBoard() -> ArduinoType.CLONE
+        else -> null
     }
 }

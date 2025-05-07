@@ -7,14 +7,20 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.domain.IArduinoUseCase
 import org.kabiri.android.usbterminal.domain.IUsbUseCase
-import org.kabiri.android.usbterminal.model.ArduinoDevice.ArduinoType.CLONE
+import org.kabiri.android.usbterminal.extensions.IResourceProvider
+import org.kabiri.android.usbterminal.extensions.getArduinoType
+import org.kabiri.android.usbterminal.extensions.isCloneArduinoBoard
+import org.kabiri.android.usbterminal.extensions.isOfficialArduinoBoard
 import org.kabiri.android.usbterminal.model.ArduinoDevice.ArduinoType.OFFICIAL
 import org.kabiri.android.usbterminal.model.OutputText
 import javax.inject.Inject
@@ -26,7 +32,8 @@ import javax.inject.Inject
 internal class MainActivityViewModel
 @Inject constructor(
     private val arduinoUseCase: IArduinoUseCase,
-    private val usbUseCase: IUsbUseCase
+    private val usbUseCase: IUsbUseCase,
+    private val resourceProvider: IResourceProvider,
 ): ViewModel() {
 
     init {
@@ -38,31 +45,45 @@ internal class MainActivityViewModel
         }
     }
 
+    private val _infoMessageFlow = MutableStateFlow("")
+    val infoMessage: StateFlow<String>
+        get() = _infoMessageFlow
+
+    private val _errorMessageFlow = MutableStateFlow("")
+    val errorMessage: StateFlow<String>
+        get() = _errorMessageFlow
+
     private val _outputLive = MutableStateFlow("")
     val output: StateFlow<String>
         get() = _outputLive
     val output2 = SnapshotStateList<OutputText>()
 
     fun connect() {
-        usbUseCase.scanForArduinoDevices { result ->
-            if (result == null) return@scanForArduinoDevices
-            when (result.type) {
-                OFFICIAL -> {
-//                    _liveErrorOutput.value =
-//                        context.getString(R.string.helper_error_device_not_found)
-//                    _liveErrorOutput.value =
-//                        context.getString(R.string.helper_error_connecting_anyway)
-                    usbUseCase.requestPermission(result.device)
-                }
-                CLONE -> {
-//                    _liveErrorOutput.value = ""
-//                    _liveErrorOutput.value =
-//                        context.getString(R.string.helper_error_usb_devices_not_attached)
-                    usbUseCase.requestPermission(result.device)
-                }
-                else -> {
+        val usbDeviceList = usbUseCase.scanForUsbDevices()
+        if (usbDeviceList.isEmpty()) {
+            _errorMessageFlow.value =
+                resourceProvider.getString(R.string.helper_error_usb_devices_not_attached)
+            return // no usb devices found
+        }
+        val device = usbDeviceList.firstOrNull { it.isOfficialArduinoBoard() || it.isCloneArduinoBoard() }
+        if (device == null) {
+            _errorMessageFlow.value =
+                resourceProvider.getString(R.string.helper_error_arduino_device_not_found)
+            _infoMessageFlow.value =
+                resourceProvider.getString(R.string.helper_error_connecting_anyway)
 
-                }
+            // request permission for the unknown device anyways
+            return usbUseCase.requestPermission(usbDeviceList.first())
+        }
+        when (device.getArduinoType()) {
+            OFFICIAL -> {
+                usbUseCase.requestPermission(device)
+            }
+
+            else -> {
+                _infoMessageFlow.value =
+                    resourceProvider.getString(R.string.helper_error_connecting_anyway)
+                usbUseCase.requestPermission(device)
             }
         }
     }
@@ -85,6 +106,27 @@ internal class MainActivityViewModel
      * Transforms the outputs from ArduinoHelper into spannable text
      * and merges them in one single flow
      */
+//    suspend fun getLiveOutput(): StateFlow<OutputText> {
+//
+//        fun Flow<String>.toOutput(type: OutputText.OutputType): Flow<OutputText> =
+//            this.map { text ->
+//                _outputLive.value += text
+//                OutputText(text, type).also { output2.add(it) }
+//            }
+//
+//        // Map each source flow
+//        val normalFlow = arduinoUseCase.messageFlow.toOutput(OutputText.OutputType.TYPE_NORMAL)
+//        val infoFlow = arduinoUseCase.infoMessageFlow.toOutput(OutputText.OutputType.TYPE_INFO)
+//        val errorFlow = arduinoUseCase.errorMessageFlow.toOutput(OutputText.OutputType.TYPE_ERROR)
+//
+//        // Merge flows into a single stream and expose as StateFlow
+//        return merge(normalFlow, infoFlow, errorFlow)
+//            .stateIn(
+//                scope = viewModelScope,
+//                started = SharingStarted.Lazily,
+//                initialValue = OutputText("", OutputText.OutputType.TYPE_NORMAL)
+//            )
+//    }
     suspend fun getLiveOutput(): StateFlow<OutputText> {
 
         val serialOutput = arduinoUseCase.messageFlow
@@ -112,9 +154,17 @@ internal class MainActivityViewModel
             return@map outputText
         }
 
-        return liveSpannedOutput
-            .combine(liveSpannedInfoOutput) { a, b -> b }
-            .combine(liveSpannedErrorOutput) { a, b -> b }
-            .stateIn(viewModelScope)
+        return combine(
+            liveSpannedOutput,
+            liveSpannedInfoOutput,
+            liveSpannedErrorOutput
+        ) { normal, info, error ->
+            // Prioritize error output over info, then normal.
+            when {
+                error.text.isNotEmpty() -> error
+                info.text.isNotEmpty() -> info
+                else -> normal
+            }
+        }.stateIn(viewModelScope)
     }
 }

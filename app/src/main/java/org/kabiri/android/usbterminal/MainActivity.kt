@@ -55,15 +55,7 @@ class MainActivity : AppCompatActivity() {
         tvOutput.movementMethod = ScrollingMovementMethod()
 
         lifecycleScope.launchWhenResumed {
-            viewModel.getLiveOutput().collect {
-                val spannable = SpannableString(it.text)
-                spannable.setSpan(
-                    it.getAppearance(this@MainActivity),
-                    0,
-                    it.text.length,
-                    SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-            }
+            viewModel.getLiveOutput()
         }
 
         lifecycleScope.launchWhenResumed {

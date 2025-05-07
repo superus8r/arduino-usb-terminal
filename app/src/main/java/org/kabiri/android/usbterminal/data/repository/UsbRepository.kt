@@ -1,23 +1,20 @@
 package org.kabiri.android.usbterminal.data.repository
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
-import android.app.PendingIntent
-import android.content.IntentFilter
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.kabiri.android.usbterminal.Constants
-import org.kabiri.android.usbterminal.extensions.isCloneArduinoBoard
-import org.kabiri.android.usbterminal.extensions.isOfficialArduinoBoard
-import org.kabiri.android.usbterminal.model.ArduinoDevice
 import javax.inject.Inject
 
 internal interface IUsbRepository {
     val usbDevice: StateFlow<UsbDevice?>
-    fun scanForArduinoDevices(onResult: (device: ArduinoDevice?) -> Unit)
+    fun scanForArduinoDevices(): List<UsbDevice>
     fun requestUsbPermission(device: UsbDevice)
     fun onPermissionResult(device: UsbDevice?, granted: Boolean)
     fun disconnect()
@@ -32,15 +29,17 @@ internal class UsbRepository
     private val _usbDevice = MutableStateFlow<UsbDevice?>(null)
     override val usbDevice: StateFlow<UsbDevice?> get() = _usbDevice
 
-    override fun scanForArduinoDevices(onResult: (device: ArduinoDevice?) -> Unit) {
+    override fun scanForArduinoDevices(): List<UsbDevice> {
         val deviceList = usbManager.deviceList
-        val device = deviceList.values.firstOrNull { usbDevice ->
-            usbDevice.isOfficialArduinoBoard() || usbDevice.isCloneArduinoBoard()
-        }
-        if (device != null) {
-            return onResult(ArduinoDevice(device))
-        }
-        return onResult(null)
+        return deviceList.values.toList()
+
+//        firstOrNull { usbDevice ->
+//            usbDevice.isOfficialArduinoBoard() || usbDevice.isCloneArduinoBoard()
+//        }
+//        if (device != null) {
+//            return ArduinoDevice(device)
+//        }
+//        return null
     }
 
     override fun requestUsbPermission(device: UsbDevice) {

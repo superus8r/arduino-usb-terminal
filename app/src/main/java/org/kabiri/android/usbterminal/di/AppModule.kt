@@ -27,6 +27,8 @@ import org.kabiri.android.usbterminal.domain.ISetCustomBaudRateUseCase
 import org.kabiri.android.usbterminal.domain.IUsbUseCase
 import org.kabiri.android.usbterminal.domain.SetCustomBaudRateUseCase
 import org.kabiri.android.usbterminal.domain.UsbUseCase
+import org.kabiri.android.usbterminal.extensions.IResourceProvider
+import org.kabiri.android.usbterminal.extensions.ResourceProvider
 import javax.inject.Singleton
 
 /**
@@ -42,25 +44,16 @@ internal class AppModule {
     ): Context = app.applicationContext
 
     @Provides
+    fun provideResourceProvider(
+        @ApplicationContext
+        context: Context
+    ): IResourceProvider = ResourceProvider(context)
+
+    @Provides
     fun provideArduinoPermissionBroadcastReceiver() = ArduinoPermissionBroadcastReceiver()
 
     @Provides
     fun providesArduinoSerialReceiver() = ArduinoSerialReceiver()
-
-    @Provides
-    fun providesArduinoHelper(
-        context: Context,
-        arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
-        arduinoSerialReceiver: ArduinoSerialReceiver,
-        getCustomBaudRateUseCase: IGetCustomBaudRateUseCase,
-    ): ArduinoRepository {
-        return ArduinoRepository(
-            context = context,
-            arduinoPermReceiver = arduinoPermReceiver,
-            arduinoSerialReceiver = arduinoSerialReceiver,
-            getBaudRate = getCustomBaudRateUseCase,
-        )
-    }
 
     @Singleton
     @Provides
@@ -87,6 +80,21 @@ internal class AppModule {
         context: Context,
     ): IUsbRepository {
         return UsbRepository(context = context)
+    }
+
+    @Provides
+    fun providesArduinoRepository(
+        context: Context,
+        arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
+        arduinoSerialReceiver: ArduinoSerialReceiver,
+        getCustomBaudRateUseCase: IGetCustomBaudRateUseCase,
+    ): ArduinoRepository {
+        return ArduinoRepository(
+            context = context,
+            arduinoPermReceiver = arduinoPermReceiver,
+            arduinoSerialReceiver = arduinoSerialReceiver,
+            getBaudRate = getCustomBaudRateUseCase,
+        )
     }
 
     @Provides
