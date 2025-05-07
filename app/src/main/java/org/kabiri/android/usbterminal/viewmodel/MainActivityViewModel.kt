@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -54,6 +55,7 @@ internal class MainActivityViewModel
     private val _outputLive = MutableStateFlow("")
     val output: StateFlow<String>
         get() = _outputLive
+
     val output2 = SnapshotStateList<OutputText>()
 
     fun connect() {
@@ -104,28 +106,21 @@ internal class MainActivityViewModel
      * Transforms the outputs from ArduinoHelper into spannable text
      * and merges them in one single flow
      */
-//    suspend fun getLiveOutput(): StateFlow<OutputText> {
-//
-//        fun Flow<String>.toOutput(type: OutputText.OutputType): Flow<OutputText> =
-//            this.map { text ->
-//                _outputLive.value += text
-//                OutputText(text, type).also { output2.add(it) }
-//            }
-//
-//        // Map each source flow
-//        val normalFlow = arduinoUseCase.messageFlow.toOutput(OutputText.OutputType.TYPE_NORMAL)
-//        val infoFlow = arduinoUseCase.infoMessageFlow.toOutput(OutputText.OutputType.TYPE_INFO)
-//        val errorFlow = arduinoUseCase.errorMessageFlow.toOutput(OutputText.OutputType.TYPE_ERROR)
-//
-//        // Merge flows into a single stream and expose as StateFlow
-//        return merge(normalFlow, infoFlow, errorFlow)
-//            .stateIn(
-//                scope = viewModelScope,
-//                started = SharingStarted.Lazily,
-//                initialValue = OutputText("", OutputText.OutputType.TYPE_NORMAL)
-//            )
-//    }
     suspend fun getLiveOutput(): StateFlow<OutputText> {
+
+        val infoOutput: Flow<OutputText> = infoMessage.map {
+            _outputLive.value = _outputLive.value + it
+            val outputText = OutputText(it, OutputText.OutputType.TYPE_INFO)
+            output2.add(outputText)
+            return@map outputText
+        }
+
+        val errorOutput: Flow<OutputText> = errorMessage.map {
+            _outputLive.value = _outputLive.value + it
+            val outputText = OutputText(it, OutputText.OutputType.TYPE_ERROR)
+            output2.add(outputText)
+            return@map outputText
+        }
 
         val arduinoDefaultOutput: Flow<OutputText> = arduinoUseCase.messageFlow.map {
             _outputLive.value = _outputLive.value + it
@@ -149,15 +144,19 @@ internal class MainActivityViewModel
         }
 
         return combine(
+            infoOutput,
+            errorOutput,
             arduinoDefaultOutput,
             arduinoInfoOutput,
-            arduinoErrorOutput
-        ) { normal, info, error ->
+            arduinoErrorOutput,
+        ) { info, error, arduinoDefault, arduinoInfo, arduinoError ->
             // Prioritize error output over info, then normal.
             when {
                 error.text.isNotEmpty() -> error
                 info.text.isNotEmpty() -> info
-                else -> normal
+                arduinoError.text.isNotEmpty() -> arduinoError
+                arduinoInfo.text.isNotEmpty() -> arduinoInfo
+                else -> arduinoDefault
             }
         }.stateIn(viewModelScope)
     }
