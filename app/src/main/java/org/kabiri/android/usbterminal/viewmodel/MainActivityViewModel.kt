@@ -83,13 +83,13 @@ internal class MainActivityViewModel
 
     /**
      * Transforms the outputs from ArduinoHelper into spannable text
-     * and merges them in one single live data.
+     * and merges them in one single flow
      */
     suspend fun getLiveOutput(): StateFlow<OutputText> {
 
-        val serialOutput = arduinoUseCase.output
-        val serialInfoOutput = arduinoUseCase.infoOutput
-        val serialErrorOutput = arduinoUseCase.errorOutput
+        val serialOutput = arduinoUseCase.messageFlow
+        val serialInfoOutput = arduinoUseCase.infoMessageFlow
+        val serialErrorOutput = arduinoUseCase.errorMessageFlow
 
         val liveSpannedOutput: Flow<OutputText> = serialOutput.map {
             _outputLive.value = _outputLive.value + it

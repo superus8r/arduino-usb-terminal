@@ -5,13 +5,17 @@ import kotlinx.coroutines.flow.Flow
 import org.kabiri.android.usbterminal.arduino.ArduinoHelper
 import javax.inject.Inject
 
+/**
+ * Created by Ali Kabiri on 07.05.2025.
+ */
+
 internal interface IArduinoUseCase {
     fun openDeviceAndPort(device: UsbDevice)
     fun disconnect()
     fun serialWrite(command: String): Boolean
-    val output: Flow<String>
-    val infoOutput: Flow<String>
-    val errorOutput: Flow<String>
+    val messageFlow: Flow<String>
+    val infoMessageFlow: Flow<String>
+    val errorMessageFlow: Flow<String>
 }
 
 internal class ArduinoUseCase
@@ -19,7 +23,6 @@ internal class ArduinoUseCase
     private val arduinoHelper: ArduinoHelper
 ) : IArduinoUseCase {
     override fun openDeviceAndPort(device: UsbDevice) {
-        // Delegate the connection logic to the helper
         arduinoHelper.openDeviceAndPort(device)
     }
 
@@ -31,9 +34,9 @@ internal class ArduinoUseCase
         return arduinoHelper.serialWrite(command)
     }
 
-    override val output get() = arduinoHelper.output
+    override val messageFlow get() = arduinoHelper.messageFlow
 
-    override val infoOutput get() = arduinoHelper.infoOutput
+    override val infoMessageFlow get() = arduinoHelper.infoMessageFlow
 
-    override val errorOutput get() = arduinoHelper.errorOutput
+    override val errorMessageFlow get() = arduinoHelper.errorMessageFlow
 }
