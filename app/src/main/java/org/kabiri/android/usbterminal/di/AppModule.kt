@@ -11,7 +11,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import org.kabiri.android.usbterminal.arduino.ArduinoHelper
+import org.kabiri.android.usbterminal.arduino.ArduinoRepository
 import org.kabiri.android.usbterminal.arduino.ArduinoPermissionBroadcastReceiver
 import org.kabiri.android.usbterminal.arduino.ArduinoSerialReceiver
 import org.kabiri.android.usbterminal.data.repository.IUsbRepository
@@ -53,8 +53,8 @@ internal class AppModule {
         arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
         arduinoSerialReceiver: ArduinoSerialReceiver,
         getCustomBaudRateUseCase: IGetCustomBaudRateUseCase,
-    ): ArduinoHelper {
-        return ArduinoHelper(
+    ): ArduinoRepository {
+        return ArduinoRepository(
             context = context,
             arduinoPermReceiver = arduinoPermReceiver,
             arduinoSerialReceiver = arduinoSerialReceiver,
@@ -98,9 +98,9 @@ internal class AppModule {
 
     @Provides
     fun provideArduinoUseCase(
-        arduinoHelper: ArduinoHelper,
+        arduinoRepository: ArduinoRepository,
     ): IArduinoUseCase {
-        return ArduinoUseCase(arduinoHelper = arduinoHelper)
+        return ArduinoUseCase(arduinoRepository = arduinoRepository)
     }
 
     @Provides

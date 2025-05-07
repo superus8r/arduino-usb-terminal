@@ -2,7 +2,7 @@ package org.kabiri.android.usbterminal.domain
 
 import android.hardware.usb.UsbDevice
 import kotlinx.coroutines.flow.Flow
-import org.kabiri.android.usbterminal.arduino.ArduinoHelper
+import org.kabiri.android.usbterminal.arduino.ArduinoRepository
 import javax.inject.Inject
 
 /**
@@ -20,23 +20,23 @@ internal interface IArduinoUseCase {
 
 internal class ArduinoUseCase
 @Inject constructor(
-    private val arduinoHelper: ArduinoHelper
+    private val arduinoRepository: ArduinoRepository
 ) : IArduinoUseCase {
     override fun openDeviceAndPort(device: UsbDevice) {
-        arduinoHelper.openDeviceAndPort(device)
+        arduinoRepository.openDeviceAndPort(device)
     }
 
     override fun disconnect() {
-        arduinoHelper.disconnect()
+        arduinoRepository.disconnect()
     }
 
     override fun serialWrite(command: String): Boolean {
-        return arduinoHelper.serialWrite(command)
+        return arduinoRepository.serialWrite(command)
     }
 
-    override val messageFlow get() = arduinoHelper.messageFlow
+    override val messageFlow get() = arduinoRepository.messageFlow
 
-    override val infoMessageFlow get() = arduinoHelper.infoMessageFlow
+    override val infoMessageFlow get() = arduinoRepository.infoMessageFlow
 
-    override val errorMessageFlow get() = arduinoHelper.errorMessageFlow
+    override val errorMessageFlow get() = arduinoRepository.errorMessageFlow
 }

@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 private const val TAG = "ArduinoHelper"
 
-internal class ArduinoHelper
+internal class ArduinoRepository
 @Inject constructor(
     private val context: Context,
     private val arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
