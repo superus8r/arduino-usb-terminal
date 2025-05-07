@@ -32,14 +32,6 @@ internal class UsbRepository
     override fun scanForArduinoDevices(): List<UsbDevice> {
         val deviceList = usbManager.deviceList
         return deviceList.values.toList()
-
-//        firstOrNull { usbDevice ->
-//            usbDevice.isOfficialArduinoBoard() || usbDevice.isCloneArduinoBoard()
-//        }
-//        if (device != null) {
-//            return ArduinoDevice(device)
-//        }
-//        return null
     }
 
     override fun requestUsbPermission(device: UsbDevice) {
