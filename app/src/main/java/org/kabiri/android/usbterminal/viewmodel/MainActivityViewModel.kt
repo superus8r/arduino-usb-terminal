@@ -7,11 +7,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.R
@@ -133,21 +131,21 @@ internal class MainActivityViewModel
         val serialInfoOutput = arduinoUseCase.infoMessageFlow
         val serialErrorOutput = arduinoUseCase.errorMessageFlow
 
-        val liveSpannedOutput: Flow<OutputText> = serialOutput.map {
+        val arduinoDefaultOutput: Flow<OutputText> = serialOutput.map {
             _outputLive.value = _outputLive.value + it
             val outputText = OutputText(it, OutputText.OutputType.TYPE_NORMAL)
             output2.add(outputText)
             return@map outputText
         }
 
-        val liveSpannedInfoOutput: Flow<OutputText> = serialInfoOutput.map {
+        val arduinoInfoOutput: Flow<OutputText> = serialInfoOutput.map {
             _outputLive.value = _outputLive.value + it
             val outputText = OutputText(it, OutputText.OutputType.TYPE_INFO)
             output2.add(outputText)
             return@map outputText
         }
 
-        val liveSpannedErrorOutput: Flow<OutputText> = serialErrorOutput.map {
+        val arduinoErrorOutput: Flow<OutputText> = serialErrorOutput.map {
             _outputLive.value = _outputLive.value + it
             val outputText = OutputText(it, OutputText.OutputType.TYPE_ERROR)
             output2.add(outputText)
@@ -155,9 +153,9 @@ internal class MainActivityViewModel
         }
 
         return combine(
-            liveSpannedOutput,
-            liveSpannedInfoOutput,
-            liveSpannedErrorOutput
+            arduinoDefaultOutput,
+            arduinoInfoOutput,
+            arduinoErrorOutput
         ) { normal, info, error ->
             // Prioritize error output over info, then normal.
             when {
