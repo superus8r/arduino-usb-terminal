@@ -127,25 +127,21 @@ internal class MainActivityViewModel
 //    }
     suspend fun getLiveOutput(): StateFlow<OutputText> {
 
-        val serialOutput = arduinoUseCase.messageFlow
-        val serialInfoOutput = arduinoUseCase.infoMessageFlow
-        val serialErrorOutput = arduinoUseCase.errorMessageFlow
-
-        val arduinoDefaultOutput: Flow<OutputText> = serialOutput.map {
+        val arduinoDefaultOutput: Flow<OutputText> = arduinoUseCase.messageFlow.map {
             _outputLive.value = _outputLive.value + it
             val outputText = OutputText(it, OutputText.OutputType.TYPE_NORMAL)
             output2.add(outputText)
             return@map outputText
         }
 
-        val arduinoInfoOutput: Flow<OutputText> = serialInfoOutput.map {
+        val arduinoInfoOutput: Flow<OutputText> = arduinoUseCase.infoMessageFlow.map {
             _outputLive.value = _outputLive.value + it
             val outputText = OutputText(it, OutputText.OutputType.TYPE_INFO)
             output2.add(outputText)
             return@map outputText
         }
 
-        val arduinoErrorOutput: Flow<OutputText> = serialErrorOutput.map {
+        val arduinoErrorOutput: Flow<OutputText> = arduinoUseCase.errorMessageFlow.map {
             _outputLive.value = _outputLive.value + it
             val outputText = OutputText(it, OutputText.OutputType.TYPE_ERROR)
             output2.add(outputText)
