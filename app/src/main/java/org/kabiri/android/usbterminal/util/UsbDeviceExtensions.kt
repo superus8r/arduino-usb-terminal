@@ -3,6 +3,12 @@ package org.kabiri.android.usbterminal.util
 import android.hardware.usb.UsbDevice
 import org.kabiri.android.usbterminal.model.ArduinoDevice.ArduinoType
 
+/**
+ * Created by Ali Kabiri on 07.05.2025.
+ *
+ * This file contains extension functions for the UsbDevice class to identify Arduino boards.
+ */
+
 internal fun UsbDevice.isOfficialArduinoBoard(): Boolean {
     val vendorId = this.vendorId
     val productId = this.productId
