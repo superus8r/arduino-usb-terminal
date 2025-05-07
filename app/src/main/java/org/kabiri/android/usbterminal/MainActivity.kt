@@ -18,6 +18,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.extensions.scrollToLastLine
 import org.kabiri.android.usbterminal.ui.setting.SettingModalBottomSheet
 import org.kabiri.android.usbterminal.ui.setting.SettingViewModel
@@ -53,11 +54,8 @@ class MainActivity : AppCompatActivity() {
         // make the text view scrollable:
         tvOutput.movementMethod = ScrollingMovementMethod()
 
-        lifecycleScope.launchWhenResumed {
+        lifecycleScope.launch {
             viewModel.getLiveOutput()
-        }
-
-        lifecycleScope.launchWhenResumed {
             viewModel.output.collect {
                 tvOutput.apply {
                     text = it
