@@ -1,7 +1,6 @@
 package org.kabiri.android.usbterminal
 
 import android.os.Bundle
-import android.text.SpannableString
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.KeyEvent
