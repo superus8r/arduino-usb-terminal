@@ -34,15 +34,6 @@ internal class MainActivityViewModel
     private val resourceProvider: IResourceProvider,
 ): ViewModel() {
 
-    init {
-        // Subscribe to USB device changes.
-        viewModelScope.launch {
-            usbUseCase.usbDevice.collect { device ->
-                device?.let { openDeviceAndPort(it) }
-            }
-        }
-    }
-
     private val _infoMessageFlow = MutableStateFlow("")
     val infoMessage: StateFlow<String>
         get() = _infoMessageFlow
@@ -56,6 +47,16 @@ internal class MainActivityViewModel
         get() = _outputLive
 
     val output2 = SnapshotStateList<OutputText>()
+
+    init {
+        // Subscribe to USB device changes.
+        viewModelScope.launch {
+            usbUseCase.usbDevice.collect { device ->
+                _infoMessageFlow.value = "device discovered: ${device?.vendorId}\n"
+                device?.let { openDeviceAndPort(it) }
+            }
+        }
+    }
 
     fun connect() {
         val usbDeviceList = usbUseCase.scanForUsbDevices()
@@ -121,6 +122,13 @@ internal class MainActivityViewModel
             return@map outputText
         }
 
+        val usbInfoOutput: Flow<OutputText> = usbUseCase.infoMessageFlow.map {
+            _outputLive.value = _outputLive.value + it
+            val outputText = OutputText(it, OutputText.OutputType.TYPE_INFO)
+            output2.add(outputText)
+            return@map outputText
+        }
+
         val arduinoDefaultOutput: Flow<OutputText> = arduinoUseCase.messageFlow.map {
             _outputLive.value = _outputLive.value + it
             val outputText = OutputText(it, OutputText.OutputType.TYPE_NORMAL)
@@ -157,6 +165,14 @@ internal class MainActivityViewModel
                 arduinoInfo.text.isNotEmpty() -> arduinoInfo
                 else -> arduinoDefault
             }
-        }.stateIn(viewModelScope)
+        }.combine(usbInfoOutput) { outputText, usbInfo ->
+            // Prioritize USB info output over the rest.
+            if (usbInfo.text.isNotEmpty()) {
+                usbInfo
+            } else {
+                outputText
+            }
+        }
+            .stateIn(viewModelScope)
     }
 }

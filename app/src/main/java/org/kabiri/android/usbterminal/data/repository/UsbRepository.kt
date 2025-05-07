@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.kabiri.android.usbterminal.Constants
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 internal interface IUsbRepository {
     val usbDevice: StateFlow<UsbDevice?>
+    val infoMessageFlow: Flow<String>
     fun scanForArduinoDevices(): List<UsbDevice>
     fun requestUsbPermission(device: UsbDevice)
     fun onPermissionResult(device: UsbDevice?, granted: Boolean)
@@ -28,6 +30,10 @@ internal class UsbRepository
 
     private val _usbDevice = MutableStateFlow<UsbDevice?>(null)
     override val usbDevice: StateFlow<UsbDevice?> get() = _usbDevice
+
+    private val _infoMessageFlow = MutableStateFlow("")
+    override val infoMessageFlow: Flow<String>
+        get() = _infoMessageFlow
 
     override fun scanForArduinoDevices(): List<UsbDevice> {
         val deviceList = usbManager.deviceList
@@ -52,6 +58,7 @@ internal class UsbRepository
     }
 
     override fun onPermissionResult(device: UsbDevice?, granted: Boolean) {
+        _infoMessageFlow.value = "Permission result: ${device?.vendorId}, granted: $granted\n"
         if (granted && device != null) {
             _usbDevice.value = device
         } else {
