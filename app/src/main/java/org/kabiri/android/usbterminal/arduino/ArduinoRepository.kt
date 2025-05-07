@@ -18,7 +18,6 @@ import org.kabiri.android.usbterminal.domain.IGetCustomBaudRateUseCase
 import org.kabiri.android.usbterminal.model.defaultBaudRate
 import javax.inject.Inject
 
-
 /**
  * Created by Ali Kabiri on 13.04.20.
  *
@@ -27,7 +26,7 @@ import javax.inject.Inject
  *  registers the Arduino Permission Broadcast Receiver.
  */
 
-private const val TAG = "ArduinoHelper"
+private const val TAG = "ArduinoRepository"
 
 internal class ArduinoRepository
 @Inject constructor(
