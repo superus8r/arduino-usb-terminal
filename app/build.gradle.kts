@@ -81,6 +81,13 @@ android {
         }
     }
 
+    packaging {
+        resources {
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
+        }
+    }
+
     namespace = "org.kabiri.android.usbterminal"
 
 }
@@ -203,6 +210,7 @@ val firebase_bom_version: String by project
 val hilt_version: String by project
 val coroutines_version: String by project
 val material_version: String by project
+val mockk_version: String by project
 dependencies {
 
     implementation("androidx.appcompat:appcompat:1.7.0")
@@ -239,34 +247,40 @@ dependencies {
     // Other UI Libraries
     implementation("com.google.android.material:material:$material_version")
 
-
     // data
     implementation("androidx.datastore:datastore-preferences:1.1.4")
 
-    // hilt testing
-    // more info:
-    // https://developer.android.com/training/dependency-injection/hilt-testing
-    androidTestImplementation("com.google.dagger:hilt-android-testing:$hilt_version")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hilt_version")
-
     // unit test libs
     testImplementation("junit:junit:4.13.2")
-    testImplementation("com.google.truth:truth:1.1.3")
 
     // instrumented test libs
     androidTestImplementation("androidx.test:core:1.6.1")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.ext:junit-ktx:1.2.1")
-    androidTestImplementation("androidx.test.ext:truth:1.6.0")
-    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
-    // Espresso
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+
     // Hamcrest for view matching
     androidTestImplementation("org.hamcrest:hamcrest-library:2.2")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test:rules:1.6.1")
 
-    // 3rd party
+    // coroutine testing
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
+
+    // google truth for assertions
+    testImplementation("com.google.truth:truth:1.1.3")
+    androidTestImplementation("androidx.test.ext:truth:1.6.0")
+
+    // mockk
+    testImplementation("io.mockk:mockk-android:$mockk_version")
+    testImplementation("io.mockk:mockk-agent:$mockk_version")
+    androidTestImplementation("io.mockk:mockk-android:$mockk_version")
+    androidTestImplementation("io.mockk:mockk-agent:$mockk_version")
+
+    // hilt testing - https://developer.android.com/training/dependency-injection/hilt-testing
+    androidTestImplementation("com.google.dagger:hilt-android-testing:$hilt_version")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hilt_version")
 
     // Android Serial Controller
     implementation("com.github.superus8r:UsbSerial:6.1.1")
