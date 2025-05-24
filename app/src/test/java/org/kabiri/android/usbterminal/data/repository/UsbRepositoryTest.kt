@@ -15,6 +15,7 @@ import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -117,5 +118,43 @@ internal class UsbRepositoryTest {
             )
             mockUsbManager.requestPermission(mockUsbDevice1, mockIntent)
         }
+    }
+
+    @Test
+    fun `onPermissionResult updates usbDevice and emits info when granted`() = runTest(testDispatcher) {
+        // arrange
+        val fakeVendorId = 1234
+        val fakeGranted = true
+        every { mockUsbDevice1.vendorId } returns fakeVendorId
+        val expected = "Permission result: $fakeVendorId, granted: $fakeGranted\n"
+
+        // act
+        sut.onPermissionResult(
+            device = mockUsbDevice1,
+            granted = fakeGranted
+        )
+
+        // assert
+        assertThat(sut.usbDevice.value).isEqualTo(mockUsbDevice1)
+        assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
+    }
+
+    @Test
+    fun `onPermissionResult clears usbDevice and emits info when denied`() = runTest(testDispatcher) {
+        // arrange
+        val fakeVendorId = 1234
+        val fakeGranted = false
+        every { mockUsbDevice1.vendorId } returns fakeVendorId
+        val expected = "Permission result: ${mockUsbDevice1.vendorId}, granted: $fakeGranted\n"
+
+        // act
+        sut.onPermissionResult(
+            device = mockUsbDevice1,
+            granted = fakeGranted
+        )
+
+        // assert
+        assertThat(sut.usbDevice.value).isNull()
+        assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
     }
 }
