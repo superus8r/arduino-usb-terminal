@@ -157,4 +157,22 @@ internal class UsbRepositoryTest {
         assertThat(sut.usbDevice.value).isNull()
         assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
     }
+
+    @Test
+    fun `onDisconnect clears usbDevice`() = runTest {
+        // arrange
+        mockkStatic(PendingIntent::class)
+        mockkStatic(ContextCompat::class)
+        every { PendingIntent.getBroadcast(any(), any(), any(), any()) } returns mockk()
+        sut.requestUsbPermission(mockUsbDevice1)
+        advanceUntilIdle()
+        assertThat(sut.usbDevice.value).isNotNull()
+
+        // act
+        sut.disconnect()
+        advanceUntilIdle()
+
+        // assert
+        assertThat(sut.usbDevice.value).isNull()
+    }
 }
