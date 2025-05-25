@@ -13,9 +13,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import org.kabiri.android.usbterminal.arduino.ArduinoRepository
+import kotlinx.coroutines.SupervisorJob
 import org.kabiri.android.usbterminal.arduino.ArduinoPermissionBroadcastReceiver
+import org.kabiri.android.usbterminal.arduino.ArduinoRepository
 import org.kabiri.android.usbterminal.arduino.ArduinoSerialReceiver
+import org.kabiri.android.usbterminal.arduino.IArduinoRepository
 import org.kabiri.android.usbterminal.data.repository.IUsbRepository
 import org.kabiri.android.usbterminal.data.repository.IUserSettingRepository
 import org.kabiri.android.usbterminal.data.repository.USER_SETTING_PREFERENCES_NAME
@@ -93,7 +95,6 @@ internal class AppModule {
         )
     }
 
-    @Singleton
     @Provides
     fun providesArduinoRepository(
         context: Context,
