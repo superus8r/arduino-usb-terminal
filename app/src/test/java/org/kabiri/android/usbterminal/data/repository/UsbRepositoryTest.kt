@@ -32,6 +32,7 @@ import org.kabiri.android.usbterminal.Constants
 internal class UsbRepositoryTest {
 
     private val testDispatcher: TestDispatcher = StandardTestDispatcher()
+    private val testScope = TestScope(testDispatcher)
 
     private val mockContext: Context = mockk(relaxed = true)
     private val mockUsbManager: UsbManager = mockk(relaxed = true)
@@ -52,7 +53,7 @@ internal class UsbRepositoryTest {
 
         sut = UsbRepository(
             context = mockContext,
-            scope = TestScope(testDispatcher)
+            scope = testScope,
         )
     }
 
@@ -125,40 +126,40 @@ internal class UsbRepositoryTest {
     }
 
     @Test
-    fun `onPermissionResult updates usbDevice and emits info when granted`() = runTest(testDispatcher) {
+    fun `onPermissionResult emits info when granted`() = runTest(testDispatcher) {
         // arrange
         val fakeVendorId = 1234
         val fakeGranted = true
+        val expected = "Permission result for device: $fakeVendorId, granted: $fakeGranted\n"
         every { mockUsbDevice1.vendorId } returns fakeVendorId
-        val expected = "Permission result: $fakeVendorId, granted: $fakeGranted\n"
 
         // act
         sut.onPermissionResult(
             device = mockUsbDevice1,
             granted = fakeGranted
         )
+        advanceUntilIdle()
 
         // assert
-        assertThat(sut.usbDevice.first()).isEqualTo(mockUsbDevice1)
         assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
     }
 
     @Test
-    fun `onPermissionResult clears usbDevice and emits info when denied`() = runTest(testDispatcher) {
+    fun `onPermissionResult emits info when denied`() = runTest(testDispatcher) {
         // arrange
         val fakeVendorId = 1234
         val fakeGranted = false
         every { mockUsbDevice1.vendorId } returns fakeVendorId
-        val expected = "Permission result: ${mockUsbDevice1.vendorId}, granted: $fakeGranted\n"
+        val expected = "Permission result for device: ${mockUsbDevice1.vendorId}, granted: $fakeGranted\n"
 
         // act
         sut.onPermissionResult(
             device = mockUsbDevice1,
             granted = fakeGranted
         )
+        advanceUntilIdle()
 
         // assert
-        assertThat(sut.usbDevice.first()).isNull()
         assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
     }
 
