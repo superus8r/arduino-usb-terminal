@@ -14,9 +14,9 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import org.kabiri.android.usbterminal.arduino.ArduinoRepository
+import org.kabiri.android.usbterminal.data.repository.ArduinoRepository
 import org.kabiri.android.usbterminal.arduino.ArduinoSerialReceiver
-import org.kabiri.android.usbterminal.arduino.IArduinoRepository
+import org.kabiri.android.usbterminal.data.repository.IArduinoRepository
 import org.kabiri.android.usbterminal.data.repository.IUsbRepository
 import org.kabiri.android.usbterminal.data.repository.IUserSettingRepository
 import org.kabiri.android.usbterminal.data.repository.USER_SETTING_PREFERENCES_NAME

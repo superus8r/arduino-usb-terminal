@@ -2,7 +2,7 @@ package org.kabiri.android.usbterminal.domain
 
 import android.hardware.usb.UsbDevice
 import kotlinx.coroutines.flow.Flow
-import org.kabiri.android.usbterminal.arduino.IArduinoRepository
+import org.kabiri.android.usbterminal.data.repository.IArduinoRepository
 import javax.inject.Inject
 
 /**

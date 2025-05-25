@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import org.kabiri.android.usbterminal.arduino.IArduinoRepository
+import org.kabiri.android.usbterminal.data.repository.IArduinoRepository
 
 internal class ArduinoUseCaseTest {
 
