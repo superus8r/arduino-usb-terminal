@@ -11,6 +11,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import org.kabiri.android.usbterminal.arduino.ArduinoRepository
 import org.kabiri.android.usbterminal.arduino.ArduinoPermissionBroadcastReceiver
 import org.kabiri.android.usbterminal.arduino.ArduinoSerialReceiver
@@ -79,7 +81,10 @@ internal class AppModule {
     fun provideUsbRepository(
         context: Context,
     ): IUsbRepository {
-        return UsbRepository(context = context)
+        return UsbRepository(
+            context = context,
+            scope = CoroutineScope(Dispatchers.Default)
+        )
     }
 
     @Provides
