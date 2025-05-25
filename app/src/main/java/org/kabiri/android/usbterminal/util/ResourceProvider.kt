@@ -8,7 +8,7 @@ import javax.inject.Singleton
  * Created by Ali Kabiri on 07.05.2025.
  */
 
-interface IResourceProvider {
+fun interface IResourceProvider {
     fun getString(resId: Int): String
 }
 
