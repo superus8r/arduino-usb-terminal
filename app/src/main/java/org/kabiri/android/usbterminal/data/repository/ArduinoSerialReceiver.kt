@@ -1,4 +1,4 @@
-package org.kabiri.android.usbterminal.arduino
+package org.kabiri.android.usbterminal.data.repository
 
 import android.util.Log
 import com.felhr.usbserial.UsbSerialInterface

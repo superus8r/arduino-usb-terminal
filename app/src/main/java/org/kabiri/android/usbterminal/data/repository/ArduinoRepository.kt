@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.R
-import org.kabiri.android.usbterminal.arduino.ArduinoSerialReceiver
 import org.kabiri.android.usbterminal.domain.IGetCustomBaudRateUseCase
 import org.kabiri.android.usbterminal.model.defaultBaudRate
 import javax.inject.Inject

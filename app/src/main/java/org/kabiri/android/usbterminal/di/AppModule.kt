@@ -15,7 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.kabiri.android.usbterminal.data.repository.ArduinoRepository
-import org.kabiri.android.usbterminal.arduino.ArduinoSerialReceiver
+import org.kabiri.android.usbterminal.data.repository.ArduinoSerialReceiver
 import org.kabiri.android.usbterminal.data.repository.IArduinoRepository
 import org.kabiri.android.usbterminal.data.repository.IUsbRepository
 import org.kabiri.android.usbterminal.data.repository.IUserSettingRepository
