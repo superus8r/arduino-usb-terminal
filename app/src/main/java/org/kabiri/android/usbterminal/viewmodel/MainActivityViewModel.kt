@@ -1,5 +1,6 @@
 package org.kabiri.android.usbterminal.viewmodel
 
+import android.content.Context
 import android.hardware.usb.UsbDevice
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -58,8 +61,8 @@ internal class MainActivityViewModel
         }
     }
 
-    fun connect() {
-        val usbDeviceList = usbUseCase.scanForUsbDevices()
+    fun connect(activityContext: Context) {
+        val usbDeviceList = usbUseCase.scanForUsbDevices(activityContext)
         if (usbDeviceList.isEmpty()) {
             _errorMessageFlow.value =
                 resourceProvider.getString(R.string.helper_error_usb_devices_not_attached)
@@ -73,19 +76,25 @@ internal class MainActivityViewModel
                 resourceProvider.getString(R.string.helper_error_connecting_anyway)
 
             // request permission for the unknown device anyways
-            return usbUseCase.requestPermission(usbDeviceList.first())
+            return usbUseCase.requestPermission(activityContext, usbDeviceList.first())
         }
         when (device.getArduinoType()) {
             OFFICIAL -> {
-                usbUseCase.requestPermission(device)
+                usbUseCase.requestPermission(activityContext, device)
             }
 
             else -> {
                 _infoMessageFlow.value =
                     resourceProvider.getString(R.string.helper_error_connecting_anyway)
-                usbUseCase.requestPermission(device)
+                usbUseCase.requestPermission(activityContext, device)
             }
         }
+    }
+
+    fun connectIfAlreadyHasPermission(activityContext: Context) = viewModelScope.launch {
+        val usbDevice = usbUseCase.usbDevice.firstOrNull() ?: return@launch
+        usbUseCase.hasPermission(activityContext, usbDevice)
+        openDeviceAndPort(usbDevice)
     }
 
     fun disconnect() {

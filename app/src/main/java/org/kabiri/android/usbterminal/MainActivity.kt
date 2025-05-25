@@ -87,10 +87,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.connectIfAlreadyHasPermission(this)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.actionConnect -> {
-                viewModel.connect()
+                viewModel.connect(this)
                 true
             }
             R.id.actionDisconnect -> {
