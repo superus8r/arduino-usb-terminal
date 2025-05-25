@@ -1,4 +1,4 @@
-package org.kabiri.android.usbterminal.extensions
+package org.kabiri.android.usbterminal.util
 
 import android.util.Log
 import android.widget.TextView

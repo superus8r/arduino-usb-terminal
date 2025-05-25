@@ -5,4 +5,5 @@
     <color name="textColorSecondary">#FFFFFF</color>
 
     <color name="icLauncherBackground">#455A64</color>
+    <color name="bg_modal_bottom_sheet">#1E1E1E</color>
 </resources>

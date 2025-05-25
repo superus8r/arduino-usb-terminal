@@ -25,10 +25,10 @@ commands:
 executors:
   android-machine:
     machine:
-      image: android:2022.12.1
+      image: android:2024.01.1
   android-docker:
     docker:
-      - image: cimg/android:2023.02
+      - image: cimg/android:2024.01
 
 jobs:
   android-test:
@@ -64,11 +64,30 @@ jobs:
           name: Prepare Fastlane
           command: sudo bundle update
       - run:
-          name: Distribute to Firebase AppTester
+          name: Distribute to Firebase AppTester Dev
           command: bundle exec fastlane distDev
       - store_artifacts:
           path: /home/circleci/project/app/build/outputs/apk/debug/app-debug.apk
           destination: fastlane-output-debug
+
+  distribute-internal-testing:
+    executor: android-docker
+    resource_class: large
+    steps:
+      - checkout
+      - restore_gradle_cache
+      - run:
+          name: Prepare Fastlane
+          command: sudo bundle update
+      - run:
+          name: Distribute to Google PlayStore Internal Testing
+          command: bundle exec fastlane deploy
+      - run:
+          name: Distribute to Firebase AppTester Prod
+          command: bundle exec fastlane distProd
+      - store_artifacts:
+          path: /home/circleci/project/app/build/outputs/bundle/release/app-release.aab
+          destination: fastlane-output-release
 
 workflows:
   workflow:
@@ -76,3 +95,4 @@ workflows:
       - android-test:
           context: SonarCloud
       - distribute-dev
+      - distribute-internal-testing
