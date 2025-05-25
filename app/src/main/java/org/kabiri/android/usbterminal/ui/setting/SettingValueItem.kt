@@ -88,7 +88,7 @@ internal fun SettingValueItem(
             .padding(16.dp),
         trailingIcon = {
             when (saveState) {
-                DEFAULT -> {}
+                DEFAULT -> Unit
                 UNSAVED -> {
                     IconButton(onClick = {
                         onClickSaveNewValue()
