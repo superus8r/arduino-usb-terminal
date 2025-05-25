@@ -2,7 +2,7 @@ package org.kabiri.android.usbterminal.domain
 
 import android.hardware.usb.UsbDevice
 import kotlinx.coroutines.flow.Flow
-import org.kabiri.android.usbterminal.arduino.ArduinoRepository
+import org.kabiri.android.usbterminal.arduino.IArduinoRepository
 import javax.inject.Inject
 
 /**
@@ -20,7 +20,7 @@ internal interface IArduinoUseCase {
 
 internal class ArduinoUseCase
 @Inject constructor(
-    private val arduinoRepository: ArduinoRepository
+    private val arduinoRepository: IArduinoRepository
 ) : IArduinoUseCase {
     override fun openDeviceAndPort(device: UsbDevice) {
         arduinoRepository.openDeviceAndPort(device)
