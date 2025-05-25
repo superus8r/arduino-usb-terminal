@@ -18,6 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -49,7 +50,10 @@ internal class UsbRepositoryTest {
         )
         every { mockContext.getSystemService(UsbManager::class.java) } returns mockUsbManager
 
-        sut = UsbRepository(mockContext)
+        sut = UsbRepository(
+            context = mockContext,
+            scope = TestScope(testDispatcher)
+        )
     }
 
     @After
@@ -102,7 +106,7 @@ internal class UsbRepositoryTest {
         advanceUntilIdle()
 
         // assert
-        assertThat(sut.usbDevice.value).isEqualTo(mockUsbDevice1)
+        assertThat(sut.usbDevice.first()).isEqualTo(mockUsbDevice1)
         verify {
             PendingIntent.getBroadcast(
                 mockContext,
@@ -135,7 +139,7 @@ internal class UsbRepositoryTest {
         )
 
         // assert
-        assertThat(sut.usbDevice.value).isEqualTo(mockUsbDevice1)
+        assertThat(sut.usbDevice.first()).isEqualTo(mockUsbDevice1)
         assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
     }
 
@@ -154,7 +158,7 @@ internal class UsbRepositoryTest {
         )
 
         // assert
-        assertThat(sut.usbDevice.value).isNull()
+        assertThat(sut.usbDevice.first()).isNull()
         assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
     }
 
@@ -166,13 +170,13 @@ internal class UsbRepositoryTest {
         every { PendingIntent.getBroadcast(any(), any(), any(), any()) } returns mockk()
         sut.requestUsbPermission(mockUsbDevice1)
         advanceUntilIdle()
-        assertThat(sut.usbDevice.value).isNotNull()
+        assertThat(sut.usbDevice.first()).isNotNull()
 
         // act
         sut.disconnect()
         advanceUntilIdle()
 
         // assert
-        assertThat(sut.usbDevice.value).isNull()
+        assertThat(sut.usbDevice.first()).isNull()
     }
 }
