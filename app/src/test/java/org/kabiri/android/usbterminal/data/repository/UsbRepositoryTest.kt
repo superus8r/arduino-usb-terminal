@@ -128,10 +128,17 @@ internal class UsbRepositoryTest {
     @Test
     fun `onPermissionResult emits info when granted`() = runTest(testDispatcher) {
         // arrange
-        val fakeVendorId = 1234
         val fakeGranted = true
-        val expected = "Permission result for device: $fakeVendorId, granted: $fakeGranted\n"
-        every { mockUsbDevice1.vendorId } returns fakeVendorId
+        val fakeId = 123
+        val fakeString = "doesn't matter"
+        val fakeMsg = "permission granted"
+        val fakeDeviceInfo = "$fakeString $fakeString $fakeId $fakeId"
+        val expected = "\n$fakeMsg $fakeDeviceInfo"
+        every { mockContext.getString(any()) } returns fakeMsg
+        every { mockUsbDevice1.manufacturerName } returns fakeString
+        every { mockUsbDevice1.productName } returns fakeString
+        every { mockUsbDevice1.vendorId } returns fakeId
+        every { mockUsbDevice1.productId } returns fakeId
 
         // act
         sut.onPermissionResult(
@@ -147,16 +154,66 @@ internal class UsbRepositoryTest {
     @Test
     fun `onPermissionResult emits info when denied`() = runTest(testDispatcher) {
         // arrange
-        val fakeVendorId = 1234
         val fakeGranted = false
-        every { mockUsbDevice1.vendorId } returns fakeVendorId
-        val expected = "Permission result for device: ${mockUsbDevice1.vendorId}, granted: $fakeGranted\n"
+        val fakeId = 123
+        val fakeString = "doesn't matter"
+        val fakeMsg = "permission denied"
+        val fakeDeviceInfo = "$fakeString $fakeString $fakeId $fakeId"
+        val expected = "$fakeMsg $fakeDeviceInfo"
+        every { mockContext.getString(any()) } returns fakeMsg
+        every { mockUsbDevice1.manufacturerName } returns fakeString
+        every { mockUsbDevice1.productName } returns fakeString
+        every { mockUsbDevice1.vendorId } returns fakeId
+        every { mockUsbDevice1.productId } returns fakeId
 
         // act
         sut.onPermissionResult(
             device = mockUsbDevice1,
             granted = fakeGranted
         )
+        advanceUntilIdle()
+
+        // assert
+        assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
+    }
+
+    @Test
+    fun `onDeviceAttached emits info when granted`() = runTest(testDispatcher) {
+        // arrange
+        val expected = "fake device attached"
+        every { mockContext.getString(any()) } returns expected
+
+        // act
+        sut.onDeviceAttached(device = mockUsbDevice1)
+        advanceUntilIdle()
+
+        // assert
+        assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
+    }
+
+    @Test
+    fun `onDeviceDetached emits info when granted`() = runTest(testDispatcher) {
+        // arrange
+        val expected = "fake device detached"
+        every { mockContext.getString(any()) } returns expected
+
+        // act
+        sut.onDeviceDetached(device = mockUsbDevice1)
+        advanceUntilIdle()
+
+        // assert
+        assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
+    }
+
+    @Test
+    fun `onUnknownAction emits info when granted`() = runTest(testDispatcher) {
+        // arrange
+        val expected = "strange action received"
+        val mockIntent: Intent = mockk()
+        every { mockContext.getString(any()) } returns expected
+
+        // act
+        sut.onUnknownAction(mockIntent)
         advanceUntilIdle()
 
         // assert

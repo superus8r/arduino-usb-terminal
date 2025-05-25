@@ -89,14 +89,13 @@ internal class UsbRepository
             if (granted) {
                 val infoMsg =
                     "${context.getString(R.string.breceiver_info_usb_permission_granted)} " +
-                            "$deviceInfo\n"
+                            deviceInfo
                 _infoMessageFlow.emit("\n$infoMsg")
             } else {
-                val error = "${context.getString(R.string.breceiver_error_usb_permission_denied)} " +
-                        "${device?.manufacturerName} ${device?.productName} " +
-                        "${device?.vendorId} ${device?.productId}"
-                _infoMessageFlow.emit(
-                    "${context.getString(R.string.breceiver_error_usb_permission_denied)} $error")
+                val errorMsg =
+                    "${context.getString(R.string.breceiver_error_usb_permission_denied)} " +
+                        deviceInfo
+                _infoMessageFlow.emit(errorMsg)
             }
         }
     }
