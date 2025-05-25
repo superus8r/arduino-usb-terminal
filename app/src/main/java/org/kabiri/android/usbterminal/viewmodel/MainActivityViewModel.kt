@@ -10,20 +10,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.domain.IArduinoUseCase
+import org.kabiri.android.usbterminal.domain.IConnectIfPermissionIsGrantedUseCase
 import org.kabiri.android.usbterminal.domain.IUsbUseCase
+import org.kabiri.android.usbterminal.model.ArduinoDevice.ArduinoType.OFFICIAL
+import org.kabiri.android.usbterminal.model.OutputText
 import org.kabiri.android.usbterminal.util.IResourceProvider
 import org.kabiri.android.usbterminal.util.getArduinoType
 import org.kabiri.android.usbterminal.util.isCloneArduinoBoard
 import org.kabiri.android.usbterminal.util.isOfficialArduinoBoard
-import org.kabiri.android.usbterminal.model.ArduinoDevice.ArduinoType.OFFICIAL
-import org.kabiri.android.usbterminal.model.OutputText
 import javax.inject.Inject
 
 /**
