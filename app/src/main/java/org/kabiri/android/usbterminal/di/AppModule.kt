@@ -51,6 +51,11 @@ internal class AppModule {
         context: Context
     ): IResourceProvider = ResourceProvider(context)
 
+    @Singleton
+    @Provides
+    fun provideApplicationScope(): CoroutineScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     @Provides
     fun provideArduinoPermissionBroadcastReceiver() = ArduinoPermissionBroadcastReceiver()
 
@@ -80,20 +85,22 @@ internal class AppModule {
     @Provides
     fun provideUsbRepository(
         context: Context,
+        scope: CoroutineScope,
     ): IUsbRepository {
         return UsbRepository(
             context = context,
-            scope = CoroutineScope(Dispatchers.Default)
+            scope = scope,
         )
     }
 
+    @Singleton
     @Provides
     fun providesArduinoRepository(
         context: Context,
         arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
         arduinoSerialReceiver: ArduinoSerialReceiver,
         getCustomBaudRateUseCase: IGetCustomBaudRateUseCase,
-    ): ArduinoRepository {
+    ): IArduinoRepository {
         return ArduinoRepository(
             context = context,
             arduinoPermReceiver = arduinoPermReceiver,
