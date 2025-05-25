@@ -36,7 +36,6 @@ internal class UsbRepository
     private val context: Context,
     private val scope: CoroutineScope,
 ): IUsbRepository {
-//    private val usbManager = context.getSystemService(UsbManager::class.java)
 
     private val _usbDevice = MutableSharedFlow<UsbDevice?>(replay = 1)
     override val usbDevice: SharedFlow<UsbDevice?> = _usbDevice.asSharedFlow()
