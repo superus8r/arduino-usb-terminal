@@ -28,30 +28,39 @@ import javax.inject.Inject
 
 private const val TAG = "ArduinoRepository"
 
+interface IArduinoRepository {
+    val messageFlow: Flow<String>
+    val infoMessageFlow: Flow<String>
+    val errorMessageFlow: Flow<String>
+    fun disconnect()
+    fun openDeviceAndPort(device: UsbDevice)
+    fun serialWrite(command: String): Boolean
+}
+
 internal class ArduinoRepository
 @Inject constructor(
     private val context: Context,
     private val arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
     private val arduinoSerialReceiver: ArduinoSerialReceiver,
     private val getBaudRate: IGetCustomBaudRateUseCase,
-) {
+): IArduinoRepository {
 
     private var currentBaudRate = defaultBaudRate // Default value
 
     private val _messageFlow = MutableStateFlow("")
-    val messageFlow: Flow<String>
+    override val messageFlow: Flow<String>
         get() = _messageFlow
             .combine(arduinoPermReceiver.liveOutput) { a, b -> a + b }
             .combine(arduinoSerialReceiver.liveOutput) { a, b -> a + b }
 
     private val _infoMessageFlow = MutableStateFlow("")
-    val infoMessageFlow: Flow<String>
+    override val infoMessageFlow: Flow<String>
         get() = _infoMessageFlow
             .combine(arduinoPermReceiver.liveInfoOutput) { a, b -> a + b }
             .combine(arduinoSerialReceiver.liveInfoOutput) { a, b -> a + b }
 
     private val _errorMessageFlow = MutableStateFlow("")
-    val errorMessageFlow: Flow<String>
+    override val errorMessageFlow: Flow<String>
         get() = _errorMessageFlow
             .combine(arduinoPermReceiver.liveErrorOutput) { a, b -> a + b }
             .combine(arduinoSerialReceiver.liveErrorOutput) { a, b -> a + b }
@@ -64,7 +73,7 @@ internal class ArduinoRepository
         observeBaudRate()
     }
 
-    fun disconnect() {
+    override fun disconnect() {
         try {
             if (::connection.isInitialized) connection.close()
             _messageFlow.value = context.getString(R.string.helper_info_serial_connection_closed)
@@ -84,7 +93,7 @@ internal class ArduinoRepository
     /**
      * This method should be called after the permission is granted to access the Arduino via USB.
      */
-    fun openDeviceAndPort(device: UsbDevice) {
+    override fun openDeviceAndPort(device: UsbDevice) {
         try {
             // setup the device communication.
             connection = usbManager.openDevice(device)
@@ -138,7 +147,7 @@ internal class ArduinoRepository
     /**
      * Send a serial message to the connected Arduino.
      */
-    fun serialWrite(command: String): Boolean {
+    override fun serialWrite(command: String): Boolean {
         return try {
             if (::serialPort.isInitialized && command.isNotBlank()) {
                 serialPort.write(command.toByteArray())
