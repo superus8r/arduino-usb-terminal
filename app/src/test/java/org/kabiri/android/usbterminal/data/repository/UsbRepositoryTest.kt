@@ -126,6 +126,32 @@ internal class UsbRepositoryTest {
     }
 
     @Test
+    fun `hasPermission returns true when granted`() = runTest {
+        // arrange
+        every { mockUsbManager.hasPermission(mockUsbDevice1) } returns true
+
+        // act
+        val actual = sut.hasPermission(mockUsbDevice1)
+
+        // assert
+        assertThat(actual).isTrue()
+        verify { mockUsbManager.hasPermission(mockUsbDevice1) }
+    }
+
+    @Test
+    fun `hasPermission returns false when denied`() = runTest {
+        // arrange
+        every { mockUsbManager.hasPermission(mockUsbDevice2) } returns false
+
+        // act
+        val actual = sut.hasPermission(mockUsbDevice2)
+
+        // assert
+        assertThat(actual).isFalse()
+        verify { mockUsbManager.hasPermission(mockUsbDevice2) }
+    }
+
+    @Test
     fun `onPermissionResult emits info when granted`() = runTest(testDispatcher) {
         // arrange
         val fakeGranted = true
