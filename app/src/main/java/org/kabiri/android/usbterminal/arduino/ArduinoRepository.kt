@@ -40,7 +40,6 @@ interface IArduinoRepository {
 internal class ArduinoRepository
 @Inject constructor(
     private val context: Context,
-    private val arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
     private val arduinoSerialReceiver: ArduinoSerialReceiver,
     private val getBaudRate: IGetCustomBaudRateUseCase,
 ): IArduinoRepository {
@@ -50,19 +49,16 @@ internal class ArduinoRepository
     private val _messageFlow = MutableStateFlow("")
     override val messageFlow: Flow<String>
         get() = _messageFlow
-            .combine(arduinoPermReceiver.liveOutput) { a, b -> a + b }
             .combine(arduinoSerialReceiver.liveOutput) { a, b -> a + b }
 
     private val _infoMessageFlow = MutableStateFlow("")
     override val infoMessageFlow: Flow<String>
         get() = _infoMessageFlow
-            .combine(arduinoPermReceiver.liveInfoOutput) { a, b -> a + b }
             .combine(arduinoSerialReceiver.liveInfoOutput) { a, b -> a + b }
 
     private val _errorMessageFlow = MutableStateFlow("")
     override val errorMessageFlow: Flow<String>
         get() = _errorMessageFlow
-            .combine(arduinoPermReceiver.liveErrorOutput) { a, b -> a + b }
             .combine(arduinoSerialReceiver.liveErrorOutput) { a, b -> a + b }
 
     private var usbManager: UsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager

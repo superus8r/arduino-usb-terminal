@@ -14,7 +14,6 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import org.kabiri.android.usbterminal.arduino.ArduinoPermissionBroadcastReceiver
 import org.kabiri.android.usbterminal.arduino.ArduinoRepository
 import org.kabiri.android.usbterminal.arduino.ArduinoSerialReceiver
 import org.kabiri.android.usbterminal.arduino.IArduinoRepository
@@ -59,9 +58,6 @@ internal class AppModule {
         CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     @Provides
-    fun provideArduinoPermissionBroadcastReceiver() = ArduinoPermissionBroadcastReceiver()
-
-    @Provides
     fun providesArduinoSerialReceiver() = ArduinoSerialReceiver()
 
     @Singleton
@@ -98,13 +94,11 @@ internal class AppModule {
     @Provides
     fun providesArduinoRepository(
         context: Context,
-        arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
         arduinoSerialReceiver: ArduinoSerialReceiver,
         getCustomBaudRateUseCase: IGetCustomBaudRateUseCase,
     ): IArduinoRepository {
         return ArduinoRepository(
             context = context,
-            arduinoPermReceiver = arduinoPermReceiver,
             arduinoSerialReceiver = arduinoSerialReceiver,
             getBaudRate = getCustomBaudRateUseCase,
         )
