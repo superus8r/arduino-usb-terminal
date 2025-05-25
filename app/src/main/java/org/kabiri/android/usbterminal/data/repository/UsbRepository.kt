@@ -20,9 +20,9 @@ import javax.inject.Inject
 internal interface IUsbRepository {
     val usbDevice: SharedFlow<UsbDevice?>
     val infoMessageFlow: Flow<String>
-    fun scanForArduinoDevices(activityContext: Context): List<UsbDevice>
-    fun requestUsbPermission(activityContext: Context, device: UsbDevice)
-    fun hasPermission(activityContext: Context, device: UsbDevice): Boolean
+    fun scanForArduinoDevices(): List<UsbDevice>
+    fun requestUsbPermission(device: UsbDevice)
+    fun hasPermission(device: UsbDevice): Boolean
     fun onPermissionResult(device: UsbDevice?, granted: Boolean)
     fun disconnect()
 }
@@ -40,52 +40,42 @@ internal class UsbRepository
     private val _infoMessageFlow = MutableStateFlow<String>("")
     override val infoMessageFlow: SharedFlow<String> = _infoMessageFlow.asSharedFlow()
 
-    override fun scanForArduinoDevices(activityContext: Context): List<UsbDevice> {
-        val usbManager = activityContext.getSystemService(UsbManager::class.java)
+    override fun scanForArduinoDevices(): List<UsbDevice> {
+        val usbManager = context.getSystemService(UsbManager::class.java)
         val deviceList = usbManager.deviceList
         return deviceList.values.toList()
     }
 
-    override fun requestUsbPermission(
-        activityContext: Context,
-        device: UsbDevice
-    ) {
+    override fun requestUsbPermission(device: UsbDevice) {
         val intent = Intent(Constants.ACTION_USB_PERMISSION)
         val permissionIntent = PendingIntent.getBroadcast(
-            activityContext,
+            context,
             0,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         ContextCompat.registerReceiver(
-            activityContext,
+            context,
             UsbPermissionReceiver(this@UsbRepository),
             IntentFilter(Constants.ACTION_USB_PERMISSION),
             ContextCompat.RECEIVER_EXPORTED
         )
         scope.launch {
             _usbDevice.emit(device)
-            val usbManager = activityContext.getSystemService(UsbManager::class.java)
+            val usbManager = context.getSystemService(UsbManager::class.java)
             usbManager.requestPermission(device, permissionIntent)
         }
     }
 
-    override fun hasPermission(activityContext: Context, device: UsbDevice): Boolean {
-        val usbManager = activityContext.getSystemService(UsbManager::class.java)
+    override fun hasPermission(device: UsbDevice): Boolean {
+        val usbManager = context.getSystemService(UsbManager::class.java)
         return usbManager.hasPermission(device)
     }
 
     override fun onPermissionResult(device: UsbDevice?, granted: Boolean) {
         scope.launch {
-            _infoMessageFlow.emit("" +
-                    "Permission result for device: ${device?.vendorId}, " +
+            _infoMessageFlow.emit("Permission result for device: ${device?.vendorId}, " +
                     "granted: $granted\n")
-//            if (granted && device != null) {
-//                _usbDevice.emit(device)
-//            }
-//            else {
-//                _usbDevice.emit(null)
-//            }
         }
     }
 
