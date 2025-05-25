@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.Constants
+import org.kabiri.android.usbterminal.R
 import javax.inject.Inject
 
 internal interface IUsbRepository {
@@ -24,6 +25,9 @@ internal interface IUsbRepository {
     fun requestUsbPermission(device: UsbDevice)
     fun hasPermission(device: UsbDevice): Boolean
     fun onPermissionResult(device: UsbDevice?, granted: Boolean)
+    fun onDeviceAttached(device: UsbDevice?)
+    fun onDeviceDetached(device: UsbDevice?)
+    fun onUnknownAction(intent: Intent?)
     fun disconnect()
 }
 
@@ -72,10 +76,49 @@ internal class UsbRepository
         return usbManager.hasPermission(device)
     }
 
-    override fun onPermissionResult(device: UsbDevice?, granted: Boolean) {
+    override fun onPermissionResult(
+        device: UsbDevice?,
+        granted: Boolean
+    ) {
+        val deviceInfo =
+            "${device?.manufacturerName} " +
+                    "${device?.productName} " +
+                    "${device?.vendorId} " +
+                    "${device?.productId}"
         scope.launch {
-            _infoMessageFlow.emit("Permission result for device: ${device?.vendorId}, " +
-                    "granted: $granted\n")
+            if (granted) {
+                val infoMsg =
+                    "${context.getString(R.string.breceiver_info_usb_permission_granted)} " +
+                            "$deviceInfo\n"
+                _infoMessageFlow.emit("\n$infoMsg")
+            } else {
+                val error = "${context.getString(R.string.breceiver_error_usb_permission_denied)} " +
+                        "${device?.manufacturerName} ${device?.productName} " +
+                        "${device?.vendorId} ${device?.productId}"
+                _infoMessageFlow.emit(
+                    "${context.getString(R.string.breceiver_error_usb_permission_denied)} $error")
+            }
+        }
+    }
+
+    override fun onDeviceAttached(device: UsbDevice?) {
+        scope.launch {
+            val attachedMsg = context.getString(R.string.breceiver_info_device_attached)
+            _infoMessageFlow.emit(attachedMsg)
+        }
+    }
+
+    override fun onDeviceDetached(device: UsbDevice?) {
+        scope.launch {
+            val detachedMsg = context.getString(R.string.breceiver_info_device_detached)
+            _infoMessageFlow.emit(detachedMsg)
+        }
+    }
+
+    override fun onUnknownAction(intent: Intent?) {
+        scope.launch {
+            val unknownActionMsg = context.getString(R.string.breceiver_info_unknown_intent_action)
+            _infoMessageFlow.emit(unknownActionMsg)
         }
     }
 

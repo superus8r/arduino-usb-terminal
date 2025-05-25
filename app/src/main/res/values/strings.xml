@@ -55,4 +55,5 @@
     <string name="breceiver_error_usb_permission_denied">permission denied for device:\n</string>
     <string name="breceiver_info_device_attached">Device attached\n</string>
     <string name="breceiver_info_device_detached">Device detached\n</string>
+    <string name="breceiver_info_unknown_intent_action">intent.action was null\n</string>
 </resources>
