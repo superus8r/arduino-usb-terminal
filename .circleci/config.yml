@@ -1,59 +1,98 @@
 version: 2.1
+orbs:
+  codecov: codecov/codecov@3.2.4
+  ruby: circleci/ruby@2.0.0
+
+commands:
+  restore_gradle_cache:
+    steps:
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ arch }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle" }}
+
+  save_gradle_cache:
+    steps:
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper
+          key: v1-gradle-wrapper-{{ arch }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle" }}
+
+executors:
+  android-machine:
+    machine:
+      image: android:2024.01.1
+  android-docker:
+    docker:
+      - image: cimg/android:2024.01
 
 jobs:
   android-test:
-    macos:
-      xcode: "11.2.0"
-    working_directory: ~/repo/App
+    executor: android-machine
+    resource_class: large
     steps:
-      - checkout:
-          path: ~/repo
-
+      - checkout
+      - restore_gradle_cache
+      - ruby/install-deps:
+          with-cache: true
       - run:
-          name: set ANDROID_SDK_ROOT
+          name: Fastlane - run all tests with coverage report
           command: |
-            echo 'export ANDROID_SDK_ROOT=$HOME/android-tools'  >> $BASH_ENV
-
-      - restore_cache:
-          key: android=tools-v1-{{ checksum "scripts/install-android-tools.sh" }}-{{ arch }}
-
+            bundle exec fastlane testDev
+      - save_gradle_cache
       - run:
-          name: install android tools
-          command: |
-            sh scripts/install-android-tools.sh
-            echo 'export PATH=$ANDROID_SDK_ROOT/tools/bin:$PATH'  >> $BASH_ENV
-            echo 'export PATH=$ANDROID_SDK_ROOT/tools:$PATH'  >> $BASH_ENV
-            echo 'export PATH=$ANDROID_SDK_ROOT/platform-tools:$PATH'  >> $BASH_ENV
-            echo 'export PATH=$ANDROID_SDK_ROOT/emulator:$PATH'  >> $BASH_ENV
-            source $BASH_ENV
-            sdkmanager --list
-
-      - save_cache:
-          key: android=tools-v1-{{ checksum "scripts/install-android-tools.sh" }}-{{ arch }}
-          paths:
-            - /Users/distiller/android-tools
-
-      - run:
-          name: create AVD
-          command: make create-avd
-
-      - run:
-          name: start AVD
-          command: emulator-headless -avd android-tablet
-          background: true
-
-      - run:
-          name: wait for emulator
-          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'
-
-      - run: adb shell screencap -p > screenshots/before.png
-
-      # (insert testing here)
-
+          name: Analyze on SonarCloud
+          command: ./gradlew lintDebug sonar
+      - codecov/upload:
+          file: app/build/mergedReportDir/jacocoTestReport/jacocoTestReport.xml
+      - store_test_results:
+          path: app/build/test-results/testDebugUnitTest
       - store_artifacts:
-          path: screenshots
+          path: app/build/mergedReportDir
+
+  distribute-dev:
+    executor: android-docker
+    resource_class: large
+    steps:
+      - checkout
+      - restore_gradle_cache
+      - run:
+          name: Prepare Fastlane
+          command: sudo bundle update
+      - run:
+          name: Distribute to Firebase AppTester Dev
+          command: bundle exec fastlane distDev
+      - store_artifacts:
+          path: /home/circleci/project/app/build/outputs/apk/debug/app-debug.apk
+          destination: fastlane-output-debug
+
+  distribute-internal-testing:
+    executor: android-docker
+    resource_class: large
+    steps:
+      - checkout
+      - restore_gradle_cache
+      - run:
+          name: Prepare Fastlane
+          command: sudo bundle update
+      - run:
+          name: Distribute to Google PlayStore Internal Testing
+          command: bundle exec fastlane deploy
+      - run:
+          name: Distribute to Firebase AppTester Prod
+          command: bundle exec fastlane distProd
+      - store_artifacts:
+          path: /home/circleci/project/app/build/outputs/bundle/release/app-release.aab
+          destination: fastlane-output-release
 
 workflows:
   workflow:
     jobs:
-      - android-test
+      - android-test:
+          context: SonarCloud
+      - distribute-dev
+      - distribute-internal-testing

@@ -1,9 +1,9 @@
-package org.kabiri.android.usbterminal.arduino
+package org.kabiri.android.usbterminal.data.repository
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.felhr.usbserial.UsbSerialInterface
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.io.UnsupportedEncodingException
 import java.nio.charset.Charset
 
@@ -18,15 +18,15 @@ class ArduinoSerialReceiver: UsbSerialInterface.UsbReadCallback {
         private const val TAG = "ArduinoSerialReceiver"
     }
 
-    private val _liveOutput = MutableLiveData<String>()
-    private val _liveInfoOutput = MutableLiveData<String>()
-    private val _liveErrorOutput = MutableLiveData<String>()
+    private val _liveOutput = MutableStateFlow("")
+    private val _liveInfoOutput = MutableStateFlow("")
+    private val _liveErrorOutput = MutableStateFlow("")
 
-    val liveOutput: LiveData<String>
+    val liveOutput: StateFlow<String>
         get() = _liveOutput
-    val liveInfoOutput: LiveData<String>
+    val liveInfoOutput: StateFlow<String>
         get() = _liveInfoOutput
-    val liveErrorOutput: LiveData<String>
+    val liveErrorOutput: StateFlow<String>
         get() = _liveErrorOutput
 
     override fun onReceivedData(message: ByteArray?) {
@@ -34,14 +34,14 @@ class ArduinoSerialReceiver: UsbSerialInterface.UsbReadCallback {
             try { // reading the message from the arduino board.
                 val encoded = String(message, Charset.defaultCharset())
                 Log.i(TAG, "message from arduino: $encoded")
-                _liveOutput.postValue(encoded)
+                _liveOutput.value = encoded
             } catch (e: UnsupportedEncodingException) {
                 e.printStackTrace()
                 Log.e(TAG, "Encoding problem occurred when reading the serial message: $e")
-                _liveErrorOutput.postValue("\n${e.localizedMessage}")
+                _liveErrorOutput.value = "\n${e.localizedMessage}"
             } catch (e: Exception) {
                 Log.e(TAG, "Unknown error occurred when reading the serial message: $e")
-                _liveErrorOutput.postValue("\n${e.localizedMessage}")
+                _liveErrorOutput.value = "\n${e.localizedMessage}"
             }
         } ?: run {
             Log.e(TAG, "Message was null")

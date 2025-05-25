@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- based on specs: -->
+    <!-- https://m3.material.io/components/bottom-sheets/overview#0ccc1064-69de-49c2-8342-67dc8424306b -->
+    <corners
+        android:topLeftRadius="28dp"
+        android:topRightRadius="28dp" />
+    <solid android:color="@color/bg_modal_bottom_sheet" />
+</shape>

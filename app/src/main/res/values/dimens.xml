@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="radius_corner_sheet_handle">2dp</dimen>
+    <dimen name="width_max_modal_sheet">640dp</dimen>
+</resources>

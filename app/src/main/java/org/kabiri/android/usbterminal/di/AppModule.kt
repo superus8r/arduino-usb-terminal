@@ -2,20 +2,44 @@ package org.kabiri.android.usbterminal.di
 
 import android.app.Application
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import org.kabiri.android.usbterminal.arduino.ArduinoHelper
-import org.kabiri.android.usbterminal.arduino.ArduinoPermissionBroadcastReceiver
-import org.kabiri.android.usbterminal.arduino.ArduinoSerialReceiver
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import org.kabiri.android.usbterminal.data.repository.ArduinoRepository
+import org.kabiri.android.usbterminal.data.repository.ArduinoSerialReceiver
+import org.kabiri.android.usbterminal.data.repository.IArduinoRepository
+import org.kabiri.android.usbterminal.data.repository.IUsbRepository
+import org.kabiri.android.usbterminal.data.repository.IUserSettingRepository
+import org.kabiri.android.usbterminal.data.repository.USER_SETTING_PREFERENCES_NAME
+import org.kabiri.android.usbterminal.data.repository.UsbRepository
+import org.kabiri.android.usbterminal.data.repository.UserSettingRepository
+import org.kabiri.android.usbterminal.domain.ArduinoUseCase
+import org.kabiri.android.usbterminal.domain.GetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.domain.IArduinoUseCase
+import org.kabiri.android.usbterminal.domain.IGetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.domain.ISetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.domain.IUsbUseCase
+import org.kabiri.android.usbterminal.domain.SetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.domain.UsbUseCase
+import org.kabiri.android.usbterminal.util.IResourceProvider
+import org.kabiri.android.usbterminal.util.ResourceProvider
+import javax.inject.Singleton
 
 /**
  * Created by Ali Kabiri on 13.04.20.
  */
 @Module
 @InstallIn(SingletonComponent::class)
-class AppModule {
+internal class AppModule {
 
     @Provides
     fun provideContext(
@@ -23,21 +47,88 @@ class AppModule {
     ): Context = app.applicationContext
 
     @Provides
-    fun provideArduinoPermissionBroadcastReceiver() = ArduinoPermissionBroadcastReceiver()
+    fun provideResourceProvider(
+        @ApplicationContext
+        context: Context
+    ): IResourceProvider = ResourceProvider(context)
+
+    @Singleton
+    @Provides
+    fun provideApplicationScope(): CoroutineScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     @Provides
     fun providesArduinoSerialReceiver() = ArduinoSerialReceiver()
 
+    @Singleton
     @Provides
-    fun providesArduinoHelper(
-        context: Context,
-        arduinoPermReceiver: ArduinoPermissionBroadcastReceiver,
-        arduinoSerialReceiver: ArduinoSerialReceiver,
-    ): ArduinoHelper {
-        return ArduinoHelper(
-            context = context,
-            arduinoPermReceiver = arduinoPermReceiver,
-            arduinoSerialReceiver = arduinoSerialReceiver,
+    fun provideDataStore(
+        @ApplicationContext
+        context: Context
+    ): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            produceFile = {
+                context.preferencesDataStoreFile(USER_SETTING_PREFERENCES_NAME)
+            }
         )
+    }
+
+    @Provides
+    fun provideUserSettingRepository(
+        dataStore: DataStore<Preferences>,
+    ): IUserSettingRepository {
+        return UserSettingRepository(dataStore)
+    }
+
+    @Provides
+    fun provideUsbRepository(
+        context: Context,
+        scope: CoroutineScope,
+    ): IUsbRepository {
+        return UsbRepository(
+            context = context,
+            scope = scope,
+        )
+    }
+
+    @Provides
+    fun providesArduinoRepository(
+        context: Context,
+        arduinoSerialReceiver: ArduinoSerialReceiver,
+        getCustomBaudRateUseCase: IGetCustomBaudRateUseCase,
+    ): IArduinoRepository {
+        return ArduinoRepository(
+            context = context,
+            arduinoSerialReceiver = arduinoSerialReceiver,
+            getBaudRate = getCustomBaudRateUseCase,
+        )
+    }
+
+    @Provides
+    fun provideUsbUseCase(
+        usbRepository: IUsbRepository,
+    ): IUsbUseCase {
+        return UsbUseCase(usbRepository = usbRepository)
+    }
+
+    @Provides
+    fun provideArduinoUseCase(
+        arduinoRepository: ArduinoRepository,
+    ): IArduinoUseCase {
+        return ArduinoUseCase(arduinoRepository = arduinoRepository)
+    }
+
+    @Provides
+    fun provideGetCustomBaudRateUseCase(
+        userSettingRepository: IUserSettingRepository,
+    ): IGetCustomBaudRateUseCase {
+        return GetCustomBaudRateUseCase(userSettingRepository = userSettingRepository)
+    }
+
+    @Provides
+    fun provideSetCustomBaudRateUseCase(
+        userSettingRepository: IUserSettingRepository
+    ): ISetCustomBaudRateUseCase {
+        return SetCustomBaudRateUseCase(userSettingRepository = userSettingRepository)
     }
 }
