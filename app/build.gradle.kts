@@ -70,8 +70,9 @@ android {
 
         animationsDisabled = true
 
+        @Suppress("UnstableApiUsage")
         managedDevices {
-            devices {
+            allDevices {
                 maybeCreate<com.android.build.api.dsl.ManagedVirtualDevice>("pixel2api30").apply {
                     device = "Pixel 2"
                     apiLevel = 30
@@ -110,14 +111,13 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     }
 
     val fileFilter = listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*", "android/**/*.*")
-    val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") { exclude(fileFilter) }
-    val mainSrc = "${layout.projectDirectory}/src/main/kotlin"
-
+    val debugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
+    val mainSrc = layout.projectDirectory.dir("src/main/kotlin")
     sourceDirectories.from(files(setOf(mainSrc)))
     classDirectories.from(files(setOf(debugTree)))
     executionData.from(fileTree(layout.buildDirectory) { include(setOf(
-            "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-            "outputs/managed_device_code_coverage/pixel2api30/coverage.ec"
+        "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+        "outputs/managed_device_code_coverage/debug/pixel2api30/coverage.ec",
     ))})
 }
 
