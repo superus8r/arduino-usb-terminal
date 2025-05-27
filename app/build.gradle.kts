@@ -110,15 +110,24 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         csv.required.set(false)
     }
 
-    val fileFilter = listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*", "android/**/*.*")
-    val debugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
-    val mainSrc = layout.projectDirectory.dir("src/main/kotlin")
-    sourceDirectories.from(files(setOf(mainSrc)))
-    classDirectories.from(files(setOf(debugTree)))
-    executionData.from(fileTree(layout.buildDirectory) { include(setOf(
-        "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-        "outputs/managed_device_code_coverage/debug/pixel2api30/coverage.ec",
-    ))})
+    val fileFilter = listOf(
+        "**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
+        "**/*Test*.*", "android/**/*.*",
+        "**/Dagger*.*", "**/*_Hilt*.*", "**/*Hilt*.*"
+    )
+    val javaDebugTree = fileTree(layout.buildDirectory.dir("intermediates/javac/debug/classes")) { exclude(fileFilter) }
+    val kotlinDebugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
+    val mainJavaSrc = layout.projectDirectory.dir("src/main/java")
+    val mainKotlinSrc = layout.projectDirectory.dir("src/main/kotlin")
+    sourceDirectories.from(files(mainJavaSrc, mainKotlinSrc))
+    classDirectories.from(files(javaDebugTree, kotlinDebugTree))
+    executionData.from(fileTree(layout.buildDirectory) {
+        include(
+            "outputs/unit_test_code_coverage/**/*.exec",
+            "outputs/managed_device_code_coverage/**/*.ec",
+            "outputs/managed_device_code_coverage/**/*.exec"
+        )
+    })
 }
 
 sonarqube {
