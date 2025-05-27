@@ -23,7 +23,7 @@ plugins {
 }
 
 task clean(type: Delete) {
-    delete rootProject.buildDir
+    delete layout.buildDirectory
 }
 
 sonarqube {
@@ -35,10 +35,11 @@ sonarqube {
         property("sonar.host.url", "https://sonarcloud.io")
 
         // sonar requires relative path for sources and binaries
-        property("sonar.sources", "/app/src/main/java")
-        property("sonar.binaries", "/app/build/tmp/kotlin-classes/debug")
+        property("sonar.sources", "app/src/main/java")
+        property("sonar.binaries", "app/build/tmp/kotlin-classes/debug")
         // sonar requires absolute path for lint and jacoco reports!
-        property("sonar.androidLint.reportPaths", "${layout.buildDirectory}/reports/lint-results-debug.xml")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory}/app/build/mergedReportDir/jacocoTestReport/jacocoTestReport.xml")
+        property("sonar.androidLint.reportPaths", "app/build/reports/lint-results-debug.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "app/build/mergedReportDir/jacocoTestReport/jacocoTestReport.xml")
     }
 }
+
