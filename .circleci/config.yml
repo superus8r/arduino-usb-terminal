@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  codecov: codecov/codecov@3.2.4
+  codecov: codecov/codecov@5.4.3
   ruby: circleci/ruby@2.0.0
 
 commands:
@@ -48,7 +48,7 @@ jobs:
           name: Analyze on SonarCloud
           command: ./gradlew lintDebug sonar
       - codecov/upload:
-          file: app/build/mergedReportDir/jacocoTestReport/jacocoTestReport.xml
+          files: app/build/mergedReportDir/jacocoTestReport/jacocoTestReport.xml
       - store_test_results:
           path: app/build/test-results/testDebugUnitTest
       - store_artifacts:
