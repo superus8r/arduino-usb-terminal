@@ -23,22 +23,20 @@ plugins {
 }
 
 task clean(type: Delete) {
-    delete rootProject.buildDir
+    delete layout.buildDirectory
 }
 
 sonarqube {
     properties {
-        property "sonar.organization", "superus8r"
-        property "sonar.projectKey", "superus8r_arduino-usb-terminal"
-        property "sonar.projectName", "arduino-usb-terminal"
-        property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.host.url", "https://sonarcloud.io"
+        property("sonar.organization", "superus8r")
+        property("sonar.projectKey", "superus8r_arduino-usb-terminal")
+        property("sonar.projectName", "arduino-usb-terminal")
+        property("sonar.sourceEncoding", "UTF-8")
+        property("sonar.host.url", "https://sonarcloud.io")
 
-        // sonar requires relative path for sources and binaries
-        property "sonar.sources", "/app/src/main/java"
-        property "sonar.binaries", "/app/build/tmp/kotlin-classes/debug"
+        property("sonar.binaries", project(":app").layout.buildDirectory.dir("tmp/kotlin-classes/debug").get().asFile.absolutePath)
         // sonar requires absolute path for lint and jacoco reports!
-        property "sonar.androidLint.reportPaths", "$rootDir/app/build/reports/lint-results-debug.xml"
-        property "sonar.coverage.jacoco.xmlReportPaths", "$rootDir/app/build/mergedReportDir/jacocoTestReport/jacocoTestReport.xml"
+        property("sonar.androidLint.reportPaths", project(":app").layout.buildDirectory.dir("reports/lint-results-debug.xml").get().asFile.absolutePath)
+        property("sonar.coverage.jacoco.xmlReportPaths", project(":app").layout.buildDirectory.dir("mergedReportDir/jacocoTestReport/jacocoTestReport.xml").get().asFile.absolutePath)
     }
 }
