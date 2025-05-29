@@ -36,6 +36,7 @@ sonarqube {
 
         // sonar requires relative path for sources and binaries
         property("sonar.sources", "app/src/main/java,app/src/main/kotlin")
+        property("sonar.exclusions", "app/src/test/**,app/src/androidTest/**")
         property("sonar.tests", "app/src/test/java,app/src/test/kotlin,app/src/androidTest/java,app/src/androidTest/kotlin")
         property("sonar.binaries", "app/build/tmp/kotlin-classes/debug")
         // sonar requires absolute path for lint and jacoco reports!
