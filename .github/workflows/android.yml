@@ -96,3 +96,17 @@ jobs:
         with:
           api-level: 29
           script: ./gradlew connectedCheck
+
+  notify-slack:
+    needs: unit-test
+    runs-on: ubuntu-latest
+    if: always()  # Runs regardless of success or failure of unit-test
+    steps:
+      - name: Send Slack notification
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_GITHUB_BUILD_INFO }}
+        run: |
+          STATUS="${{ needs.unit-test.result }}"
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"Unit tests completed: $STATUS\"}" \
+            $SLACK_WEBHOOK_URL
