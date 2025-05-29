@@ -20,7 +20,7 @@ import org.kabiri.android.usbterminal.model.UserSettingPreferences
 
 private const val TEST_DATA_STORE_NAME = "test_data_store"
 @RunWith(AndroidJUnit4::class)
-class UserSettingRepositoryAndroidTest {
+internal class UserSettingRepositoryAndroidTest {
 
     private val testCoroutineDispatcher: TestDispatcher = StandardTestDispatcher()
     private val testCoroutineScope = TestScope(testCoroutineDispatcher + Job())
