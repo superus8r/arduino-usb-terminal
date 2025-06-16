@@ -54,6 +54,7 @@ jobs:
           name: Fastlane - run all tests with coverage report
           command: |
             bundle exec fastlane testDev
+            bundle exec fastlane lint
       - save_gradle_cache
       - save_bundler_cache
       - run:
