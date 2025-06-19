@@ -242,7 +242,6 @@ dependencies {
     // Compose Bom
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
-    androidTestImplementation(composeBom)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
     // Compose - Android Studio Preview support
@@ -264,6 +263,7 @@ dependencies {
     testImplementation(libs.mockk.agent)
 
     // Instrumented Test Libraries
+    androidTestImplementation(composeBom)
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.ext.junit.ktx)
