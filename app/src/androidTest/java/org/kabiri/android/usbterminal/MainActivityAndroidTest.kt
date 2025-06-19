@@ -2,6 +2,7 @@ package org.kabiri.android.usbterminal
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.activityScenarioRule
@@ -22,5 +23,18 @@ internal class MainActivityAndroidTest {
         onView(withId(R.id.tvOutput)).check(matches(isDisplayed()))
         onView(withId(R.id.btEnter)).check(matches(isDisplayed()))
         onView(withId(R.id.etInput)).check(matches(isDisplayed()))
+
+        // Check menu items are displayed
+        onView(withId(R.id.actionSettings)).check(matches(isDisplayed()))
+        onView(withId(R.id.actionConnect)).check(matches(isDisplayed()))
+        onView(withId(R.id.actionDisconnect)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun clickingSettingsOpensSettingsBottomSheet() {
+        // Click the Settings menu item
+        onView(withId(R.id.actionSettings)).perform(click())
+        // Assert the bottom sheet content is displayed
+        onView(withId(R.id.composeViewSettingContent)).check(matches(isDisplayed()))
     }
 }
