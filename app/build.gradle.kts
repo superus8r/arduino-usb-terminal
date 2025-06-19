@@ -95,8 +95,7 @@ android {
 }
 
 jacoco {
-    val jacoco_version: String by project
-    toolVersion = jacoco_version
+    toolVersion = libs.versions.jacoco.get()
     reportsDirectory.set(layout.buildDirectory.dir("mergedReportDir"))
 }
 
@@ -217,11 +216,6 @@ fun loadKeyStore(name: String): Properties? {
     }
 }
 
-val firebase_bom_version: String by project
-val hilt_version: String by project
-val coroutines_version: String by project
-val material_version: String by project
-val mockk_version: String by project
 dependencies {
 
     implementation("androidx.appcompat:appcompat:1.7.0")
@@ -229,13 +223,13 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:$firebase_bom_version"))
+    implementation(platform("com.google.firebase:firebase-bom:${libs.versions.firebaseBom.get()}"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
 
     // Dependency Injection
-    implementation("com.google.dagger:hilt-android:$hilt_version")
-    kapt("com.google.dagger:hilt-compiler:$hilt_version")
+    implementation("com.google.dagger:hilt-android:${libs.versions.hilt.get()}")
+    kapt("com.google.dagger:hilt-compiler:${libs.versions.hilt.get()}")
 
     // Coroutines
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
@@ -256,7 +250,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.10.1")
 
     // Other UI Libraries
-    implementation("com.google.android.material:material:$material_version")
+    implementation("com.google.android.material:material:${libs.versions.material.get()}")
 
     // data
     implementation("androidx.datastore:datastore-preferences:1.1.4")
@@ -276,22 +270,22 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.6.1")
 
     // coroutine testing
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
-    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${libs.versions.hilt.get()}")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${libs.versions.coroutines.get()}")
 
     // google truth for assertions
     testImplementation("com.google.truth:truth:1.1.3")
     androidTestImplementation("androidx.test.ext:truth:1.6.0")
 
     // mockk
-    testImplementation("io.mockk:mockk-android:$mockk_version")
-    testImplementation("io.mockk:mockk-agent:$mockk_version")
-    androidTestImplementation("io.mockk:mockk-android:$mockk_version")
-    androidTestImplementation("io.mockk:mockk-agent:$mockk_version")
+    testImplementation("io.mockk:mockk-android:${libs.versions.mockk.get()}")
+    testImplementation("io.mockk:mockk-agent:${libs.versions.mockk.get()}")
+    androidTestImplementation("io.mockk:mockk-android:${libs.versions.mockk.get()}")
+    androidTestImplementation("io.mockk:mockk-agent:${libs.versions.mockk.get()}")
 
     // hilt testing - https://developer.android.com/training/dependency-injection/hilt-testing
-    androidTestImplementation("com.google.dagger:hilt-android-testing:$hilt_version")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hilt_version")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:${libs.versions.hilt.get()}")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:${libs.versions.hilt.get()}")
 
     // Android Serial Controller
     implementation("com.github.superus8r:UsbSerial:6.1.1")

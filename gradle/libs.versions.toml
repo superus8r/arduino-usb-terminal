@@ -1,0 +1,20 @@
+[versions]
+gradle = "8.1.0"
+coroutines = "1.6.4"
+firebaseBom = "32.8.0"
+hilt = "2.56.2"
+jacoco = "0.8.8"
+kotlin = "2.1.20"
+material = "1.12.0"
+mockk = "1.14.2"
+
+[libraries]
+hilt_android_gradle_plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
+google_services = { module = "com.google.gms:google-services", version = "4.4.1" }
+firebase_crashlytics_gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version = "2.9.9" }
+
+[plugins]
+android_application = { id = "com.android.application", version.ref = "gradle" }
+kotlin_android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin_compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+sonarqube = { id = "org.sonarqube", version = "3.5.0.2730" }
