@@ -264,6 +264,7 @@ dependencies {
 
     // Instrumented Test Libraries
     androidTestImplementation(composeBom)
+    androidTestImplementation(libs.coroutines.test)
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.ext.junit.ktx)
