@@ -1,5 +1,5 @@
 [versions]
-gradle = "8.1.0"
+gradle = "8.10.1"
 coroutines = "1.6.4"
 firebaseBom = "32.8.0"
 hilt = "2.56.2"
