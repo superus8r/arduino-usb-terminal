@@ -28,7 +28,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
-          key: ${{ runner.OS }}-gradle-caches-cache-${{ hashFiles('build.gradle') }}
+          key: ${{ runner.OS }}-gradle-caches-cache-${{ hashFiles('build.gradle.kts') }}
           restore-keys: |
             ${{ runner.OS }}-gradle-caches-cache-
       - name: generate ksProp file

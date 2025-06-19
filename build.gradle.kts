@@ -1,29 +1,29 @@
 buildscript {
-    ext {
-        coroutines_version = "1.6.4"
-        firebase_bom_version = "32.8.0"
-        hilt_version = "2.56.2"
-        jacoco_version = "0.8.8"
-        kotlin_version = "2.1.20"
-        material_version = "1.12.0"
-        mockk_version = "1.14.2"
+    extra.apply {
+        set("coroutines_version", "1.6.4")
+        set("firebase_bom_version", "32.8.0")
+        set("hilt_version", "2.56.2")
+        set("jacoco_version", "0.8.8")
+        set("kotlin_version", "2.1.20")
+        set("material_version", "1.12.0")
+        set("mockk_version", "1.14.2")
     }
     dependencies {
-        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
-        classpath "com.google.gms:google-services:4.4.1"
-        classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.9"
+        classpath("com.google.dagger:hilt-android-gradle-plugin:${extra["hilt_version"]}")
+        classpath("com.google.gms:google-services:4.4.1")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.9")
     }
 }
 
 plugins {
-    id("com.android.application") version '8.10.1' apply false
+    id("com.android.application") version "8.10.1" apply false
     id("org.jetbrains.kotlin.android") version "2.1.20" apply false
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.20"
     id("org.sonarqube") version "3.5.0.2730"
 }
 
-task clean(type: Delete) {
-    delete layout.buildDirectory
+tasks.register<Delete>("clean") {
+    delete(layout.buildDirectory)
 }
 
 sonarqube {
@@ -35,7 +35,6 @@ sonarqube {
         property("sonar.host.url", "https://sonarcloud.io")
 
         property("sonar.binaries", project(":app").layout.buildDirectory.dir("tmp/kotlin-classes/debug").get().asFile.absolutePath)
-        // sonar requires absolute path for lint and jacoco reports!
         property("sonar.androidLint.reportPaths", project(":app").layout.buildDirectory.dir("reports/lint-results-debug.xml").get().asFile.absolutePath)
         property("sonar.coverage.jacoco.xmlReportPaths", project(":app").layout.buildDirectory.dir("mergedReportDir/jacocoTestReport/jacocoTestReport.xml").get().asFile.absolutePath)
     }

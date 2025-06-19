@@ -9,7 +9,7 @@ commands:
       - restore_cache:
           key: v1-gradle-wrapper-{{ arch }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
-          key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "settings.gradle" }}-{{ checksum "gradle.properties" }}-{{ checksum "app/build.gradle.kts" }}
+          key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}-{{ checksum "gradle.properties" }}-{{ checksum "app/build.gradle.kts" }}
   restore_bundler_cache:
     steps:
       - restore_cache:
@@ -24,7 +24,7 @@ commands:
       - save_cache:
           paths:
             - ~/.gradle/caches
-          key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "settings.gradle" }}-{{ checksum "gradle.properties" }}-{{ checksum "app/build.gradle.kts" }}
+          key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}-{{ checksum "gradle.properties" }}-{{ checksum "app/build.gradle.kts" }}
   save_bundler_cache:
     steps:
       - save_cache:
