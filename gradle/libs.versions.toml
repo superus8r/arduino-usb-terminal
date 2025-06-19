@@ -85,7 +85,7 @@ androidx-test-runner = { module = "androidx.test:runner", version.ref = "testRun
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "testRules" }
 androidx-test-truth = { module = "androidx.test.ext:truth", version.ref = "androidxTruth" }
 
-# Plugins (already present)
+# Plugins (buildScript dependencies)
 hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 google-services = { module = "com.google.gms:google-services", version = "4.4.1" }
 firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version = "2.9.9" }
