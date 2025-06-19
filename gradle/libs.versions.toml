@@ -1,13 +1,10 @@
 [versions]
+# Build tools & plugins
 gradle = "8.10.1"
-coroutines = "1.7.3"
-firebaseBom = "32.8.0"
-hilt = "2.56.2"
-jacoco = "0.8.8"
 kotlin = "2.1.20"
-material = "1.12.0"
-mockk = "1.14.2"
-composeBom = "2023.06.01"
+jacoco = "0.8.8"
+
+# AndroidX
 appcompat = "1.7.0"
 coreKtx = "1.16.0"
 constraintlayout = "2.2.1"
@@ -16,7 +13,29 @@ lifecycleViewmodelKtx = "2.8.7"
 lifecycleExtensions = "2.2.0"
 activityCompose = "1.10.1"
 datastorePreferences = "1.1.4"
+
+# Compose
+composeBom = "2023.06.01"
+
+# Google/Material
+material = "1.12.0"
+
+# Firebase
+firebaseBom = "32.8.0"
+
+# Dagger/Hilt
+hilt = "2.56.2"
+hiltAndroidTesting = "2.56.2"
+
+# Coroutines
+coroutines = "1.7.3"
+
+# USB Serial
+usbSerial = "6.1.1"
+
+# Testing
 junit = "4.13.2"
+mockk = "1.14.2"
 testCore = "1.6.1"
 testExtJunit = "1.2.1"
 testExtJunitKtx = "1.2.1"
@@ -26,11 +45,10 @@ testRunner = "1.6.2"
 testRules = "1.6.1"
 truth = "1.1.3"
 androidxTruth = "1.6.0"
-hiltAndroidTesting = "2.56.2"
-usbSerial = "6.1.1"
 
 [libraries]
-# AndroidX
+
+# --- AndroidX ---
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
@@ -40,42 +58,42 @@ lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", ver
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 
-# Compose
+# --- Compose ---
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 compose-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 
-# Google Material
+# --- Google/Material ---
 material = { module = "com.google.android.material:material", version.ref = "material" }
 
-# Firebase
+# --- Firebase ---
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 
-# Dagger Hilt
+# --- Dagger/Hilt ---
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroidTesting" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidTesting" }
 
-# Coroutines
+# --- Coroutines ---
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
-# USB Serial
+# --- USB Serial ---
 usb-serial = { module = "com.github.superus8r:UsbSerial", version.ref = "usbSerial" }
 
-# Unit Test
+# --- Unit Test ---
 junit = { module = "junit:junit", version.ref = "junit" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 
-# Instrumented Test
+# --- Instrumented Test ---
 androidx-test-core = { module = "androidx.test:core", version.ref = "testCore" }
 androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "testExtJunit" }
 androidx-test-ext-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "testExtJunitKtx" }
@@ -85,12 +103,13 @@ androidx-test-runner = { module = "androidx.test:runner", version.ref = "testRun
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "testRules" }
 androidx-test-truth = { module = "androidx.test.ext:truth", version.ref = "androidxTruth" }
 
-# Plugins (buildScript dependencies)
+# --- Plugins (classpath dependencies) ---
 hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 google-services = { module = "com.google.gms:google-services", version = "4.4.1" }
 firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version = "2.9.9" }
 
 [plugins]
+# --- Gradle Plugins ---
 android-application = { id = "com.android.application", version.ref = "gradle" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
