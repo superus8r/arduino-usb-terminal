@@ -35,15 +35,24 @@ internal class MainActivityAndroidTest {
 
     @Test
     fun checkUiViewsAreDisplayed() {
+        // arrange
+        // act
+        // assert
         onView(withId(R.id.tvOutput)).check(matches(isDisplayed()))
         onView(withId(R.id.btEnter)).check(matches(isDisplayed()))
         onView(withId(R.id.etInput)).check(matches(isDisplayed()))
+    }
 
+    @Test
+    fun checkActionMenuItemsAreDisplayed() {
+        // arrange
+        // act
         // Ensure action items are accessible, either in the toolbar or via overflow
         ensureMenuIsAccessible(R.id.actionSettings)
         ensureMenuIsAccessible(R.id.actionConnect)
         ensureMenuIsAccessible(R.id.actionDisconnect)
 
+        // assert
         // Check menu items are displayed
         onView(withId(R.id.actionSettings)).check(matches(isDisplayed()))
         onView(withId(R.id.actionConnect)).check(matches(isDisplayed()))
@@ -52,11 +61,14 @@ internal class MainActivityAndroidTest {
 
     @Test
     fun clickingSettingsOpensSettingsBottomSheet() {
+        // arrange
         // Ensure the action item is accisble, either in the toolbar or via overflow
         ensureMenuIsAccessible(R.id.actionSettings)
-        // Click the Settings menu item
+
+        // act
         onView(withId(R.id.actionSettings)).perform(click())
-        // Assert the bottom sheet content is displayed
+
+        // assert
         onView(withId(R.id.composeViewSettingContent)).check(matches(isDisplayed()))
     }
 }
