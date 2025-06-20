@@ -25,7 +25,7 @@ internal class MainActivityAndroidTest {
         try {
             // Try to find the menu item first
             onView(withId(menuItemId)).check(matches(isDisplayed()))
-        } catch (e: NoMatchingViewException) {
+        } catch (_: NoMatchingViewException) {
             // If not found then open the overflow menu
             openActionBarOverflowOrOptionsMenu(
                 InstrumentationRegistry.getInstrumentation().targetContext
