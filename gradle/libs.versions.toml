@@ -21,14 +21,14 @@ composeBom = "2023.06.01"
 material = "1.12.0"
 
 # Firebase
-firebaseBom = "32.8.0"
+firebaseBom = "33.15.0"
 
 # Dagger/Hilt
 hilt = "2.56.2"
 hiltAndroidTesting = "2.56.2"
 
 # Coroutines
-coroutines = "1.7.3"
+coroutines = "1.10.2"
 
 # USB Serial
 usbSerial = "6.1.1"
@@ -43,7 +43,7 @@ espressoCore = "3.6.1"
 hamcrest = "2.2"
 testRunner = "1.6.2"
 testRules = "1.6.1"
-truth = "1.1.3"
+truth = "1.4.4"
 androidxTruth = "1.6.0"
 
 [libraries]
