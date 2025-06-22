@@ -2,10 +2,6 @@ name: Android CI
 
 on: [ push ]
 
-env:
-  GRADLE_WRAPPER_CACHE_KEY: ${{ runner.OS }}-gradle-wrapper-cache-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/wrapper/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
-  GRADLE_CACHES_CACHE_KEY: ${{ runner.OS }}-gradle-caches-cache-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/libs.versions.toml') }}
-
 jobs:
 
   unit-test:
@@ -25,14 +21,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ env.GRADLE_WRAPPER_CACHE_KEY }}
+          key: ${{ runner.OS }}-gradle-wrapper-cache-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/wrapper/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.OS }}-gradle-wrapper-cache-
       - name: Cache Gradle caches
         uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
-          key: ${{ env.GRADLE_CACHES_CACHE_KEY }}
+          key: ${{ runner.OS }}-gradle-caches-cache-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.OS }}-gradle-caches-cache-
       - name: generate ksProp file
@@ -64,14 +60,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ env.GRADLE_WRAPPER_CACHE_KEY }}
+          key: ${{ runner.OS }}-gradle-wrapper-cache-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/wrapper/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.OS }}-gradle-wrapper-cache-
       - name: Cache Gradle caches
         uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
-          key: ${{ env.GRADLE_CACHES_CACHE_KEY }}
+          key: ${{ runner.OS }}-gradle-caches-cache-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.OS }}-gradle-caches-cache-
       - name: generate ksProp file
@@ -102,14 +98,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ env.GRADLE_WRAPPER_CACHE_KEY }}
+          key: ${{ runner.OS }}-gradle-wrapper-cache-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/wrapper/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.OS }}-gradle-wrapper-cache-
       - name: Cache Gradle caches
         uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
-          key: ${{ env.GRADLE_CACHES_CACHE_KEY }}
+          key: ${{ runner.OS }}-gradle-caches-cache-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.OS }}-gradle-caches-cache-
       - name: generate ksProp file
