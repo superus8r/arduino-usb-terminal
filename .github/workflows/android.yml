@@ -80,6 +80,20 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+      - name: Cache Gradle wrapper
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.OS }}-gradle-wrapper-cache-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/wrapper/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.OS }}-gradle-wrapper-cache-
+      - name: Cache Gradle caches
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.OS }}-gradle-caches-cache-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.OS }}-gradle-caches-cache-
       - name: generate ksProp file
         run: ./gradlew generateKsPropFile
       - name: generate google-services.json file
