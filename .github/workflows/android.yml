@@ -134,6 +134,12 @@ jobs:
         with:
           name: ui-test-video
           path: ./ui-test.mp4
+      - name: Upload UI test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-results
+          path: app/build/reports/androidTests/connected/
 
   notify-slack:
     needs: unit-test
