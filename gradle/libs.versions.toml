@@ -43,7 +43,7 @@ espressoCore = "3.6.1"
 hamcrest = "2.2"
 testRunner = "1.6.2"
 testRules = "1.6.1"
-truth = "1.1.3"
+truth = "1.4.4"
 androidxTruth = "1.6.0"
 
 [libraries]
