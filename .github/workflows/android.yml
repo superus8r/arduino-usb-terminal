@@ -28,7 +28,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
-          key: ${{ runner.OS }}-gradle-caches-cache-${{ hashFiles('build.gradle') }}
+          key: ${{ runner.OS }}-gradle-caches-cache-${{ hashFiles('build.gradle.kts') }}
           restore-keys: |
             ${{ runner.OS }}-gradle-caches-cache-
       - name: generate ksProp file
@@ -91,11 +91,21 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: run tests
+      - name: run tests with screen record
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          script: ./gradlew connectedCheck
+          script: |
+            adb shell screenrecord /sdcard/ui-test.mp4 &
+            SCREENRECORD_PID=$!
+            ./gradlew connectedCheck || true
+            kill $SCREENRECORD_PID || true
+            adb pull /sdcard/ui-test.mp4 ./ui-test.mp4 || true
+      - name: Upload UI test video
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-video
+          path: ./ui-test.mp4
 
   notify-slack:
     needs: unit-test
