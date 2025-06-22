@@ -114,7 +114,6 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         "**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
         "**/*Test*.*", "android/**/*.*",
         "**/Dagger*.*", "**/*_Hilt*.*", "**/*Hilt*.*",
-        "**/ui/**" // Exclude UI files from coverage
     )
     val javaDebugTree = fileTree(layout.buildDirectory.dir("intermediates/javac/debug/classes")) { exclude(fileFilter) }
     val kotlinDebugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
