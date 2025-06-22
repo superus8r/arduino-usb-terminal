@@ -98,7 +98,7 @@ jobs:
           script: |
             adb shell screenrecord /sdcard/ui-test.mp4 &
             SCREENRECORD_PID=$!
-            ./gradlew connectedCheck || true
+            ./gradlew connectedCheck
             kill $SCREENRECORD_PID || true
             adb pull /sdcard/ui-test.mp4 ./ui-test.mp4 || true
       - name: Upload UI test video
