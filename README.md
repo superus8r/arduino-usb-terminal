@@ -71,7 +71,21 @@ Since this uses the gradle scanner, the sonar properties are defined in root pro
 On one hand, the Sonar scanner requires local paths for `sonar.sources` and `sonar.binaries` properties, on the other hand it requires absolute path for `sonar.androidLint.reportPaths` and `sonar.coverage.jacoco.xmlReportPaths`.
 More info on official Sonar docs: [SonarScanner for Gradle](https://docs.sonarcloud.io/advanced-setup/ci-based-analysis/sonarscanner-for-gradle/) 
 
- 
+
+## Dependency Verification
+
+This project uses [Gradle Dependency Verification](https://docs.gradle.org/current/userguide/dependency_verification.html) to check the authenticity dependencies.
+
+The following files are committed to the repository:
+- `gradle/verification-metadata.xml`
+- `gradle/verification-keyring.keys`
+- `gradle/verification-metadata.gpg`
+**For contributors: if you add or update dependencies, regenerate these files with:**
+```
+./gradlew --write-verification-metadata pgp,sha256 --export-keys
+```
+Then commit the updated files.
+This improves supply chain security and hopefully helps prevent unauthorized dependency changes.
  
  ## Knows Issues
 - Jacoco coverage report is incorrect
