@@ -30,7 +30,8 @@ jobs:
           path: ~/.gradle/caches
           key: ${{ runner.OS }}-gradle-caches-cache-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/libs.versions.toml', 'gradle/verification-metadata.xml', 'gradle/verification-keyring.keys', 'gradle/verification-metadata.gpg') }}
           restore-keys: |
-            ${{ runner.OS }}-gradle-caches-cache-
+#            ${{ runner.OS }}-gradle-caches-cache-
+      - name: generate ksProp file
       - name: generate ksProp file
         run: ./gradlew generateKsPropFile
       - name: generate google-services.json file
