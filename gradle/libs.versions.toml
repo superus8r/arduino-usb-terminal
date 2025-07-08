@@ -15,7 +15,7 @@ activityCompose = "1.10.1"
 datastorePreferences = "1.1.7"
 
 # Compose
-composeBom = "2023.06.01"
+composeBom = "2025.06.01"
 
 # Google/Material
 material = "1.12.0"
