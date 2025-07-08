@@ -21,7 +21,7 @@ composeBom = "2025.06.01"
 material = "1.12.0"
 
 # Firebase
-firebaseBom = "33.15.0"
+firebaseBom = "33.16.0"
 
 # Dagger/Hilt
 hilt = "2.56.2"
