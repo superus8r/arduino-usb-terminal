@@ -10,8 +10,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://www.jitpack.io" ) }
+        maven("https://www.jitpack.io")
     }
 }
-rootProject.name='USBTerminal'
-include ':app'
+rootProject.name = "USBTerminal"
+include(":app")

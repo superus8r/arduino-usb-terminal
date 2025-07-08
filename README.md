@@ -74,6 +74,7 @@ More info on official Sonar docs: [SonarScanner for Gradle](https://docs.sonarcl
  
  
  ## Knows Issues
+- Jacoco coverage report is incorrect
 - Please feel free inform me about new issues
  
  

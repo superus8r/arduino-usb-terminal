@@ -36,8 +36,8 @@ android {
         applicationId = "org.kabiri.android.usbterminal"
         minSdk = 24
         targetSdk = 35
-        versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 14
-        versionName = "0.9.84${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
+        versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 15
+        versionName = "0.9.85${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -62,7 +62,8 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         named("debug") {
-            isTestCoverageEnabled = true
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
         }
     }
 
@@ -70,8 +71,9 @@ android {
 
         animationsDisabled = true
 
+        @Suppress("UnstableApiUsage")
         managedDevices {
-            devices {
+            allDevices {
                 maybeCreate<com.android.build.api.dsl.ManagedVirtualDevice>("pixel2api30").apply {
                     device = "Pixel 2"
                     apiLevel = 30
@@ -93,8 +95,7 @@ android {
 }
 
 jacoco {
-    val jacoco_version: String by project
-    toolVersion = jacoco_version
+    toolVersion = libs.versions.jacoco.get()
     reportsDirectory.set(layout.buildDirectory.dir("mergedReportDir"))
 }
 
@@ -109,16 +110,24 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         csv.required.set(false)
     }
 
-    val fileFilter = listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*", "android/**/*.*")
-    val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") { exclude(fileFilter) }
-    val mainSrc = "${layout.projectDirectory}/src/main/kotlin"
-
-    sourceDirectories.from(files(setOf(mainSrc)))
-    classDirectories.from(files(setOf(debugTree)))
-    executionData.from(fileTree(layout.buildDirectory) { include(setOf(
-            "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-            "outputs/managed_device_code_coverage/pixel2api30/coverage.ec"
-    ))})
+    val fileFilter = listOf(
+        "**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
+        "**/*Test*.*", "android/**/*.*",
+        "**/Dagger*.*", "**/*_Hilt*.*", "**/*Hilt*.*",
+    )
+    val javaDebugTree = fileTree(layout.buildDirectory.dir("intermediates/javac/debug/classes")) { exclude(fileFilter) }
+    val kotlinDebugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
+    val mainJavaSrc = layout.projectDirectory.dir("src/main/java")
+    val mainKotlinSrc = layout.projectDirectory.dir("src/main/kotlin")
+    sourceDirectories.from(files(mainJavaSrc, mainKotlinSrc))
+    classDirectories.from(files(javaDebugTree, kotlinDebugTree))
+    executionData.from(fileTree(layout.buildDirectory) {
+        include(
+            "outputs/unit_test_code_coverage/**/*.exec",
+            "outputs/managed_device_code_coverage/**/*.ec",
+            "outputs/managed_device_code_coverage/**/*.exec"
+        )
+    })
 }
 
 sonarqube {
@@ -206,82 +215,70 @@ fun loadKeyStore(name: String): Properties? {
     }
 }
 
-val firebase_bom_version: String by project
-val hilt_version: String by project
-val coroutines_version: String by project
-val material_version: String by project
-val mockk_version: String by project
 dependencies {
 
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.core:core-ktx:1.16.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    // AndroidX
+    implementation(libs.appcompat)
+    implementation(libs.core.ktx)
+    implementation(libs.constraintlayout)
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:$firebase_bom_version"))
-    implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics.ktx)
+    implementation(libs.firebase.crashlytics.ktx)
 
     // Dependency Injection
-    implementation("com.google.dagger:hilt-android:$hilt_version")
-    kapt("com.google.dagger:hilt-compiler:$hilt_version")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 
     // Coroutines
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.lifecycle.extensions)
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.android)
 
     // Compose Bom
-    val composeBom = platform("androidx.compose:compose-bom:2023.06.01")
+    val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
-    androidTestImplementation(composeBom)
-    implementation("androidx.compose.foundation:foundation")
-    implementation("androidx.compose.material3:material3")
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material3)
     // Compose - Android Studio Preview support
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    implementation("androidx.activity:activity-compose:1.10.1")
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.activity.compose)
 
     // Other UI Libraries
-    implementation("com.google.android.material:material:$material_version")
+    implementation(libs.material)
 
-    // data
-    implementation("androidx.datastore:datastore-preferences:1.1.4")
+    // Data
+    implementation(libs.datastore.preferences)
 
-    // unit test libs
-    testImplementation("junit:junit:4.13.2")
+    // Unit Test Libraries
+    testImplementation(libs.junit)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.truth)
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.mockk.agent)
 
-    // instrumented test libs
-    androidTestImplementation("androidx.test:core:1.6.1")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.ext:junit-ktx:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    // Instrumented Test Libraries
+    androidTestImplementation(composeBom)
+    androidTestImplementation(libs.coroutines.test)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit.ktx)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.hamcrest)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.truth)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.mockk.agent)
 
-    // Hamcrest for view matching
-    androidTestImplementation("org.hamcrest:hamcrest-library:2.2")
-    androidTestImplementation("androidx.test:runner:1.6.2")
-    androidTestImplementation("androidx.test:rules:1.6.1")
-
-    // coroutine testing
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
-    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
-
-    // google truth for assertions
-    testImplementation("com.google.truth:truth:1.1.3")
-    androidTestImplementation("androidx.test.ext:truth:1.6.0")
-
-    // mockk
-    testImplementation("io.mockk:mockk-android:$mockk_version")
-    testImplementation("io.mockk:mockk-agent:$mockk_version")
-    androidTestImplementation("io.mockk:mockk-android:$mockk_version")
-    androidTestImplementation("io.mockk:mockk-agent:$mockk_version")
-
-    // hilt testing - https://developer.android.com/training/dependency-injection/hilt-testing
-    androidTestImplementation("com.google.dagger:hilt-android-testing:$hilt_version")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hilt_version")
+    // Hilt Testing
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler)
 
     // Android Serial Controller
-    implementation("com.github.superus8r:UsbSerial:6.1.1")
+    implementation(libs.usb.serial)
 }

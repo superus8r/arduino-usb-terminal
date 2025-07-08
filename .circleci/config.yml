@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  codecov: codecov/codecov@3.2.4
+  codecov: codecov/codecov@5.4.3
   ruby: circleci/ruby@2.0.0
 
 commands:
@@ -9,7 +9,11 @@ commands:
       - restore_cache:
           key: v1-gradle-wrapper-{{ arch }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
-          key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle" }}
+          key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "app/build.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }}
+  restore_bundler_cache:
+    steps:
+      - restore_cache:
+          key: v1-bundler-cache-{{ checksum "Gemfile.lock" }}
 
   save_gradle_cache:
     steps:
@@ -20,7 +24,13 @@ commands:
       - save_cache:
           paths:
             - ~/.gradle/caches
-          key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle" }}
+          key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "app/build.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }}
+  save_bundler_cache:
+    steps:
+      - save_cache:
+          paths:
+            - vendor/bundle
+          key: v1-bundler-cache-{{ checksum "Gemfile.lock" }}
 
 executors:
   android-machine:
@@ -37,18 +47,21 @@ jobs:
     steps:
       - checkout
       - restore_gradle_cache
+      - restore_bundler_cache
       - ruby/install-deps:
           with-cache: true
       - run:
           name: Fastlane - run all tests with coverage report
           command: |
             bundle exec fastlane testDev
+            bundle exec fastlane lint
       - save_gradle_cache
+      - save_bundler_cache
       - run:
           name: Analyze on SonarCloud
           command: ./gradlew lintDebug sonar
       - codecov/upload:
-          file: app/build/mergedReportDir/jacocoTestReport/jacocoTestReport.xml
+          files: app/build/mergedReportDir/jacocoTestReport/jacocoTestReport.xml
       - store_test_results:
           path: app/build/test-results/testDebugUnitTest
       - store_artifacts:
