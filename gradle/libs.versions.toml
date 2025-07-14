@@ -1,6 +1,6 @@
 [versions]
 # Build tools & plugins
-gradle = "8.10.1"
+gradle = "8.11.1"
 kotlin = "2.1.20"
 jacoco = "0.8.8"
 
