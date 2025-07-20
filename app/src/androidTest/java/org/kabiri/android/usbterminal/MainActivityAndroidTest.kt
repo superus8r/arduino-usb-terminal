@@ -15,17 +15,15 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
 @RunWith(AndroidJUnit4::class)
 internal class MainActivityAndroidTest {
-
     @get:Rule
     var rule = activityScenarioRule<MainActivity>()
 
     private fun ensureMenuIsAccessible(
         menuItemId: Int,
         onVisible: () -> Unit,
-        onOverflow: () -> Unit
+        onOverflow: () -> Unit,
     ) {
         try {
             // Try to find the menu item first
@@ -49,49 +47,46 @@ internal class MainActivityAndroidTest {
     }
 
     @Test
-    fun checkActionMenuItemSettingsIsDisplayed() = ensureMenuIsAccessible(
-        menuItemId = R.id.actionSettings,
-        onVisible = {
-
-            // assert
-            onView(withId(R.id.actionSettings)).check(matches(isDisplayed()))
-        },
-        onOverflow = {
-
-            // assert
-            onView(withText(R.string.title_settings)).check(matches(isDisplayed()))
-        }
-    )
-
-    @Test
-    fun checkActionMenuItemConnectIsDisplayed() = ensureMenuIsAccessible(
-        menuItemId = R.id.actionSettings,
-        onVisible = {
-
-            // assert
-            onView(withId(R.id.actionConnect)).check(matches(isDisplayed()))
-        },
-        onOverflow = {
-
-            // assert
-            onView(withText(R.string.title_connect)).check(matches(isDisplayed()))
-        }
-    )
+    fun checkActionMenuItemSettingsIsDisplayed() =
+        ensureMenuIsAccessible(
+            menuItemId = R.id.actionSettings,
+            onVisible = {
+                // assert
+                onView(withId(R.id.actionSettings)).check(matches(isDisplayed()))
+            },
+            onOverflow = {
+                // assert
+                onView(withText(R.string.title_settings)).check(matches(isDisplayed()))
+            },
+        )
 
     @Test
-    fun checkActionMenuItemDisconnectIsDisplayed() = ensureMenuIsAccessible(
-        menuItemId = R.id.actionSettings,
-        onVisible = {
+    fun checkActionMenuItemConnectIsDisplayed() =
+        ensureMenuIsAccessible(
+            menuItemId = R.id.actionSettings,
+            onVisible = {
+                // assert
+                onView(withId(R.id.actionConnect)).check(matches(isDisplayed()))
+            },
+            onOverflow = {
+                // assert
+                onView(withText(R.string.title_connect)).check(matches(isDisplayed()))
+            },
+        )
 
-            // assert
-            onView(withId(R.id.actionDisconnect)).check(matches(isDisplayed()))
-        },
-        onOverflow = {
-
-            // assert
-            onView(withText(R.string.title_disconnect)).check(matches(isDisplayed()))
-        }
-    )
+    @Test
+    fun checkActionMenuItemDisconnectIsDisplayed() =
+        ensureMenuIsAccessible(
+            menuItemId = R.id.actionSettings,
+            onVisible = {
+                // assert
+                onView(withId(R.id.actionDisconnect)).check(matches(isDisplayed()))
+            },
+            onOverflow = {
+                // assert
+                onView(withText(R.string.title_disconnect)).check(matches(isDisplayed()))
+            },
+        )
 
     @Test
     fun clickingSettingsOpensSettingsBottomSheet() {
@@ -99,7 +94,6 @@ internal class MainActivityAndroidTest {
         ensureMenuIsAccessible(
             menuItemId = R.id.actionSettings,
             onVisible = {
-
                 // act
                 onView(withId(R.id.actionSettings)).perform(click())
 
@@ -112,7 +106,7 @@ internal class MainActivityAndroidTest {
 
                 // assert
                 onView(withId(R.id.composeViewSettingContent)).check(matches(isDisplayed()))
-            }
+            },
         )
     }
 }
