@@ -10,6 +10,7 @@ commands:
           key: v1-gradle-wrapper-{{ arch }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
           key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "app/build.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }}
+
   restore_bundler_cache:
     steps:
       - restore_cache:
@@ -25,12 +26,21 @@ commands:
           paths:
             - ~/.gradle/caches
           key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "app/build.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }}
+
   save_bundler_cache:
     steps:
       - save_cache:
           paths:
             - vendor/bundle
           key: v1-bundler-cache-{{ checksum "Gemfile.lock" }}
+
+  setup_android:
+    steps:
+      - checkout
+      - restore_gradle_cache
+      - restore_bundler_cache
+      - ruby/install-deps:
+          with-cache: true
 
 executors:
   android-machine:
@@ -45,11 +55,7 @@ jobs:
     executor: android-machine
     resource_class: large
     steps:
-      - checkout
-      - restore_gradle_cache
-      - restore_bundler_cache
-      - ruby/install-deps:
-          with-cache: true
+      - setup_android
       - run:
           name: Fastlane - run all tests with coverage report
           command: |
