@@ -10,8 +10,10 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -134,5 +136,39 @@ internal class MainActivityViewModelTest {
             assertThat(sut.infoMessage.value).isEqualTo("")
             assertThat(sut.errorMessage.value).isEqualTo("")
             assertThat(sut.output.value).isEqualTo("")
+        }
+
+    @Test
+    fun `connectIfAlreadyHasPermission does nothing when no usb device exists`() =
+        runTest {
+            // arrange
+            every { mockUsbUseCase.usbDevice } returns MutableStateFlow(null)
+
+            // act
+            sut.connectIfAlreadyHasPermission()
+
+            // assert
+            verify(exactly = 0) { mockUsbUseCase.hasPermission(any()) }
+            verify(exactly = 0) { mockArduinoUsecase.openDeviceAndPort(any()) }
+        }
+
+    @Test
+    fun `connectIfAlreadyHasPermission calls hasPermission and openDeviceAndPort when usb device exists`() =
+        runTest {
+            // arrange
+            val mockDevice: UsbDevice = mockk(relaxed = true)
+            val fakeVendorId = 0x0043
+            every { mockDevice.vendorId } returns fakeVendorId
+            every { mockUsbUseCase.usbDevice } returns MutableStateFlow(mockDevice)
+            every { mockUsbUseCase.hasPermission(mockDevice) } returns true
+            every { mockArduinoUsecase.openDeviceAndPort(any()) } returns Unit
+
+            // act
+            sut.connectIfAlreadyHasPermission()
+            advanceUntilIdle()
+
+            // assert
+            verify { mockUsbUseCase.hasPermission(mockDevice) }
+            verify { mockArduinoUsecase.openDeviceAndPort(mockDevice) }
         }
 }
