@@ -49,7 +49,7 @@ internal class MainActivityViewModel
 
     val output2 = SnapshotStateList<OutputText>()
 
-    init {
+    internal fun startObservingUsbDevice() {
         // Subscribe to USB device changes.
         viewModelScope.launch {
             usbUseCase.usbDevice.collect { device ->
