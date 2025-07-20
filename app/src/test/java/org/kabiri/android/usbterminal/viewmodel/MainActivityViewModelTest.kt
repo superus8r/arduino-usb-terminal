@@ -78,17 +78,17 @@ internal class MainActivityViewModelTest {
 
     @Test
     fun `startObservingUsbDevice does not call openDeviceAndPort when device is null`() = runTest {
-        // Arrange
+        // arrange
         val expected = null
         val deviceFlow = MutableStateFlow<UsbDevice?>(expected)
         every { mockUsbUseCase.usbDevice } returns deviceFlow
 
-        // Act
+        // act
         sut.startObservingUsbDevice()
         deviceFlow.value = expected
         advanceUntilIdle()
 
-        // Assert
+        // assert
         verify(exactly = 0) { mockArduinoUsecase.openDeviceAndPort(any()) }
         assertThat(sut.infoMessage.value).contains(expected.toString())
     }
