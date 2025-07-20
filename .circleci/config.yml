@@ -14,7 +14,7 @@ commands:
   restore_bundler_cache:
     steps:
       - restore_cache:
-          key: v1-bundler-cache-{{ checksum "Gemfile.lock" }}
+          key: v1-bundler-cache-{{ arch }}-{{ checksum "Gemfile.lock" }}
 
   save_gradle_cache:
     steps:
