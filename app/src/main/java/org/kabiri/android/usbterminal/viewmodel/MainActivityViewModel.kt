@@ -101,7 +101,7 @@ internal class MainActivityViewModel
         arduinoUseCase.disconnect()
     }
 
-    fun openDeviceAndPort(device: UsbDevice) = viewModelScope.launch {
+    private fun openDeviceAndPort(device: UsbDevice) = viewModelScope.launch {
         arduinoUseCase.openDeviceAndPort(device)
     }
 
