@@ -60,12 +60,12 @@ jobs:
           name: Fastlane - run all tests with coverage report
           command: |
             bundle exec fastlane testDev
-            bundle exec fastlane lint
+      - run: ./gradlew lintDebug
       - save_gradle_cache
       - save_bundler_cache
       - run:
           name: Analyze on SonarCloud
-          command: ./gradlew lintDebug sonar
+          command: ./gradlew sonar
       - codecov/upload:
           files: app/build/mergedReportDir/jacocoTestReport/jacocoTestReport.xml
       - store_test_results:
