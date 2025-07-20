@@ -94,7 +94,7 @@ jobs:
     executor: android-docker
     resource_class: large
     steps:
-      - android_setup
+      - setup_android
       - run:
           name: Prepare Fastlane
           command: sudo bundle update
