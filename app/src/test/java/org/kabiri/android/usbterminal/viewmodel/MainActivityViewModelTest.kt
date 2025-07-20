@@ -77,21 +77,22 @@ internal class MainActivityViewModelTest {
         }
 
     @Test
-    fun `startObservingUsbDevice does not call openDeviceAndPort when device is null`() = runTest {
-        // arrange
-        val expected = null
-        val deviceFlow = MutableStateFlow<UsbDevice?>(expected)
-        every { mockUsbUseCase.usbDevice } returns deviceFlow
+    fun `startObservingUsbDevice does not call openDeviceAndPort when device is null`() =
+        runTest {
+            // arrange
+            val expected = null
+            val deviceFlow = MutableStateFlow<UsbDevice?>(expected)
+            every { mockUsbUseCase.usbDevice } returns deviceFlow
 
-        // act
-        sut.startObservingUsbDevice()
-        deviceFlow.value = expected
-        advanceUntilIdle()
+            // act
+            sut.startObservingUsbDevice()
+            deviceFlow.value = expected
+            advanceUntilIdle()
 
-        // assert
-        verify(exactly = 0) { mockArduinoUsecase.openDeviceAndPort(any()) }
-        assertThat(sut.infoMessage.value).contains(expected.toString())
-    }
+            // assert
+            verify(exactly = 0) { mockArduinoUsecase.openDeviceAndPort(any()) }
+            assertThat(sut.infoMessage.value).contains(expected.toString())
+        }
 
     @Test
     fun `connect emits expected message when device list is empty`() =
@@ -209,4 +210,31 @@ internal class MainActivityViewModelTest {
             verify { mockUsbUseCase.hasPermission(mockDevice) }
             verify { mockArduinoUsecase.openDeviceAndPort(mockDevice) }
         }
+
+    @Test
+    fun `disconnect calls disconnect on both usbUseCase and arduinoUseCase`() =
+        runTest {
+            // arrange
+            // act
+            sut.disconnect()
+
+            // assert
+            verify(exactly = 1) { mockUsbUseCase.disconnect() }
+            verify(exactly = 1) { mockArduinoUsecase.disconnect() }
+        }
+
+    @Test
+    fun `serialWrite updates output and returns result from arduinoUseCase`() = runTest {
+        // arrange
+        val expected = "TEST_COMMAND"
+        every { mockArduinoUsecase.serialWrite(expected) } returns true
+
+        // act
+        val result = sut.serialWrite(expected)
+
+        // assert
+        verify { mockArduinoUsecase.serialWrite(expected) }
+        assertThat(result).isTrue()
+        assertThat(sut.output.value).contains(expected)
+    }
 }
