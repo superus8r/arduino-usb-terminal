@@ -56,6 +56,27 @@ internal class MainActivityViewModelTest {
     }
 
     @Test
+    fun `startObservingUsbDevice updates infoMessage and calls openDeviceAndPort when device is emitted`() =
+        runTest {
+            // arrange
+            val expected = 0x0043
+            val deviceFlow = MutableStateFlow<UsbDevice?>(null)
+            val mockDevice: UsbDevice = mockk(relaxed = true)
+            every { mockDevice.vendorId } returns expected
+            every { mockUsbUseCase.usbDevice } returns deviceFlow
+            every { mockArduinoUsecase.openDeviceAndPort(mockDevice) } returns Unit
+
+            // act
+            sut.startObservingUsbDevice()
+            deviceFlow.value = mockDevice
+            advanceUntilIdle()
+
+            // assert
+            verify(exactly = 1) { mockArduinoUsecase.openDeviceAndPort(mockDevice) }
+            assertThat(sut.infoMessage.value).contains(expected.toString())
+        }
+
+    @Test
     fun `connect emits expected message when device list is empty`() =
         runTest {
             // arrange
