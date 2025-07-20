@@ -77,6 +77,23 @@ internal class MainActivityViewModelTest {
         }
 
     @Test
+    fun `startObservingUsbDevice does not call openDeviceAndPort when device is null`() = runTest {
+        // Arrange
+        val expected = null
+        val deviceFlow = MutableStateFlow<UsbDevice?>(expected)
+        every { mockUsbUseCase.usbDevice } returns deviceFlow
+
+        // Act
+        sut.startObservingUsbDevice()
+        deviceFlow.value = expected
+        advanceUntilIdle()
+
+        // Assert
+        verify(exactly = 0) { mockArduinoUsecase.openDeviceAndPort(any()) }
+        assertThat(sut.infoMessage.value).contains(expected.toString())
+    }
+
+    @Test
     fun `connect emits expected message when device list is empty`() =
         runTest {
             // arrange
