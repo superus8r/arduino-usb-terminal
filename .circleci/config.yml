@@ -39,8 +39,6 @@ commands:
       - checkout
       - restore_gradle_cache
       - restore_bundler_cache
-      - ruby/install-deps:
-          with-cache: true
 
 executors:
   android-machine:
@@ -56,6 +54,8 @@ jobs:
     resource_class: large
     steps:
       - setup_android
+      - ruby/install-deps:
+          with-cache: true
       - run:
           name: Fastlane - run all tests with coverage report
           command: |
