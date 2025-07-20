@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
   codecov: codecov/codecov@5.4.3
-  ruby: circleci/ruby@2.0.0
+  ruby: circleci/ruby@2.5.3
 
 commands:
   restore_gradle_cache:
@@ -10,10 +10,11 @@ commands:
           key: v1-gradle-wrapper-{{ arch }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
           key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "app/build.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }}
+
   restore_bundler_cache:
     steps:
       - restore_cache:
-          key: v1-bundler-cache-{{ checksum "Gemfile.lock" }}
+          key: v1-bundler-cache-{{ arch }}-{{ checksum "Gemfile.lock" }}
 
   save_gradle_cache:
     steps:
@@ -25,6 +26,7 @@ commands:
           paths:
             - ~/.gradle/caches
           key: v1-gradle-cache-{{ arch }}-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "app/build.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }}
+
   save_bundler_cache:
     steps:
       - save_cache:
@@ -32,34 +34,38 @@ commands:
             - vendor/bundle
           key: v1-bundler-cache-{{ checksum "Gemfile.lock" }}
 
+  setup_android:
+    steps:
+      - checkout
+      - restore_gradle_cache
+      - restore_bundler_cache
+
 executors:
   android-machine:
     machine:
-      image: android:2024.01.1
+      image: android:2024.11.1
   android-docker:
     docker:
-      - image: cimg/android:2024.01
+      - image: cimg/android:2025.04
 
 jobs:
   android-test:
     executor: android-machine
     resource_class: large
     steps:
-      - checkout
-      - restore_gradle_cache
-      - restore_bundler_cache
+      - setup_android
       - ruby/install-deps:
           with-cache: true
       - run:
           name: Fastlane - run all tests with coverage report
           command: |
             bundle exec fastlane testDev
-            bundle exec fastlane lint
+      - run: ./gradlew lintDebug
       - save_gradle_cache
       - save_bundler_cache
       - run:
           name: Analyze on SonarCloud
-          command: ./gradlew lintDebug sonar
+          command: ./gradlew sonar
       - codecov/upload:
           files: app/build/mergedReportDir/jacocoTestReport/jacocoTestReport.xml
       - store_test_results:
@@ -71,14 +77,15 @@ jobs:
     executor: android-docker
     resource_class: large
     steps:
-      - checkout
-      - restore_gradle_cache
+      - setup_android
       - run:
           name: Prepare Fastlane
           command: sudo bundle update
       - run:
           name: Distribute to Firebase AppTester Dev
           command: bundle exec fastlane distDev
+      - save_gradle_cache
+      - save_bundler_cache
       - store_artifacts:
           path: /home/circleci/project/app/build/outputs/apk/debug/app-debug.apk
           destination: fastlane-output-debug
@@ -87,8 +94,7 @@ jobs:
     executor: android-docker
     resource_class: large
     steps:
-      - checkout
-      - restore_gradle_cache
+      - setup_android
       - run:
           name: Prepare Fastlane
           command: sudo bundle update
@@ -98,6 +104,8 @@ jobs:
       - run:
           name: Distribute to Firebase AppTester Prod
           command: bundle exec fastlane distProd
+      - save_gradle_cache
+      - save_bundler_cache
       - store_artifacts:
           path: /home/circleci/project/app/build/outputs/bundle/release/app-release.aab
           destination: fastlane-output-release
@@ -108,4 +116,7 @@ workflows:
       - android-test:
           context: SonarCloud
       - distribute-dev
-      - distribute-internal-testing
+      - distribute-internal-testing:
+          requires:
+            - android-test
+
