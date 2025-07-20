@@ -45,10 +45,10 @@ commands:
 executors:
   android-machine:
     machine:
-      image: android:2024.01.1
+      image: android:2024.11.1
   android-docker:
     docker:
-      - image: cimg/android:2024.01
+      - image: cimg/android:2025.04
 
 jobs:
   android-test:
