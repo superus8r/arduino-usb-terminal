@@ -27,7 +27,6 @@ import org.kabiri.android.usbterminal.util.isOfficialArduinoBoard
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class MainActivityViewModelTest {
-
     private val testDispatcher: TestDispatcher = StandardTestDispatcher()
     private val testScope = TestScope(testDispatcher)
 
@@ -40,17 +39,18 @@ internal class MainActivityViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        sut = MainActivityViewModel(
-            arduinoUseCase = mockArduinoUsecase,
-            usbUseCase = mockUsbUseCase,
-            resourceProvider = mockResourceProvider,
-        )
+        sut =
+            MainActivityViewModel(
+                arduinoUseCase = mockArduinoUsecase,
+                usbUseCase = mockUsbUseCase,
+                resourceProvider = mockResourceProvider,
+            )
     }
 
     @After
     fun cleanUp() {
         Dispatchers.resetMain()
-        unmockkStatic("org.kabiri.android.usbterminal.util.UsbDeviceExtensionsKt")
+        unmockkStatic(UsbDevice::isOfficialArduinoBoard, UsbDevice::isCloneArduinoBoard)
         clearAllMocks()
     }
 
