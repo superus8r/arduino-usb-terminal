@@ -54,6 +54,7 @@ internal class MainActivityViewModel
         viewModelScope.launch {
             usbUseCase.usbDevice.collect { device ->
                 _infoMessageFlow.value = "device discovered: ${device?.vendorId}\n"
+                // TODO: DROID-17 - check if this line is required after DROID-17 is done
                 device?.let { openDeviceAndPort(it) }
             }
         }
@@ -92,7 +93,7 @@ internal class MainActivityViewModel
     fun connectIfAlreadyHasPermission() = viewModelScope.launch {
         val usbDevice = usbUseCase.usbDevice.firstOrNull() ?: return@launch
         usbUseCase.hasPermission(usbDevice)
-        // TODO : Fix hasPermission return value not being used here.
+        // TODO: DROID-17 - Fix hasPermission return value not being used here.
         openDeviceAndPort(usbDevice)
     }
 
