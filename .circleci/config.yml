@@ -108,4 +108,7 @@ workflows:
       - android-test:
           context: SonarCloud
       - distribute-dev
-      - distribute-internal-testing
+      - distribute-internal-testing:
+          requires:
+            - android-test
+
