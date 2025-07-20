@@ -77,14 +77,15 @@ jobs:
     executor: android-docker
     resource_class: large
     steps:
-      - checkout
-      - restore_gradle_cache
+      - setup_android
       - run:
           name: Prepare Fastlane
           command: sudo bundle update
       - run:
           name: Distribute to Firebase AppTester Dev
           command: bundle exec fastlane distDev
+      - save_gradle_cache
+      - save_bundler_cache
       - store_artifacts:
           path: /home/circleci/project/app/build/outputs/apk/debug/app-debug.apk
           destination: fastlane-output-debug
@@ -93,8 +94,7 @@ jobs:
     executor: android-docker
     resource_class: large
     steps:
-      - checkout
-      - restore_gradle_cache
+      - android_setup
       - run:
           name: Prepare Fastlane
           command: sudo bundle update
@@ -104,6 +104,8 @@ jobs:
       - run:
           name: Distribute to Firebase AppTester Prod
           command: bundle exec fastlane distProd
+      - save_gradle_cache
+      - save_bundler_cache
       - store_artifacts:
           path: /home/circleci/project/app/build/outputs/bundle/release/app-release.aab
           destination: fastlane-output-release
