@@ -92,6 +92,7 @@ internal class MainActivityViewModel
     fun connectIfAlreadyHasPermission() = viewModelScope.launch {
         val usbDevice = usbUseCase.usbDevice.firstOrNull() ?: return@launch
         usbUseCase.hasPermission(usbDevice)
+        // TODO : Fix hasPermission return value not being used here.
         openDeviceAndPort(usbDevice)
     }
 
