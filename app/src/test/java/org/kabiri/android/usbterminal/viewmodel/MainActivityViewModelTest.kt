@@ -27,7 +27,15 @@ import org.kabiri.android.usbterminal.util.IResourceProvider
 import org.kabiri.android.usbterminal.util.isCloneArduinoBoard
 import org.kabiri.android.usbterminal.util.isOfficialArduinoBoard
 
-private const val OFFICIAL_VENDOR_ID = 0x0043
+private const val OFFICIAL_VENDOR_ID = 0x2341
+private const val OFFICIAL_PRODUCT_ID = 0x0043
+
+private const val CLONE_VENDOR_ID = 0x1A86
+private const val CLONE_PRODUCT_ID = 0x7523
+
+
+private const val OTHER_VENDOR_ID = 0x1234 // random id
+private const val OTHER_PRODUCT_ID = 0x1234 // random id
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class MainActivityViewModelTest {
@@ -119,9 +127,8 @@ internal class MainActivityViewModelTest {
             val expectedInfo = "connecting anyways"
 
             val fakeDevice: UsbDevice = mockk(relaxed = true)
-            mockkStatic(UsbDevice::isOfficialArduinoBoard, UsbDevice::isCloneArduinoBoard)
-            every { fakeDevice.isOfficialArduinoBoard() } returns false
-            every { fakeDevice.isCloneArduinoBoard() } returns false
+            every { fakeDevice.vendorId } returns OTHER_VENDOR_ID
+            every { fakeDevice.productId } returns OTHER_PRODUCT_ID
 
             every { mockUsbUseCase.scanForUsbDevices() } returns listOf(fakeDevice)
             every { mockResourceProvider.getString(R.string.helper_error_arduino_device_not_found) } returns expectedError
@@ -137,37 +144,14 @@ internal class MainActivityViewModelTest {
         }
 
     @Test
-    fun `connect emits expected message and calls requestPermission when the device is neither official nor a clone`() =
-        runTest {
-            // arrange
-            val expected = "connecting anyways"
-
-            val fakeDevice: UsbDevice = mockk(relaxed = true)
-            mockkStatic(UsbDevice::isOfficialArduinoBoard, UsbDevice::isCloneArduinoBoard)
-            every { fakeDevice.isOfficialArduinoBoard() } returns false
-            every { fakeDevice.isCloneArduinoBoard() } returns false
-
-            every { mockUsbUseCase.scanForUsbDevices() } returns listOf(fakeDevice)
-            every { mockResourceProvider.getString(R.string.helper_error_connecting_anyway) } returns expected
-
-            // act
-            sut.connect()
-
-            // assert
-            assertThat(sut.infoMessage.value).isEqualTo(expected)
-            verify(exactly = 1) { mockUsbUseCase.requestPermission(fakeDevice) }
-        }
-
-    @Test
     fun `connect emits expected message and calls requestPermission when the device is a clone`() =
         runTest {
             // arrange
             val expected = "connecting anyways"
 
             val fakeDevice: UsbDevice = mockk(relaxed = true)
-            mockkStatic(UsbDevice::isOfficialArduinoBoard, UsbDevice::isCloneArduinoBoard)
-            every { fakeDevice.isOfficialArduinoBoard() } returns false
-            every { fakeDevice.isCloneArduinoBoard() } returns true
+            every { fakeDevice.vendorId } returns CLONE_VENDOR_ID
+            every { fakeDevice.productId } returns CLONE_PRODUCT_ID
 
             every { mockUsbUseCase.scanForUsbDevices() } returns listOf(fakeDevice)
             every { mockResourceProvider.getString(R.string.helper_error_connecting_anyway) } returns expected
@@ -185,9 +169,8 @@ internal class MainActivityViewModelTest {
         runTest {
             // arrange
             val fakeDevice: UsbDevice = mockk(relaxed = true)
-            mockkStatic(UsbDevice::isOfficialArduinoBoard, UsbDevice::isCloneArduinoBoard)
-            every { fakeDevice.isOfficialArduinoBoard() } returns true
-            every { fakeDevice.isCloneArduinoBoard() } returns false
+            every { fakeDevice.vendorId } returns OFFICIAL_VENDOR_ID
+            every { fakeDevice.productId } returns OFFICIAL_PRODUCT_ID
 
             every { mockUsbUseCase.scanForUsbDevices() } returns listOf(fakeDevice)
 
