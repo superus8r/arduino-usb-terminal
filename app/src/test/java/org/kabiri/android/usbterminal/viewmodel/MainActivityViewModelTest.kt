@@ -5,7 +5,6 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +31,6 @@ private const val OFFICIAL_PRODUCT_ID = 0x0043
 
 private const val CLONE_VENDOR_ID = 0x1A86
 private const val CLONE_PRODUCT_ID = 0x7523
-
 
 private const val OTHER_VENDOR_ID = 0x1234 // random id
 private const val OTHER_PRODUCT_ID = 0x1234 // random id
@@ -231,17 +229,84 @@ internal class MainActivityViewModelTest {
         }
 
     @Test
-    fun `serialWrite updates output and returns result from arduinoUseCase`() = runTest {
-        // arrange
-        val expected = "TEST_COMMAND"
-        every { mockArduinoUsecase.serialWrite(expected) } returns true
+    fun `serialWrite updates output and returns result from arduinoUseCase`() =
+        runTest {
+            // arrange
+            val expected = "TEST_COMMAND"
+            every { mockArduinoUsecase.serialWrite(expected) } returns true
 
-        // act
-        val result = sut.serialWrite(expected)
+            // act
+            val result = sut.serialWrite(expected)
 
-        // assert
-        verify { mockArduinoUsecase.serialWrite(expected) }
-        assertThat(result).isTrue()
-        assertThat(sut.output.value).contains(expected)
-    }
+            // assert
+            verify { mockArduinoUsecase.serialWrite(expected) }
+            assertThat(result).isTrue()
+            assertThat(sut.output.value).contains(expected)
+        }
+
+    @Test
+    fun `getLiveOutput emits arduinoInfo when only arduinoInfo is not empty`() =
+        runTest {
+            // arrange
+            val arduinoDefaultFlow = MutableStateFlow("")
+            val arduinoInfoFlow = MutableStateFlow("arduino info message")
+            val arduinoErrorFlow = MutableStateFlow("")
+            val usbInfoFlow = MutableStateFlow("")
+
+            every { mockArduinoUsecase.messageFlow } returns arduinoDefaultFlow
+            every { mockArduinoUsecase.infoMessageFlow } returns arduinoInfoFlow
+            every { mockArduinoUsecase.errorMessageFlow } returns arduinoErrorFlow
+            every { mockUsbUseCase.infoMessageFlow } returns usbInfoFlow
+            every { mockResourceProvider.getString(any()) } returns ""
+
+            // inject flows into ViewModel
+            sut =
+                MainActivityViewModel(
+                    arduinoUseCase = mockArduinoUsecase,
+                    usbUseCase = mockUsbUseCase,
+                    resourceProvider = mockResourceProvider,
+                )
+
+            // act
+            val outputFlow = sut.getLiveOutput()
+            advanceUntilIdle()
+            val output = outputFlow.value
+
+            // assert
+            assertThat(output.text).isEqualTo("arduino info message")
+            assertThat(output.type).isEqualTo(org.kabiri.android.usbterminal.model.OutputText.OutputType.TYPE_INFO)
+        }
+
+    @Test
+    fun `getLiveOutput emits arduinoDefault when all outputs are empty`() =
+        runTest {
+            // arrange
+            val arduinoDefaultFlow = MutableStateFlow("default message")
+            val arduinoInfoFlow = MutableStateFlow("")
+            val arduinoErrorFlow = MutableStateFlow("")
+            val usbInfoFlow = MutableStateFlow("")
+
+            every { mockArduinoUsecase.messageFlow } returns arduinoDefaultFlow
+            every { mockArduinoUsecase.infoMessageFlow } returns arduinoInfoFlow
+            every { mockArduinoUsecase.errorMessageFlow } returns arduinoErrorFlow
+            every { mockUsbUseCase.infoMessageFlow } returns usbInfoFlow
+            every { mockResourceProvider.getString(any()) } returns ""
+
+            // inject flows into ViewModel
+            sut =
+                MainActivityViewModel(
+                    arduinoUseCase = mockArduinoUsecase,
+                    usbUseCase = mockUsbUseCase,
+                    resourceProvider = mockResourceProvider,
+                )
+
+            // act
+            val outputFlow = sut.getLiveOutput()
+            advanceUntilIdle()
+            val output = outputFlow.value
+
+            // assert
+            assertThat(output.text).isEqualTo("default message")
+            assertThat(output.type).isEqualTo(org.kabiri.android.usbterminal.model.OutputText.OutputType.TYPE_NORMAL)
+        }
 }
