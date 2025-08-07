@@ -27,6 +27,8 @@ import org.kabiri.android.usbterminal.util.IResourceProvider
 import org.kabiri.android.usbterminal.util.isCloneArduinoBoard
 import org.kabiri.android.usbterminal.util.isOfficialArduinoBoard
 
+private const val OFFICIAL_VENDOR_ID = 0x0043
+
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class MainActivityViewModelTest {
     private val testDispatcher: TestDispatcher = StandardTestDispatcher()
@@ -59,7 +61,7 @@ internal class MainActivityViewModelTest {
     fun `startObservingUsbDevice updates infoMessage and calls openDeviceAndPort when device is emitted`() =
         runTest {
             // arrange
-            val expected = 0x0043
+            val expected = OFFICIAL_VENDOR_ID
             val deviceFlow = MutableStateFlow<UsbDevice?>(null)
             val mockDevice: UsbDevice = mockk(relaxed = true)
             every { mockDevice.vendorId } returns expected
@@ -135,6 +137,28 @@ internal class MainActivityViewModelTest {
         }
 
     @Test
+    fun `connect emits expected message and calls requestPermission when the device is neither official nor a clone`() =
+        runTest {
+            // arrange
+            val expected = "connecting anyways"
+
+            val fakeDevice: UsbDevice = mockk(relaxed = true)
+            mockkStatic(UsbDevice::isOfficialArduinoBoard, UsbDevice::isCloneArduinoBoard)
+            every { fakeDevice.isOfficialArduinoBoard() } returns false
+            every { fakeDevice.isCloneArduinoBoard() } returns false
+
+            every { mockUsbUseCase.scanForUsbDevices() } returns listOf(fakeDevice)
+            every { mockResourceProvider.getString(R.string.helper_error_connecting_anyway) } returns expected
+
+            // act
+            sut.connect()
+
+            // assert
+            assertThat(sut.infoMessage.value).isEqualTo(expected)
+            verify(exactly = 1) { mockUsbUseCase.requestPermission(fakeDevice) }
+        }
+
+    @Test
     fun `connect emits expected message and calls requestPermission when the device is a clone`() =
         runTest {
             // arrange
@@ -196,7 +220,7 @@ internal class MainActivityViewModelTest {
         runTest {
             // arrange
             val mockDevice: UsbDevice = mockk(relaxed = true)
-            val fakeVendorId = 0x0043
+            val fakeVendorId = OFFICIAL_VENDOR_ID
             every { mockDevice.vendorId } returns fakeVendorId
             every { mockUsbUseCase.usbDevice } returns MutableStateFlow(mockDevice)
             every { mockUsbUseCase.hasPermission(mockDevice) } returns true
