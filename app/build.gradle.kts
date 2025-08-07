@@ -112,16 +112,16 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     }
 
     val fileFilter = listOf(
-        "**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
+        "**/R.class",
+        "**/MainActivity.*",
+        "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
         "**/*Test*.*", "android/**/*.*",
         "**/Dagger*.*", "**/*_Hilt*.*", "**/*Hilt*.*",
     )
-    val javaDebugTree = fileTree(layout.buildDirectory.dir("intermediates/javac/debug/classes")) { exclude(fileFilter) }
     val kotlinDebugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
-    val mainJavaSrc = layout.projectDirectory.dir("src/main/java")
     val mainKotlinSrc = layout.projectDirectory.dir("src/main/kotlin")
-    sourceDirectories.from(files(mainJavaSrc, mainKotlinSrc))
-    classDirectories.from(files(javaDebugTree, kotlinDebugTree))
+    sourceDirectories.from(files(mainKotlinSrc))
+    classDirectories.from(files(kotlinDebugTree))
     executionData.from(fileTree(layout.buildDirectory) {
         include(
             "outputs/managed_device_code_coverage/**/*.ec",
