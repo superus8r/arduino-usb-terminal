@@ -1,0 +1,55 @@
+<resources>
+    <!-- App -->
+    <string name="app_name">USBTerminal</string>
+    <string name="title_connect">Conectar</string>
+    <string name="title_disconnect">Desconectar</string>
+    <string name="title_settings">Configuración</string>
+
+    <!-- Home Screen -->
+    <string name="home_bt_enter">Enviar</string>
+    <string name="home_et_hint">Escribe un comando …</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Configuración</string>
+    <string name="settings_subtitle">Escribe un nuevo valor y pulsa la marca de verificación para guardarlo.</string>
+    <string name="settings_bottom_text">Atención: Al pulsar el botón Predeterminado se restablecerán rápidamente los ajustes a sus valores originales.</string>
+    <string name="settings_bt_reset_default">Predeterminado</string>
+    <string name="settings_bt_dismiss_sheet">Cerrar</string>
+    <string name="settings_bt_save">Guardar</string>
+    <string name="settings_label_baud_rate">Velocidad en baudios</string>
+    <string name="settings_label_saved">Guardado</string>
+    <string name="settings_label_error">Introduce un número</string>
+
+    <!-- Joystick Screen (upcoming) -->
+    <string name="bt_joystick_forward">Avanzar</string>
+    <string name="bt_joystick_left">Girar a la izquierda</string>
+    <string name="bt_joystick_right">Girar a la derecha</string>
+    <string name="bt_joystick_backward">Retroceder</string>
+
+    <!-- Messages -->
+    <string name="helper_error_serial_port_is_null">El puerto serie es nulo: el dispositivo podría estar desconectado.\n</string>
+    <string name="helper_error_arduino_device_not_found">Dispositivo Arduino no encontrado (o podría ser un clon desconocido).\n</string>
+    <string name="helper_error_connecting_anyway">Conectando de todos modos (podría comportarse de forma incorrecta)…\n</string>
+    <string name="helper_error_usb_devices_not_attached">No hay dispositivos USB conectados\n</string>
+    <string name="helper_error_serial_connection_not_opened">Puerto no abierto - Puede haber un problema con la conexión serie al Arduino\n</string>
+    <string name="helper_error_write_problem">Se produjo un error al escribir en el puerto serie:\n</string>
+    <string name="helper_error_connection_closed_unexpectedly">La conexión con el dispositivo se cerró inesperadamente\n</string>
+    <string name="helper_error_connection_failed_to_open">No se pudo abrir la conexión con el dispositivo. Asegúrate de que el dispositivo esté conectado y que el cable USB y el puerto estén en buen estado.\n</string>
+    <string name="helper_error_connection_failed_to_open_unknown">No se pudo abrir la conexión con el dispositivo.\n</string>
+    <string name="helper_error_connection_not_ready_to_close">No hay ninguna conexión de dispositivo que cerrar\n</string>
+    <string name="helper_error_connection_failed_to_close">No se pudo cerrar la conexión con el dispositivo\n</string>
+    <string name="helper_error_applying_baud_rate">No se pudo aplicar la velocidad en baudios…\n</string>
+    <string name="helper_error_baud_rate_failed_to_apply_no_connection">Conecta un Arduino por USB y pulsa el botón de conexión USB para conectar.\n</string>
+    <string name="helper_info_serial_connection_opened">Conexión serie abierta\n</string>
+    <string name="helper_info_serial_connection_closed">Conexión serie cerrada\n</string>
+    <string name="helper_info_usb_permission_requested">Se solicitó permiso para acceder al dispositivo USB…\n</string>
+    <string name="helper_info_checking_attached_usb_devices">Comprobando dispositivos USB conectados…\n</string>
+    <string name="helper_info_baud_rate_applying">Velocidad en baudios: %d (se puede cambiar en la configuración)\n</string>
+    <string name="helper_info_baud_rate_applied">Velocidad en baudios aplicada correctamente: %d\n</string>
+
+    <string name="breceiver_info_usb_permission_granted">Permiso USB concedido para: \n</string>
+    <string name="breceiver_error_usb_permission_denied">permiso denegado para el dispositivo:\n</string>
+    <string name="breceiver_info_device_attached">Dispositivo conectado\n</string>
+    <string name="breceiver_info_device_detached">Dispositivo desconectado\n</string>
+    <string name="breceiver_info_unknown_intent_action">intent.action era null\n</string>
+</resources>
