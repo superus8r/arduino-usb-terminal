@@ -35,7 +35,7 @@ usbSerial = "6.1.1"
 
 # Testing
 junit = "4.13.2"
-mockk = "1.14.2"
+mockk = "1.14.5"
 testCore = "1.6.1"
 testExtJunit = "1.2.1"
 testExtJunitKtx = "1.2.1"
@@ -70,7 +70,6 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 
 # --- Firebase ---
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 
 # --- Dagger/Hilt ---
