@@ -15,11 +15,17 @@
         <item name="android:background">@drawable/bg_modal_bottom_sheet</item>
     </style>
 
-    <style name="ModalBottomSheetTheme" parent="Theme.Design.BottomSheetDialog">
+    <!-- Common items for the bottom sheet theme -->
+    <style name="ModalBottomSheetTheme.Base" parent="Theme.Design.BottomSheetDialog">
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+        <item name="android:navigationBarColor">@color/bg_modal_bottom_sheet</item>
         <item name="android:windowIsFloating">false</item>
         <item name="bottomSheetStyle">@style/ModalBottomSheet</item>
+    </style>
+
+    <!-- Day variant adds light nav bar icons -->
+    <style name="ModalBottomSheetTheme" parent="@style/ModalBottomSheetTheme.Base">
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
     </style>
 
 </resources>
