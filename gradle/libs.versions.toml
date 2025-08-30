@@ -1,6 +1,6 @@
 [versions]
 # Build tools & plugins
-gradle = "8.10.1"
+gradle = "8.11.1"
 kotlin = "2.1.20"
 jacoco = "0.8.8"
 
@@ -8,7 +8,7 @@ jacoco = "0.8.8"
 appcompat = "1.7.1"
 coreKtx = "1.16.0"
 constraintlayout = "2.2.1"
-lifecycleRuntimeKtx = "2.9.1"
+lifecycleRuntimeKtx = "2.9.2"
 lifecycleViewmodelKtx = "2.9.1"
 lifecycleExtensions = "2.2.0"
 activityCompose = "1.10.1"
@@ -35,7 +35,7 @@ usbSerial = "6.1.1"
 
 # Testing
 junit = "4.13.2"
-mockk = "1.14.2"
+mockk = "1.14.5"
 testCore = "1.6.1"
 testExtJunit = "1.2.1"
 testExtJunitKtx = "1.2.1"
@@ -64,13 +64,14 @@ compose-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 
 # --- Google/Material ---
 material = { module = "com.google.android.material:material", version.ref = "material" }
 
 # --- Firebase ---
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 
 # --- Dagger/Hilt ---

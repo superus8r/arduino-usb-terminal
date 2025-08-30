@@ -33,11 +33,6 @@ platform :android do
     ])
   end
 
-  desc "Runs lint"
-  lane :lint do
-    gradle(task: "lintDebug")
-  end
-
   desc "Deploy to Firebase AppTester Dev channel"
   lane :distDev do
     gradle(tasks: [

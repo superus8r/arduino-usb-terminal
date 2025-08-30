@@ -19,23 +19,21 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.kabiri.android.usbterminal.util.scrollToLastLine
 import org.kabiri.android.usbterminal.ui.setting.SettingModalBottomSheet
 import org.kabiri.android.usbterminal.ui.setting.SettingViewModel
+import org.kabiri.android.usbterminal.util.scrollToLastLine
 import org.kabiri.android.usbterminal.viewmodel.MainActivityViewModel
+
+private const val TAG = "MainActivity"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        private const val TAG = "MainActivity"
-    }
-
     private val viewModel by viewModels<MainActivityViewModel>()
     private val settingViewModel by viewModels<SettingViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.startObservingUsbDevice()
         setContentView(R.layout.activity_main)
 
         // avoid system navbar or soft keyboard overlapping the content.
@@ -54,12 +52,19 @@ class MainActivity : AppCompatActivity() {
         // make the text view scrollable:
         tvOutput.movementMethod = ScrollingMovementMethod()
 
+        var autoScrollEnabled = true
+        lifecycleScope.launch {
+            settingViewModel.currentAutoScroll.collect { enabled ->
+                autoScrollEnabled = enabled
+            }
+        }
+
         lifecycleScope.launch {
             viewModel.getLiveOutput()
             viewModel.output.collect {
                 tvOutput.apply {
                     text = it
-                    scrollToLastLine()
+                    if (autoScrollEnabled) scrollToLastLine()
                 }
             }
         }
@@ -67,9 +72,11 @@ class MainActivity : AppCompatActivity() {
         fun sendCommand() {
             val input = etInput.text.toString()
             // append the input to console
-            if (viewModel.serialWrite(input))
-                etInput.setText("") // clear the terminal input.
-            else Log.e(TAG, "The message was not sent to Arduino")
+            if (viewModel.serialWrite(input)) {
+                etInput.setText("")
+            } else {
+                Log.e(TAG, "The message was not sent to Arduino")
+            }
         }
 
         // send the command to device when the button is clicked.
@@ -83,7 +90,9 @@ class MainActivity : AppCompatActivity() {
                         event.action == KeyEvent.ACTION_DOWN)) {
                 sendCommand()
                 true
-            } else false
+            } else {
+                false
+            }
         }
     }
 

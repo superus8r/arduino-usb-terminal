@@ -1,5 +1,6 @@
 import java.io.FileInputStream
-import java.util.*
+import java.util.Base64
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -36,8 +37,8 @@ android {
         applicationId = "org.kabiri.android.usbterminal"
         minSdk = 24
         targetSdk = 35
-        versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 15
-        versionName = "0.9.85${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
+        versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 16
+        versionName = "0.9.86${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -111,6 +112,35 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     }
 
     val fileFilter = listOf(
+        "**/R.class",
+        "**/MainActivity.*",
+        "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
+        "**/*Test*.*", "android/**/*.*",
+        "**/Dagger*.*", "**/*_Hilt*.*", "**/*Hilt*.*",
+    )
+    val kotlinDebugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
+    val mainKotlinSrc = layout.projectDirectory.dir("src/main/kotlin")
+    sourceDirectories.from(files(mainKotlinSrc))
+    classDirectories.from(files(kotlinDebugTree))
+    executionData.from(fileTree(layout.buildDirectory) {
+        include(
+            "outputs/managed_device_code_coverage/**/*.ec",
+            "outputs/unit_test_code_coverage/**/*.exec",
+        )
+    })
+}
+
+tasks.register<JacocoReport>("jacocoUiOnly") {
+
+    dependsOn("pixel2api30DebugAndroidTest")
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+
+    val fileFilter = listOf(
         "**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
         "**/*Test*.*", "android/**/*.*",
         "**/Dagger*.*", "**/*_Hilt*.*", "**/*Hilt*.*",
@@ -123,7 +153,6 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     classDirectories.from(files(javaDebugTree, kotlinDebugTree))
     executionData.from(fileTree(layout.buildDirectory) {
         include(
-            "outputs/unit_test_code_coverage/**/*.exec",
             "outputs/managed_device_code_coverage/**/*.ec",
             "outputs/managed_device_code_coverage/**/*.exec"
         )
@@ -224,7 +253,6 @@ dependencies {
 
     // Firebase
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics.ktx)
 
     // Dependency Injection
@@ -263,6 +291,8 @@ dependencies {
 
     // Instrumented Test Libraries
     androidTestImplementation(composeBom)
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    debugImplementation(libs.compose.ui.test.manifest)
     androidTestImplementation(libs.coroutines.test)
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
