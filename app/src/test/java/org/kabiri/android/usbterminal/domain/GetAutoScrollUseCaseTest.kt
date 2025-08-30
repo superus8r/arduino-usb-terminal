@@ -25,7 +25,26 @@ internal class GetAutoScrollUseCaseTest {
     }
 
     @Test
-    fun testGetAutoScrollUseCaseReturns() =
+    fun `test getAutoScrollUseCase returns true`() =
+        runTest {
+            // arrange
+            val expected = true
+            mockUserSettingRepository.apply {
+                coEvery { preferenceFlow } returns
+                    flowOf(
+                        UserSettingPreferences(autoScroll = expected),
+                    )
+            }
+
+            // act
+            val actual = sut().first()
+
+            // assert
+            assertThat(actual).isEqualTo(expected)
+        }
+
+    @Test
+    fun `test getAutoScrollUseCase returns false`() =
         runTest {
             // arrange
             val expected = false
