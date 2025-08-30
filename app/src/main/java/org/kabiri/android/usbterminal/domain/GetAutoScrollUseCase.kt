@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.map
 import org.kabiri.android.usbterminal.data.repository.IUserSettingRepository
 import javax.inject.Inject
 
-internal interface IGetAutoScrollUseCase {
+internal fun interface IGetAutoScrollUseCase {
     operator fun invoke(): Flow<Boolean>
 }
 
