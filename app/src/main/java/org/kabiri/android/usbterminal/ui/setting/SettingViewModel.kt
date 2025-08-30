@@ -7,7 +7,8 @@ import org.kabiri.android.usbterminal.domain.IGetAutoScrollUseCase
 import org.kabiri.android.usbterminal.domain.IGetCustomBaudRateUseCase
 import org.kabiri.android.usbterminal.domain.ISetAutoScrollUseCase
 import org.kabiri.android.usbterminal.domain.ISetCustomBaudRateUseCase
-import org.kabiri.android.usbterminal.model.defaultBaudRate
+import org.kabiri.android.usbterminal.model.DEFAULT_AUTO_SCROLL
+import org.kabiri.android.usbterminal.model.DEFAULT_BAUD_RATE
 import javax.inject.Inject
 
 /**
@@ -33,6 +34,7 @@ internal class SettingViewModel
         fun setAutoScrollEnabled(enabled: Boolean) = setAutoScroll(enabled)
 
         fun resetDefault() {
-            setBaudRate(defaultBaudRate)
+            setBaudRate(DEFAULT_BAUD_RATE)
+            setAutoScroll(DEFAULT_AUTO_SCROLL)
         }
     }

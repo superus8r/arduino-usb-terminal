@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import org.kabiri.android.usbterminal.model.UserSettingPreferences
-import org.kabiri.android.usbterminal.model.defaultBaudRate
+import org.kabiri.android.usbterminal.model.DEFAULT_BAUD_RATE
 import java.io.IOException
 import javax.inject.Inject
 
@@ -69,7 +69,7 @@ internal class UserSettingRepository
 
         override suspend fun clear() {
             dataStore.edit { preferences ->
-                preferences[PreferencesKeys.BAUD_RATE] = defaultBaudRate.toString()
+                preferences[PreferencesKeys.BAUD_RATE] = DEFAULT_BAUD_RATE.toString()
                 preferences[PreferencesKeys.AUTO_SCROLL] = true
             }
         }
@@ -78,7 +78,7 @@ internal class UserSettingRepository
             // Get the user settings from preferences
             // and convert it to a [UserSettingPreferences] object
             return UserSettingPreferences(
-                baudRate = preferences[PreferencesKeys.BAUD_RATE]?.toIntOrNull() ?: defaultBaudRate,
+                baudRate = preferences[PreferencesKeys.BAUD_RATE]?.toIntOrNull() ?: DEFAULT_BAUD_RATE,
                 autoScroll = preferences[PreferencesKeys.AUTO_SCROLL] ?: true,
             )
         }

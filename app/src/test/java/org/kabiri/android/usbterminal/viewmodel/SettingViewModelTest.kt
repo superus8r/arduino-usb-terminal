@@ -102,4 +102,20 @@ internal class SettingViewModelTest {
         // assert
         verify(exactly = 1) { mockSetAutoScroll(expected) }
     }
+
+    @Test
+    internal fun `test resetDefault calls setBaudRate and setAutoScroll`() {
+        // arrange
+        val expectedBaudRate = 9600
+        val expectedAutoScroll = true
+        every { mockSetBaudRate(expectedBaudRate) } returns Unit
+        every { mockSetAutoScroll(expectedAutoScroll) } returns Unit
+
+        // act
+        sut.resetDefault()
+
+        // assert
+        verify(exactly = 1) { mockSetBaudRate(expectedBaudRate) }
+        verify(exactly = 1) { mockSetAutoScroll(expectedAutoScroll) }
+    }
 }

@@ -8,7 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.kabiri.android.usbterminal.model.defaultBaudRate
+import org.kabiri.android.usbterminal.model.DEFAULT_BAUD_RATE
 
 @Composable
 internal fun SettingContent(
@@ -16,7 +16,7 @@ internal fun SettingContent(
     settingViewModel: SettingViewModel,
     onDismiss: () -> Unit,
 ) {
-    val currentBaudRate by settingViewModel.currentBaudRate.collectAsState(defaultBaudRate)
+    val currentBaudRate by settingViewModel.currentBaudRate.collectAsState(DEFAULT_BAUD_RATE)
     val autoScrollEnabled by settingViewModel.currentAutoScroll.collectAsState(true)
 
     Column(modifier = modifier) {
