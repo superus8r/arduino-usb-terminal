@@ -52,12 +52,19 @@ class MainActivity : AppCompatActivity() {
         // make the text view scrollable:
         tvOutput.movementMethod = ScrollingMovementMethod()
 
+        var autoScrollEnabled = true
+        lifecycleScope.launch {
+            settingViewModel.currentAutoScroll.collect { enabled ->
+                autoScrollEnabled = enabled
+            }
+        }
+
         lifecycleScope.launch {
             viewModel.getLiveOutput()
             viewModel.output.collect {
                 tvOutput.apply {
                     text = it
-                    scrollToLastLine()
+                    if (autoScrollEnabled) scrollToLastLine()
                 }
             }
         }

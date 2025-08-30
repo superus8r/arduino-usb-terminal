@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.domain.IGetCustomBaudRateUseCase
-import org.kabiri.android.usbterminal.model.defaultBaudRate
+import org.kabiri.android.usbterminal.model.DEFAULT_BAUD_RATE
 import javax.inject.Inject
 
 /**
@@ -44,7 +44,7 @@ internal class ArduinoRepository
     private val getBaudRate: IGetCustomBaudRateUseCase,
 ): IArduinoRepository {
 
-    private var currentBaudRate = defaultBaudRate // Default value
+    private var currentBaudRate = DEFAULT_BAUD_RATE // Default value
 
     private val _messageFlow = MutableStateFlow("")
     override val messageFlow: Flow<String>
