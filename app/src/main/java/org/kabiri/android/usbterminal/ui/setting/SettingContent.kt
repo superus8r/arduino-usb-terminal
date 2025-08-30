@@ -17,16 +17,22 @@ internal fun SettingContent(
     onDismiss: () -> Unit,
 ) {
     val currentBaudRate by settingViewModel.currentBaudRate.collectAsState(defaultBaudRate)
+    val autoScrollEnabled by settingViewModel.currentAutoScroll.collectAsState(true)
 
     Column(modifier = modifier) {
-
         // Settings Header
         SettingsHeader()
+
+        // Auto-scroll Setting
+        SettingAutoScrollItem(
+            enabled = autoScrollEnabled,
+            onToggle = settingViewModel::setAutoScrollEnabled,
+        )
 
         // Baud Rate Setting
         SettingValueItem(
             currentValue = currentBaudRate,
-            onNewValue = settingViewModel::setNewBaudRate
+            onNewValue = settingViewModel::setNewBaudRate,
         )
 
         // Reset Default Button
@@ -35,10 +41,9 @@ internal fun SettingContent(
                 settingViewModel.resetDefault()
                 onDismiss()
             },
-            onClickDismiss = onDismiss
+            onClickDismiss = onDismiss,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
     }
 }
-
