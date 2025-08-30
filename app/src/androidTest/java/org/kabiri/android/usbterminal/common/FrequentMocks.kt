@@ -7,9 +7,14 @@ import org.kabiri.android.usbterminal.model.UserSettingPreferences
 
 internal fun getFakeUserSettingRepository(
     onSetBaudRate: () -> Unit = {},
-    fakeUserSetting: UserSettingPreferences = UserSettingPreferences(baudRate = 123)
-): IUserSettingRepository {
-    return object: IUserSettingRepository {
+    onSetAutoScroll: () -> Unit = {},
+    fakeUserSetting: UserSettingPreferences =
+        UserSettingPreferences(
+            baudRate = 123,
+            autoScroll = true,
+        ),
+): IUserSettingRepository =
+    object : IUserSettingRepository {
         override val preferenceFlow: Flow<UserSettingPreferences>
             get() = flowOf(fakeUserSetting)
 
@@ -17,11 +22,11 @@ internal fun getFakeUserSettingRepository(
             onSetBaudRate()
         }
 
-        override suspend fun clear() {}
-
-        override suspend fun fetchInitialPreferences(): UserSettingPreferences {
-            return fakeUserSetting
+        override suspend fun setAutoScroll(enabled: Boolean) {
+            onSetAutoScroll()
         }
 
+        override suspend fun clear() {}
+
+        override suspend fun fetchInitialPreferences(): UserSettingPreferences = fakeUserSetting
     }
-}
