@@ -24,7 +24,7 @@ internal fun SettingContent(
         SettingsHeader()
 
         // Auto-scroll Setting
-        SettingAutoScrollItem(
+        SettingSwitchItem(
             enabled = autoScrollEnabled,
             onToggle = settingViewModel::setAutoScrollEnabled,
         )

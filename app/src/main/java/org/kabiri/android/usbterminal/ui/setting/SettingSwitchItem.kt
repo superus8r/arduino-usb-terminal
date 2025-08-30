@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import org.kabiri.android.usbterminal.R
 
 @Composable
-internal fun SettingAutoScrollItem(
+internal fun SettingSwitchItem(
     enabled: Boolean,
     onToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
