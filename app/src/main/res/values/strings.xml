@@ -1,13 +1,13 @@
 <resources>
 
     <!--NON-TRANSLATABLE-->
-    <string translatable="false" name="next_line">\n</string>
 
     <!--TRANSLATABLE-->
     <string name="app_name">USBTerminal</string>
     <string name="title_connect">Connect</string>
     <string name="title_disconnect">Disconnect</string>
     <string name="title_settings">Settings</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
 
     <!-- Home Screen -->
     <string name="home_bt_enter">Enter</string>
@@ -32,29 +32,29 @@
     <string name="bt_joystick_backward">Go Backward</string>
 
     <!-- Messages -->
-    <string name="helper_error_serial_port_is_null">Serial Port is null: The device might be disconnected.\n</string>
-    <string name="helper_error_arduino_device_not_found">Arduino Device not found (or the device might be an unknown clone).\n</string>
-    <string name="helper_error_connecting_anyway">Connecting anyway (may misbehave)…\n</string>
-    <string name="helper_error_usb_devices_not_attached">No USB devices are attached\n</string>
-    <string name="helper_error_serial_connection_not_opened">Port not opened - There might be a problem with the serial connection to Arduino\n</string>
-    <string name="helper_error_write_problem">Serial Write encountered an error:\n</string>
-    <string name="helper_error_connection_closed_unexpectedly">Device connection was closed unexpectedly\n</string>
-    <string name="helper_error_connection_failed_to_open">Failed to open device connection. Please make sure the device is connected and the USB cable and the port are healthy.\n</string>
-    <string name="helper_error_connection_failed_to_open_unknown">Failed to open device connection.\n</string>
-    <string name="helper_error_connection_not_ready_to_close">No device connection to close\n</string>
-    <string name="helper_error_connection_failed_to_close">Device connection failed to close\n</string>
-    <string name="helper_error_applying_baud_rate">Failed to apply baud rate…\n</string>
-    <string name="helper_error_baud_rate_failed_to_apply_no_connection">Please connect an Arduino via USB and click on the USB connection button to connect.\n</string>
-    <string name="helper_info_serial_connection_opened">Serial Connection Opened\n</string>
-    <string name="helper_info_serial_connection_closed">Serial Connection Closed\n</string>
-    <string name="helper_info_usb_permission_requested">Requested permission to access the USB device…\n</string>
-    <string name="helper_info_checking_attached_usb_devices">Checking attached USB devices…\n</string>
-    <string name="helper_info_baud_rate_applying">Baud rate: %d (can be changed in settings)\n</string>
-    <string name="helper_info_baud_rate_applied">Baud rate applied successfully: %d\n</string>
+    <string name="helper_error_serial_port_is_null">Serial Port is null: The device might be disconnected.</string>
+    <string name="helper_error_arduino_device_not_found">Arduino Device not found (or the device might be an unknown clone).</string>
+    <string name="helper_error_connecting_anyway">Connecting anyway (may misbehave)…</string>
+    <string name="helper_error_usb_devices_not_attached">No USB devices are attached</string>
+    <string name="helper_error_serial_connection_not_opened">Port not opened - There might be a problem with the serial connection to Arduino</string>
+    <string name="helper_error_write_problem">Serial Write encountered an error:</string>
+    <string name="helper_error_connection_closed_unexpectedly">Device connection was closed unexpectedly</string>
+    <string name="helper_error_connection_failed_to_open">Failed to open device connection. Please make sure the device is connected and the USB cable and the port are healthy.</string>
+    <string name="helper_error_connection_failed_to_open_unknown">Failed to open device connection.</string>
+    <string name="helper_error_connection_not_ready_to_close">No device connection to close</string>
+    <string name="helper_error_connection_failed_to_close">Device connection failed to close</string>
+    <string name="helper_error_applying_baud_rate">Failed to apply baud rate…</string>
+    <string name="helper_error_baud_rate_failed_to_apply_no_connection">Please connect an Arduino via USB and click on the USB connection button to connect.</string>
+    <string name="helper_info_serial_connection_opened">Serial Connection Opened</string>
+    <string name="helper_info_serial_connection_closed">Serial Connection Closed</string>
+    <string name="helper_info_usb_permission_requested">Requested permission to access the USB device…</string>
+    <string name="helper_info_checking_attached_usb_devices">Checking attached USB devices…</string>
+    <string name="helper_info_baud_rate_applying">Baud rate: %d (can be changed in settings)</string>
+    <string name="helper_info_baud_rate_applied">Baud rate applied successfully: %d</string>
 
-    <string name="breceiver_info_usb_permission_granted">"USB Permission granted for: \n"</string>
-    <string name="breceiver_error_usb_permission_denied">permission denied for device:\n</string>
-    <string name="breceiver_info_device_attached">Device attached\n</string>
-    <string name="breceiver_info_device_detached">Device detached\n</string>
-    <string name="breceiver_info_unknown_intent_action">intent.action was null\n</string>
+    <string name="breceiver_info_usb_permission_granted">"USB Permission granted for: "</string>
+    <string name="breceiver_error_usb_permission_denied">permission denied for device:</string>
+    <string name="breceiver_info_device_attached">Device attached</string>
+    <string name="breceiver_info_device_detached">Device detached</string>
+    <string name="breceiver_info_unknown_intent_action">intent.action was null</string>
 </resources>

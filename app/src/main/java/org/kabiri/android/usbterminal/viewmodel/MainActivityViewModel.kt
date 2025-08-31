@@ -8,10 +8,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.domain.IArduinoUseCase
@@ -44,17 +46,13 @@ internal class MainActivityViewModel
         val errorMessage: StateFlow<String>
             get() = _errorMessageFlow
 
-        private val _outputLive = MutableStateFlow("")
-        val output: StateFlow<String>
-            get() = _outputLive
-
-        val output2 = SnapshotStateList<OutputText>()
+        val output = SnapshotStateList<OutputText>()
 
         internal fun startObservingUsbDevice() {
             // Subscribe to USB device changes.
             viewModelScope.launch {
                 usbUseCase.usbDevice.collect { device ->
-                    _infoMessageFlow.value = "device discovered: ${device?.vendorId}\n"
+                    _infoMessageFlow.value = "device discovered: ${device?.vendorId}"
                     // TODO: DROID-17 - check if this line is required after DROID-17 is done
                     device?.let { openDeviceAndPort(it) }
                 }
@@ -68,7 +66,8 @@ internal class MainActivityViewModel
                     resourceProvider.getString(R.string.helper_error_usb_devices_not_attached)
                 return // no usb devices found
             }
-            val device = usbDeviceList.firstOrNull { it.isOfficialArduinoBoard() || it.isCloneArduinoBoard() }
+            val device =
+                usbDeviceList.firstOrNull { it.isOfficialArduinoBoard() || it.isCloneArduinoBoard() }
             if (device == null) {
                 _errorMessageFlow.value =
                     resourceProvider.getString(R.string.helper_error_arduino_device_not_found)
@@ -110,85 +109,54 @@ internal class MainActivityViewModel
             }
 
         fun serialWrite(command: String): Boolean {
-            _outputLive.value = "${output.value}\n$command\n"
+            val outputText = OutputText(command, OutputText.OutputType.TYPE_NORMAL)
+            output.add(outputText)
             return arduinoUseCase.serialWrite(command)
         }
 
         /**
-         * Transforms the outputs from ArduinoHelper into spannable text
-         * and merges them in one single flow
+         * Starts emitting all output sources to the snapshot list used by the UI.
+         * Emits every item (including repeats) with its type.
          */
-        suspend fun getLiveOutput(): StateFlow<OutputText> {
+        fun startObservingTerminalOutput() {
             val infoOutput: Flow<OutputText> =
-                infoMessage.map {
-                    _outputLive.value = _outputLive.value + it
-                    val outputText = OutputText(it, OutputText.OutputType.TYPE_INFO)
-                    output2.add(outputText)
-                    return@map outputText
-                }
+                infoMessage
+                    .filter { it.isNotEmpty() }
+                    .map { OutputText(it, OutputText.OutputType.TYPE_INFO) }
 
             val errorOutput: Flow<OutputText> =
-                errorMessage.map {
-                    _outputLive.value = _outputLive.value + it
-                    val outputText = OutputText(it, OutputText.OutputType.TYPE_ERROR)
-                    output2.add(outputText)
-                    return@map outputText
-                }
+                errorMessage
+                    .filter { it.isNotEmpty() }
+                    .map { OutputText(it, OutputText.OutputType.TYPE_ERROR) }
 
             val usbInfoOutput: Flow<OutputText> =
-                usbUseCase.infoMessageFlow.map {
-                    _outputLive.value = _outputLive.value + it
-                    val outputText = OutputText(it, OutputText.OutputType.TYPE_INFO)
-                    output2.add(outputText)
-                    return@map outputText
-                }
+                usbUseCase.infoMessageFlow
+                    .filter { it.isNotEmpty() }
+                    .map { OutputText(it, OutputText.OutputType.TYPE_INFO) }
 
             val arduinoDefaultOutput: Flow<OutputText> =
-                arduinoUseCase.messageFlow.map {
-                    _outputLive.value = _outputLive.value + it
-                    val outputText = OutputText(it, OutputText.OutputType.TYPE_NORMAL)
-                    output2.add(outputText)
-                    return@map outputText
-                }
+                arduinoUseCase.messageFlow
+                    .filter { it.isNotEmpty() }
+                    .map { OutputText(it, OutputText.OutputType.TYPE_NORMAL) }
 
             val arduinoInfoOutput: Flow<OutputText> =
-                arduinoUseCase.infoMessageFlow.map {
-                    _outputLive.value = _outputLive.value + it
-                    val outputText = OutputText(it, OutputText.OutputType.TYPE_INFO)
-                    output2.add(outputText)
-                    return@map outputText
-                }
+                arduinoUseCase.infoMessageFlow
+                    .filter { it.isNotEmpty() }
+                    .map { OutputText(it, OutputText.OutputType.TYPE_INFO) }
 
             val arduinoErrorOutput: Flow<OutputText> =
-                arduinoUseCase.errorMessageFlow.map {
-                    _outputLive.value = _outputLive.value + it
-                    val outputText = OutputText(it, OutputText.OutputType.TYPE_ERROR)
-                    output2.add(outputText)
-                    return@map outputText
-                }
+                arduinoUseCase.errorMessageFlow
+                    .filter { it.isNotEmpty() }
+                    .map { OutputText(it, OutputText.OutputType.TYPE_ERROR) }
 
-            return combine(
+            merge(
                 infoOutput,
                 errorOutput,
+                usbInfoOutput,
                 arduinoDefaultOutput,
                 arduinoInfoOutput,
                 arduinoErrorOutput,
-            ) { info, error, arduinoDefault, arduinoInfo, arduinoError ->
-                // Prioritize error output over info, then normal.
-                when {
-                    error.text.isNotEmpty() -> error
-                    info.text.isNotEmpty() -> info
-                    arduinoError.text.isNotEmpty() -> arduinoError
-                    arduinoInfo.text.isNotEmpty() -> arduinoInfo
-                    else -> arduinoDefault
-                }
-            }.combine(usbInfoOutput) { outputText, usbInfo ->
-                // Prioritize USB info output over the rest.
-                if (usbInfo.text.isNotEmpty()) {
-                    usbInfo
-                } else {
-                    outputText
-                }
-            }.stateIn(viewModelScope)
+            ).onEach { output.add(it) }
+                .launchIn(viewModelScope)
         }
     }

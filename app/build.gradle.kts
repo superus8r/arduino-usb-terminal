@@ -37,8 +37,8 @@ android {
         applicationId = "org.kabiri.android.usbterminal"
         minSdk = 24
         targetSdk = 35
-        versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 17
-        versionName = "0.9.87${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
+        versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 18
+        versionName = "0.9.88${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -120,7 +120,8 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     )
     val kotlinDebugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
     val mainKotlinSrc = layout.projectDirectory.dir("src/main/kotlin")
-    sourceDirectories.from(files(mainKotlinSrc))
+    val mainJavaSrc = layout.projectDirectory.dir("src/main/java")
+    sourceDirectories.from(files(mainKotlinSrc, mainJavaSrc))
     classDirectories.from(files(kotlinDebugTree))
     executionData.from(fileTree(layout.buildDirectory) {
         include(
