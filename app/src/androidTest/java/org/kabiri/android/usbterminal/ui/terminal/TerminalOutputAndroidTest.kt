@@ -4,6 +4,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -91,9 +92,7 @@ class TerminalOutputAndroidTest {
                 TerminalOutput(
                     logs = logs,
                     autoScroll = false,
-                    modifier =
-                        androidx.compose.ui.Modifier
-                            .testTag("terminal"),
+                    modifier = Modifier.testTag("terminal"),
                 )
             }
         }
@@ -115,8 +114,7 @@ class TerminalOutputAndroidTest {
                     logs = logs,
                     autoScroll = false,
                     modifier =
-                        androidx.compose.ui.Modifier
-                            .testTag("terminal"),
+                        Modifier.testTag("terminal"),
                 )
             }
         }
@@ -133,5 +131,53 @@ class TerminalOutputAndroidTest {
                 ?.coerceToText(context)
                 ?.toString()
         assertThat(copied).isEqualTo("")
+    }
+
+    @Test
+    fun terminalOutput_autoScrollTrue_withEmptyList_isStable() {
+        // arrange
+        val logs = mutableStateListOf<OutputText>()
+
+        // act
+        composeRule.setContent {
+            UsbTerminalTheme {
+                TerminalOutput(
+                    logs = logs,
+                    autoScroll = true,
+                    modifier = Modifier.testTag("terminal"),
+                )
+            }
+        }
+
+        // assert: composable exists even with empty logs and autoScroll enabled
+        composeRule.onNodeWithTag("terminal").assertExists().assertIsDisplayed()
+    }
+
+    @Test
+    fun terminalOutput_noAutoScroll_append_rendersNewItem() {
+        // arrange
+        val logs =
+            mutableStateListOf(
+                OutputText("Initial", OutputText.OutputType.TYPE_NORMAL),
+            )
+
+        composeRule.setContent {
+            UsbTerminalTheme {
+                TerminalOutput(
+                    logs = logs,
+                    autoScroll = false,
+                    modifier = Modifier.testTag("terminal"),
+                )
+            }
+        }
+
+        // act: append a new line while autoScroll is disabled
+        composeRule.runOnUiThread {
+            logs.add(OutputText("Next", OutputText.OutputType.TYPE_NORMAL))
+        }
+        composeRule.waitForIdle()
+
+        // assert: new item is rendered (if condition path with autoScroll=false evaluated)
+        composeRule.onNodeWithText("Next").assertIsDisplayed()
     }
 }
