@@ -54,7 +54,7 @@ internal class MainActivityViewModel
             // Subscribe to USB device changes.
             viewModelScope.launch {
                 usbUseCase.usbDevice.collect { device ->
-                    _infoMessageFlow.value = "device discovered: ${device?.vendorId}\n"
+                    _infoMessageFlow.value = "device discovered: ${device?.vendorId}"
                     // TODO: DROID-17 - check if this line is required after DROID-17 is done
                     device?.let { openDeviceAndPort(it) }
                 }
@@ -110,7 +110,7 @@ internal class MainActivityViewModel
             }
 
         fun serialWrite(command: String): Boolean {
-            _outputLive.value = "${output.value}\n$command\n"
+            _outputLive.value = "${output.value}\n$command"
             val outputText = OutputText(command, OutputText.OutputType.TYPE_INFO)
             output2.add(outputText)
             return arduinoUseCase.serialWrite(command)

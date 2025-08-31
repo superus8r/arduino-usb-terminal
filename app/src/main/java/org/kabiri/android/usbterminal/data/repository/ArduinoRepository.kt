@@ -77,12 +77,12 @@ internal class ArduinoRepository
             _errorMessageFlow.value =
                 context.getString(R.string.helper_error_connection_not_ready_to_close)
 
-            _errorMessageFlow.value = "${e.localizedMessage}\n"
+            _errorMessageFlow.value = "${e.localizedMessage}"
         } catch (e: Exception) {
             _errorMessageFlow.value = context.getString(
                     R.string.helper_error_connection_failed_to_close
                 )
-            _errorMessageFlow.value = "${e.localizedMessage}\n"
+            _errorMessageFlow.value = "${e.localizedMessage}"
         }
     }
 
@@ -147,8 +147,6 @@ internal class ArduinoRepository
         return try {
             if (::serialPort.isInitialized && command.isNotBlank()) {
                 serialPort.write(command.toByteArray())
-                // go to next line because the answer might be sent in more than one part.
-                _messageFlow.value = context.getString(R.string.next_line)
                 true
             } else {
                 _errorMessageFlow.value =
@@ -157,7 +155,7 @@ internal class ArduinoRepository
             }
         } catch (e: Exception) {
             _errorMessageFlow.value = context.getString(R.string.helper_error_write_problem) +
-                    " \n${e.localizedMessage}\n"
+                    " \n${e.localizedMessage}"
             Log.e(TAG, "$e")
             false
         }

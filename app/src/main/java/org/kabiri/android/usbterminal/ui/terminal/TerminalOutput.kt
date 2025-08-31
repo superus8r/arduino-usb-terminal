@@ -67,7 +67,7 @@ internal fun TerminalOutput(
                     else -> MaterialTheme.colorScheme.onBackground
                 }
             Text(
-                text = item.text.trimEnd('\n'),
+                text = item.text,
                 color = color,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = Int.MAX_VALUE,
