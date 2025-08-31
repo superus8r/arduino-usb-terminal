@@ -120,7 +120,8 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     )
     val kotlinDebugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
     val mainKotlinSrc = layout.projectDirectory.dir("src/main/kotlin")
-    sourceDirectories.from(files(mainKotlinSrc))
+    val mainJavaSrc = layout.projectDirectory.dir("src/main/java")
+    sourceDirectories.from(files(mainKotlinSrc, mainJavaSrc))
     classDirectories.from(files(kotlinDebugTree))
     executionData.from(fileTree(layout.buildDirectory) {
         include(
