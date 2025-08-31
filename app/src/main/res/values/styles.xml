@@ -1,25 +1,30 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+    <style name="AppTheme.Base" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!-- Ensure status bar tone matches app bar exactly -->
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
 
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
     </style>
 
-    <style name="ModalBottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/bg_modal_bottom_sheet</item>
+    <!-- App theme alias; v23 will override this to add icon contrast -->
+    <style name="UsbTerminalTheme" parent="@style/AppTheme.Base" />
+
+    <!-- Common items for the bottom sheet theme -->
+    <style name="ModalBottomSheetTheme.Base" parent="Theme.Material3.DayNight.BottomSheetDialog">
+        <!-- Edge-to-edge for modal as well; host handles coloring -->
+        <item name="android:navigationBarColor">@color/bg_modal_bottom_sheet</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
-    <style name="ModalBottomSheetTheme" parent="Theme.Design.BottomSheetDialog">
-        <item name="android:statusBarColor">@android:color/transparent</item>
+    <!-- Day variant adds light nav bar icons -->
+    <style name="SettingModalBottomSheetTheme" parent="@style/ModalBottomSheetTheme.Base">
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
-        <item name="android:windowIsFloating">false</item>
-        <item name="bottomSheetStyle">@style/ModalBottomSheet</item>
     </style>
 
 </resources>

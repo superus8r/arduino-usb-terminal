@@ -1,0 +1,12 @@
+<resources>
+    <!-- API 29+: disable forced contrast scrims on system bars -->
+    <style name="UsbTerminalTheme" parent="@style/AppTheme.Base">
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+    </style>
+
+    <style name="SettingModalBottomSheetTheme" parent="@style/ModalBottomSheetTheme.Base">
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+    </style>
+</resources>
