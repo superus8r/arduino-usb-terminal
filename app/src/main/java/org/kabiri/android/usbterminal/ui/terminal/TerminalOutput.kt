@@ -1,5 +1,6 @@
 package org.kabiri.android.usbterminal.ui.terminal
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -33,6 +34,7 @@ internal fun TerminalOutput(
         modifier = modifier,
         state = listState,
         contentPadding = PaddingValues(vertical = 8.dp),
+        verticalArrangement = Arrangement.Bottom,
     ) {
         itemsIndexed(logs, key = { index, item -> index }) { _, item ->
             val color =
