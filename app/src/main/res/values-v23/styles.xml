@@ -6,7 +6,7 @@
     </style>
 
     <style name="SettingModalBottomSheetTheme" parent="@style/ModalBottomSheetTheme.Base">
-        <!-- Keep light icons on the turquoise status bar in the dialog as well -->
+        <!-- Keep light icons on the turquoise status bar in the modal as well -->
         <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>
