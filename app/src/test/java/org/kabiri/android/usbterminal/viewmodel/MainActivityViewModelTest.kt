@@ -180,7 +180,6 @@ internal class MainActivityViewModelTest {
             verify(exactly = 1) { mockUsbUseCase.requestPermission(fakeDevice) }
             assertThat(sut.infoMessage.value).isEqualTo("")
             assertThat(sut.errorMessage.value).isEqualTo("")
-            assertThat(sut.output.value).isEqualTo("")
         }
 
     @Test

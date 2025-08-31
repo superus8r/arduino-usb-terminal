@@ -44,10 +44,6 @@ internal class MainActivityViewModel
         val errorMessage: StateFlow<String>
             get() = _errorMessageFlow
 
-        private val _outputLive = MutableStateFlow("")
-        val output: StateFlow<String>
-            get() = _outputLive
-
         val output2 = SnapshotStateList<OutputText>()
 
         internal fun startObservingUsbDevice() {
@@ -110,7 +106,6 @@ internal class MainActivityViewModel
             }
 
         fun serialWrite(command: String): Boolean {
-            _outputLive.value = "${output.value}\n$command"
             val outputText = OutputText(command, OutputText.OutputType.TYPE_INFO)
             output2.add(outputText)
             return arduinoUseCase.serialWrite(command)
@@ -123,7 +118,6 @@ internal class MainActivityViewModel
         suspend fun getLiveOutput(): StateFlow<OutputText> {
             val infoOutput: Flow<OutputText> =
                 infoMessage.map {
-                    _outputLive.value = _outputLive.value + it
                     val outputText = OutputText(it, OutputText.OutputType.TYPE_INFO)
                     output2.add(outputText)
                     return@map outputText
@@ -131,7 +125,6 @@ internal class MainActivityViewModel
 
             val errorOutput: Flow<OutputText> =
                 errorMessage.map {
-                    _outputLive.value = _outputLive.value + it
                     val outputText = OutputText(it, OutputText.OutputType.TYPE_ERROR)
                     output2.add(outputText)
                     return@map outputText
@@ -139,7 +132,6 @@ internal class MainActivityViewModel
 
             val usbInfoOutput: Flow<OutputText> =
                 usbUseCase.infoMessageFlow.map {
-                    _outputLive.value = _outputLive.value + it
                     val outputText = OutputText(it, OutputText.OutputType.TYPE_INFO)
                     output2.add(outputText)
                     return@map outputText
@@ -147,7 +139,6 @@ internal class MainActivityViewModel
 
             val arduinoDefaultOutput: Flow<OutputText> =
                 arduinoUseCase.messageFlow.map {
-                    _outputLive.value = _outputLive.value + it
                     val outputText = OutputText(it, OutputText.OutputType.TYPE_NORMAL)
                     output2.add(outputText)
                     return@map outputText
@@ -155,7 +146,6 @@ internal class MainActivityViewModel
 
             val arduinoInfoOutput: Flow<OutputText> =
                 arduinoUseCase.infoMessageFlow.map {
-                    _outputLive.value = _outputLive.value + it
                     val outputText = OutputText(it, OutputText.OutputType.TYPE_INFO)
                     output2.add(outputText)
                     return@map outputText
@@ -163,7 +153,6 @@ internal class MainActivityViewModel
 
             val arduinoErrorOutput: Flow<OutputText> =
                 arduinoUseCase.errorMessageFlow.map {
-                    _outputLive.value = _outputLive.value + it
                     val outputText = OutputText(it, OutputText.OutputType.TYPE_ERROR)
                     output2.add(outputText)
                     return@map outputText
