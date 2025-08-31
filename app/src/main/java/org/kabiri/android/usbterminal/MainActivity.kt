@@ -1,7 +1,6 @@
 package org.kabiri.android.usbterminal
 
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
@@ -11,21 +10,19 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.platform.ComposeView
-import org.kabiri.android.usbterminal.ui.theme.UsbTerminalTheme
-import org.kabiri.android.usbterminal.ui.terminal.TerminalOutput
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.ui.setting.SettingModalBottomSheet
 import org.kabiri.android.usbterminal.ui.setting.SettingViewModel
-import org.kabiri.android.usbterminal.util.scrollToLastLine
+import org.kabiri.android.usbterminal.ui.terminal.TerminalOutput
+import org.kabiri.android.usbterminal.ui.theme.UsbTerminalTheme
 import org.kabiri.android.usbterminal.viewmodel.MainActivityViewModel
 
 private const val TAG = "MainActivity"
