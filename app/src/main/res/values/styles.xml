@@ -1,30 +1,42 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+    <style name="AppTheme.Base" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!-- Ensure status bar tone matches app bar exactly -->
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
 
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
+
+        <!-- Make the status bar match the app bar color -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
-    <style name="ModalBottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
+    <!-- App theme alias; v23 will override this to add icon contrast -->
+    <style name="UsbTerminalTheme" parent="@style/AppTheme.Base" />
+
+    <style name="ModalBottomSheet" parent="@style/Widget.MaterialComponents.BottomSheet.Modal">
+        <!-- Tint ensures Material background matches day/night color -->
+        <item name="backgroundTint">@color/bg_modal_bottom_sheet</item>
         <item name="android:background">@drawable/bg_modal_bottom_sheet</item>
     </style>
 
     <!-- Common items for the bottom sheet theme -->
-    <style name="ModalBottomSheetTheme.Base" parent="Theme.Design.BottomSheetDialog">
-        <item name="android:statusBarColor">@android:color/transparent</item>
+    <style name="ModalBottomSheetTheme.Base" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <!-- Match activity/app bar color for a unified look -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
         <item name="android:navigationBarColor">@color/bg_modal_bottom_sheet</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowIsFloating">false</item>
         <item name="bottomSheetStyle">@style/ModalBottomSheet</item>
     </style>
 
     <!-- Day variant adds light nav bar icons -->
-    <style name="ModalBottomSheetTheme" parent="@style/ModalBottomSheetTheme.Base">
+    <style name="SettingModalBottomSheetTheme" parent="@style/ModalBottomSheetTheme.Base">
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
     </style>
 

@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Only override what differs from day -->
-    <style name="ModalBottomSheetTheme" parent="@style/ModalBottomSheetTheme.Base">
+    <!-- Night: nav bar icons should be light -->
+    <style name="SettingModalBottomSheetTheme" parent="@style/ModalBottomSheetTheme.Base">
         <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
     </style>
 </resources>
