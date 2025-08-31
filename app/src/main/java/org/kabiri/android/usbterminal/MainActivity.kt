@@ -16,9 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.ui.setting.SettingModalBottomSheet
 import org.kabiri.android.usbterminal.ui.setting.SettingViewModel
 import org.kabiri.android.usbterminal.ui.terminal.TerminalOutput
@@ -35,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.startObservingUsbDevice()
+        viewModel.startObservingTerminalOutput()
         setContentView(R.layout.activity_main)
 
         val rootView = findViewById<View>(R.id.root_view)
@@ -70,9 +69,6 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
-
-        // Start producing output into viewModel.output2 used by Compose list
-        lifecycleScope.launch { viewModel.getLiveOutput() }
 
         fun sendCommand() {
             val input = etInput.text.toString()

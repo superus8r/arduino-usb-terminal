@@ -246,7 +246,7 @@ internal class MainActivityViewModelTest {
         }
 
     @Test
-    fun `getLiveOutput emits arduinoInfo when only arduinoInfo is not empty`() =
+    fun `startObservingTerminalOutput appends arduinoInfo when only arduinoInfo is not empty`() =
         runTest {
             // arrange
             val arduinoDefaultFlow = MutableStateFlow("")
@@ -261,17 +261,18 @@ internal class MainActivityViewModelTest {
             every { mockResourceProvider.getString(any()) } returns ""
 
             // act
-            val outputFlow = sut.getLiveOutput()
+            sut.startObservingTerminalOutput()
             advanceUntilIdle()
-            val output = outputFlow.value
 
             // assert
-            assertThat(output.text).isEqualTo("arduino info message")
-            assertThat(output.type).isEqualTo(OutputText.OutputType.TYPE_INFO)
+            assertThat(sut.output2).isNotEmpty()
+            val last = sut.output2.last()
+            assertThat(last.text).isEqualTo("arduino info message")
+            assertThat(last.type).isEqualTo(OutputText.OutputType.TYPE_INFO)
         }
 
     @Test
-    fun `getLiveOutput emits arduinoDefault when all outputs are empty`() =
+    fun `startObservingTerminalOutput appends arduinoDefault when all outputs are empty`() =
         runTest {
             // arrange
             val arduinoDefaultFlow = MutableStateFlow("default message")
@@ -286,12 +287,13 @@ internal class MainActivityViewModelTest {
             every { mockResourceProvider.getString(any()) } returns ""
 
             // act
-            val outputFlow = sut.getLiveOutput()
+            sut.startObservingTerminalOutput()
             advanceUntilIdle()
-            val output = outputFlow.value
 
             // assert
-            assertThat(output.text).isEqualTo("default message")
-            assertThat(output.type).isEqualTo(OutputText.OutputType.TYPE_NORMAL)
+            assertThat(sut.output2).isNotEmpty()
+            val last = sut.output2.last()
+            assertThat(last.text).isEqualTo("default message")
+            assertThat(last.type).isEqualTo(OutputText.OutputType.TYPE_NORMAL)
         }
 }
