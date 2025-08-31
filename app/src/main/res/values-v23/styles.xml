@@ -1,0 +1,12 @@
+<resources>
+    <!-- API 23+: control status bar icon contrast (dark icons vs light icons) -->
+    <style name="UsbTerminalTheme" parent="@style/AppTheme.Base">
+        <!-- Turquoise status bar needs light icons for readability -->
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="SettingModalBottomSheetTheme" parent="@style/ModalBottomSheetTheme.Base">
+        <!-- Keep light icons on the turquoise status bar in the modal as well -->
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
