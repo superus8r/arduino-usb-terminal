@@ -46,7 +46,7 @@ internal class MainActivityViewModel
         val errorMessage: StateFlow<String>
             get() = _errorMessageFlow
 
-        val output2 = SnapshotStateList<OutputText>()
+        val output = SnapshotStateList<OutputText>()
 
         internal fun startObservingUsbDevice() {
             // Subscribe to USB device changes.
@@ -110,7 +110,7 @@ internal class MainActivityViewModel
 
         fun serialWrite(command: String): Boolean {
             val outputText = OutputText(command, OutputText.OutputType.TYPE_NORMAL)
-            output2.add(outputText)
+            output.add(outputText)
             return arduinoUseCase.serialWrite(command)
         }
 
@@ -156,7 +156,7 @@ internal class MainActivityViewModel
                 arduinoDefaultOutput,
                 arduinoInfoOutput,
                 arduinoErrorOutput,
-            ).onEach { output2.add(it) }
+            ).onEach { output.add(it) }
                 .launchIn(viewModelScope)
         }
     }

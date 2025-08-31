@@ -241,7 +241,7 @@ internal class MainActivityViewModelTest {
             // assert
             verify { mockArduinoUsecase.serialWrite(expected) }
             assertThat(result).isTrue()
-            val outputText = sut.output2.last().text
+            val outputText = sut.output.last().text
             assertThat(outputText).contains(expected)
         }
 
@@ -265,8 +265,8 @@ internal class MainActivityViewModelTest {
             advanceUntilIdle()
 
             // assert
-            assertThat(sut.output2).isNotEmpty()
-            val last = sut.output2.last()
+            assertThat(sut.output).isNotEmpty()
+            val last = sut.output.last()
             assertThat(last.text).isEqualTo("arduino info message")
             assertThat(last.type).isEqualTo(OutputText.OutputType.TYPE_INFO)
         }
@@ -291,8 +291,8 @@ internal class MainActivityViewModelTest {
             advanceUntilIdle()
 
             // assert
-            assertThat(sut.output2).isNotEmpty()
-            val last = sut.output2.last()
+            assertThat(sut.output).isNotEmpty()
+            val last = sut.output.last()
             assertThat(last.text).isEqualTo("default message")
             assertThat(last.type).isEqualTo(OutputText.OutputType.TYPE_NORMAL)
         }

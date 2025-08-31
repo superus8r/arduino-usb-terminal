@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
             UsbTerminalTheme {
                 val autoScrollEnabled = settingViewModel.currentAutoScroll.collectAsState(initial = true).value
                 TerminalOutput(
-                    logs = viewModel.output2,
+                    logs = viewModel.output,
                     autoScroll = autoScrollEnabled,
                 )
             }
