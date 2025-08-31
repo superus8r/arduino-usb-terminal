@@ -59,7 +59,7 @@ internal fun TerminalOutput(
         contentPadding = PaddingValues(vertical = 8.dp),
         verticalArrangement = Arrangement.Bottom,
     ) {
-        itemsIndexed(logs, key = { index, item -> index }) { _, item ->
+        itemsIndexed(logs, key = { index, _ -> index }) { _, item ->
             val color =
                 when (item.type) {
                     OutputText.OutputType.TYPE_ERROR -> MaterialTheme.colorScheme.error

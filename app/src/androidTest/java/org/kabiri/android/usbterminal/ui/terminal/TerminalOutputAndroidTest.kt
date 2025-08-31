@@ -4,9 +4,11 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -73,5 +75,63 @@ class TerminalOutputAndroidTest {
                 ?.coerceToText(context)
                 ?.toString()
         assertThat(copied).isEqualTo("A\nB")
+    }
+
+    @Test
+    fun terminalOutput_appliesModifierTag() {
+        // arrange
+        val logs =
+            mutableStateListOf(
+                OutputText("Tagged line", OutputText.OutputType.TYPE_NORMAL),
+            )
+
+        // act
+        composeRule.setContent {
+            UsbTerminalTheme {
+                TerminalOutput(
+                    logs = logs,
+                    autoScroll = false,
+                    modifier =
+                        androidx.compose.ui.Modifier
+                            .testTag("terminal"),
+                )
+            }
+        }
+
+        // assert: the tagged node exists and is visible, and the text is displayed
+        composeRule.onNodeWithTag("terminal").assertExists().assertIsDisplayed()
+        composeRule.onNodeWithText("Tagged line").assertIsDisplayed()
+    }
+
+    @Test
+    fun terminalOutput_handlesEmptyLogs_andLongPressCopiesEmpty() {
+        // arrange
+        val context = composeRule.activity
+        val logs = mutableStateListOf<OutputText>()
+
+        composeRule.setContent {
+            UsbTerminalTheme {
+                TerminalOutput(
+                    logs = logs,
+                    autoScroll = false,
+                    modifier =
+                        androidx.compose.ui.Modifier
+                            .testTag("terminal"),
+                )
+            }
+        }
+
+        // act: long-press the list itself
+        composeRule.onNodeWithTag("terminal").performTouchInput { longClick() }
+        composeRule.waitForIdle()
+
+        // assert: clipboard should contain empty string
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val copied =
+            clipboard.primaryClip
+                ?.getItemAt(0)
+                ?.coerceToText(context)
+                ?.toString()
+        assertThat(copied).isEqualTo("")
     }
 }
