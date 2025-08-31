@@ -17,6 +17,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.ComposeView
+import org.kabiri.android.usbterminal.ui.theme.UsbTerminalTheme
+import org.kabiri.android.usbterminal.ui.terminal.TerminalOutput
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.ui.setting.SettingModalBottomSheet
@@ -56,28 +60,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         val etInput = findViewById<EditText>(R.id.etInput)
-        val tvOutput = findViewById<TextView>(R.id.tvOutput)
+        val composeOutput = findViewById<ComposeView>(R.id.composeOutput)
         val btEnter = findViewById<Button>(R.id.btEnter)
 
-        // make the text view scrollable:
-        tvOutput.movementMethod = ScrollingMovementMethod()
-
-        var autoScrollEnabled = true
-        lifecycleScope.launch {
-            settingViewModel.currentAutoScroll.collect { enabled ->
-                autoScrollEnabled = enabled
+        // Compose terminal output UI
+        composeOutput.setContent {
+            UsbTerminalTheme {
+                val autoScrollEnabled = settingViewModel.currentAutoScroll.collectAsState(initial = true).value
+                TerminalOutput(
+                    logs = viewModel.output2,
+                    autoScroll = autoScrollEnabled,
+                )
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.getLiveOutput()
-            viewModel.output.collect {
-                tvOutput.apply {
-                    text = it
-                    if (autoScrollEnabled) scrollToLastLine()
-                }
-            }
-        }
+        // Start producing output into viewModel.output2 used by Compose list
+        lifecycleScope.launch { viewModel.getLiveOutput() }
 
         fun sendCommand() {
             val input = etInput.text.toString()
