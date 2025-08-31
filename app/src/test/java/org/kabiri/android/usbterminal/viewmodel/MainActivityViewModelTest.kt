@@ -22,6 +22,7 @@ import org.junit.Test
 import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.domain.IArduinoUseCase
 import org.kabiri.android.usbterminal.domain.IUsbUseCase
+import org.kabiri.android.usbterminal.model.OutputText
 import org.kabiri.android.usbterminal.util.IResourceProvider
 import org.kabiri.android.usbterminal.util.isCloneArduinoBoard
 import org.kabiri.android.usbterminal.util.isOfficialArduinoBoard
@@ -241,7 +242,8 @@ internal class MainActivityViewModelTest {
             // assert
             verify { mockArduinoUsecase.serialWrite(expected) }
             assertThat(result).isTrue()
-            assertThat(sut.output.value).contains(expected)
+            val outputText = sut.output2.last().text
+            assertThat(outputText).contains(expected)
         }
 
     @Test

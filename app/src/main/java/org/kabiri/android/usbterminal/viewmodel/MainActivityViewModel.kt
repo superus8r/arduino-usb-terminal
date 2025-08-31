@@ -111,6 +111,8 @@ internal class MainActivityViewModel
 
         fun serialWrite(command: String): Boolean {
             _outputLive.value = "${output.value}\n$command\n"
+            val outputText = OutputText(command, OutputText.OutputType.TYPE_INFO)
+            output2.add(outputText)
             return arduinoUseCase.serialWrite(command)
         }
 
