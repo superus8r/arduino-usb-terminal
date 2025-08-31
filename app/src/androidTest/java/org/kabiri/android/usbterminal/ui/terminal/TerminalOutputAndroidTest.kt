@@ -57,7 +57,7 @@ class TerminalOutputAndroidTest {
 
         composeRule.setContent {
             UsbTerminalTheme {
-                TerminalOutput(logs = logs, autoScroll = false)
+                TerminalOutput(logs = logs, autoScroll = true)
             }
         }
 
