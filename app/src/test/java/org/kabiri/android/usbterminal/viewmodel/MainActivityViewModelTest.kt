@@ -261,14 +261,6 @@ internal class MainActivityViewModelTest {
             every { mockUsbUseCase.infoMessageFlow } returns usbInfoFlow
             every { mockResourceProvider.getString(any()) } returns ""
 
-            // inject flows into ViewModel
-            sut =
-                MainActivityViewModel(
-                    arduinoUseCase = mockArduinoUsecase,
-                    usbUseCase = mockUsbUseCase,
-                    resourceProvider = mockResourceProvider,
-                )
-
             // act
             val outputFlow = sut.getLiveOutput()
             advanceUntilIdle()
@@ -276,7 +268,7 @@ internal class MainActivityViewModelTest {
 
             // assert
             assertThat(output.text).isEqualTo("arduino info message")
-            assertThat(output.type).isEqualTo(org.kabiri.android.usbterminal.model.OutputText.OutputType.TYPE_INFO)
+            assertThat(output.type).isEqualTo(OutputText.OutputType.TYPE_INFO)
         }
 
     @Test
@@ -294,14 +286,6 @@ internal class MainActivityViewModelTest {
             every { mockUsbUseCase.infoMessageFlow } returns usbInfoFlow
             every { mockResourceProvider.getString(any()) } returns ""
 
-            // inject flows into ViewModel
-            sut =
-                MainActivityViewModel(
-                    arduinoUseCase = mockArduinoUsecase,
-                    usbUseCase = mockUsbUseCase,
-                    resourceProvider = mockResourceProvider,
-                )
-
             // act
             val outputFlow = sut.getLiveOutput()
             advanceUntilIdle()
@@ -309,6 +293,6 @@ internal class MainActivityViewModelTest {
 
             // assert
             assertThat(output.text).isEqualTo("default message")
-            assertThat(output.type).isEqualTo(org.kabiri.android.usbterminal.model.OutputText.OutputType.TYPE_NORMAL)
+            assertThat(output.type).isEqualTo(OutputText.OutputType.TYPE_NORMAL)
         }
 }
