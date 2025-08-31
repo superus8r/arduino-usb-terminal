@@ -37,8 +37,8 @@ android {
         applicationId = "org.kabiri.android.usbterminal"
         minSdk = 24
         targetSdk = 35
-        versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 17
-        versionName = "0.9.87${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
+        versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 18
+        versionName = "0.9.88${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
