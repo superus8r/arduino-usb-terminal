@@ -22,6 +22,7 @@ import org.junit.Test
 import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.domain.IArduinoUseCase
 import org.kabiri.android.usbterminal.domain.IUsbUseCase
+import org.kabiri.android.usbterminal.model.OutputText
 import org.kabiri.android.usbterminal.util.IResourceProvider
 import org.kabiri.android.usbterminal.util.isCloneArduinoBoard
 import org.kabiri.android.usbterminal.util.isOfficialArduinoBoard
@@ -179,7 +180,6 @@ internal class MainActivityViewModelTest {
             verify(exactly = 1) { mockUsbUseCase.requestPermission(fakeDevice) }
             assertThat(sut.infoMessage.value).isEqualTo("")
             assertThat(sut.errorMessage.value).isEqualTo("")
-            assertThat(sut.output.value).isEqualTo("")
         }
 
     @Test
@@ -241,11 +241,12 @@ internal class MainActivityViewModelTest {
             // assert
             verify { mockArduinoUsecase.serialWrite(expected) }
             assertThat(result).isTrue()
-            assertThat(sut.output.value).contains(expected)
+            val outputText = sut.output.last().text
+            assertThat(outputText).contains(expected)
         }
 
     @Test
-    fun `getLiveOutput emits arduinoInfo when only arduinoInfo is not empty`() =
+    fun `startObservingTerminalOutput appends arduinoInfo when only arduinoInfo is not empty`() =
         runTest {
             // arrange
             val arduinoDefaultFlow = MutableStateFlow("")
@@ -259,26 +260,19 @@ internal class MainActivityViewModelTest {
             every { mockUsbUseCase.infoMessageFlow } returns usbInfoFlow
             every { mockResourceProvider.getString(any()) } returns ""
 
-            // inject flows into ViewModel
-            sut =
-                MainActivityViewModel(
-                    arduinoUseCase = mockArduinoUsecase,
-                    usbUseCase = mockUsbUseCase,
-                    resourceProvider = mockResourceProvider,
-                )
-
             // act
-            val outputFlow = sut.getLiveOutput()
+            sut.startObservingTerminalOutput()
             advanceUntilIdle()
-            val output = outputFlow.value
 
             // assert
-            assertThat(output.text).isEqualTo("arduino info message")
-            assertThat(output.type).isEqualTo(org.kabiri.android.usbterminal.model.OutputText.OutputType.TYPE_INFO)
+            assertThat(sut.output).isNotEmpty()
+            val last = sut.output.last()
+            assertThat(last.text).isEqualTo("arduino info message")
+            assertThat(last.type).isEqualTo(OutputText.OutputType.TYPE_INFO)
         }
 
     @Test
-    fun `getLiveOutput emits arduinoDefault when all outputs are empty`() =
+    fun `startObservingTerminalOutput appends arduinoDefault when all outputs are empty`() =
         runTest {
             // arrange
             val arduinoDefaultFlow = MutableStateFlow("default message")
@@ -292,21 +286,14 @@ internal class MainActivityViewModelTest {
             every { mockUsbUseCase.infoMessageFlow } returns usbInfoFlow
             every { mockResourceProvider.getString(any()) } returns ""
 
-            // inject flows into ViewModel
-            sut =
-                MainActivityViewModel(
-                    arduinoUseCase = mockArduinoUsecase,
-                    usbUseCase = mockUsbUseCase,
-                    resourceProvider = mockResourceProvider,
-                )
-
             // act
-            val outputFlow = sut.getLiveOutput()
+            sut.startObservingTerminalOutput()
             advanceUntilIdle()
-            val output = outputFlow.value
 
             // assert
-            assertThat(output.text).isEqualTo("default message")
-            assertThat(output.type).isEqualTo(org.kabiri.android.usbterminal.model.OutputText.OutputType.TYPE_NORMAL)
+            assertThat(sut.output).isNotEmpty()
+            val last = sut.output.last()
+            assertThat(last.text).isEqualTo("default message")
+            assertThat(last.type).isEqualTo(OutputText.OutputType.TYPE_NORMAL)
         }
 }

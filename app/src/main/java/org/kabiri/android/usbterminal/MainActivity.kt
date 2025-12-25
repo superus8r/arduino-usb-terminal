@@ -1,7 +1,6 @@
 package org.kabiri.android.usbterminal
 
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
@@ -11,17 +10,17 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.ui.setting.SettingModalBottomSheet
 import org.kabiri.android.usbterminal.ui.setting.SettingViewModel
-import org.kabiri.android.usbterminal.util.scrollToLastLine
+import org.kabiri.android.usbterminal.ui.terminal.TerminalOutput
+import org.kabiri.android.usbterminal.ui.theme.UsbTerminalTheme
 import org.kabiri.android.usbterminal.viewmodel.MainActivityViewModel
 
 private const val TAG = "MainActivity"
@@ -34,31 +33,40 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.startObservingUsbDevice()
+        viewModel.startObservingTerminalOutput()
         setContentView(R.layout.activity_main)
 
-        // avoid system navbar or soft keyboard overlapping the content.
         val rootView = findViewById<View>(R.id.root_view)
+        val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
             val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+            // Toolbar consumes status bar space; content avoids bottom system bars
+            toolbar.setPadding(
+                toolbar.paddingLeft,
+                systemBarsInsets.top,
+                toolbar.paddingRight,
+                toolbar.paddingBottom,
+            )
             view.setPadding(0, 0, 0, maxOf(systemBarsInsets.bottom, imeInsets.bottom))
             insets
         }
 
         val etInput = findViewById<EditText>(R.id.etInput)
-        val tvOutput = findViewById<TextView>(R.id.tvOutput)
+        val composeOutput = findViewById<ComposeView>(R.id.composeOutput)
         val btEnter = findViewById<Button>(R.id.btEnter)
 
-        // make the text view scrollable:
-        tvOutput.movementMethod = ScrollingMovementMethod()
-
-        lifecycleScope.launch {
-            viewModel.getLiveOutput()
-            viewModel.output.collect {
-                tvOutput.apply {
-                    text = it
-                    scrollToLastLine()
-                }
+        // Compose terminal output UI
+        composeOutput.setContent {
+            UsbTerminalTheme {
+                val autoScrollEnabled = settingViewModel.currentAutoScroll.collectAsState(initial = true).value
+                TerminalOutput(
+                    logs = viewModel.output,
+                    autoScroll = autoScrollEnabled,
+                )
             }
         }
 

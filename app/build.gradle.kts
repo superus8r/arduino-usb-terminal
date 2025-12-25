@@ -37,8 +37,8 @@ android {
         applicationId = "org.kabiri.android.usbterminal"
         minSdk = 24
         targetSdk = 35
-        versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 15
-        versionName = "0.9.85${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
+        versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 18
+        versionName = "0.9.88${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -120,7 +120,8 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     )
     val kotlinDebugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
     val mainKotlinSrc = layout.projectDirectory.dir("src/main/kotlin")
-    sourceDirectories.from(files(mainKotlinSrc))
+    val mainJavaSrc = layout.projectDirectory.dir("src/main/java")
+    sourceDirectories.from(files(mainKotlinSrc, mainJavaSrc))
     classDirectories.from(files(kotlinDebugTree))
     executionData.from(fileTree(layout.buildDirectory) {
         include(
@@ -253,7 +254,6 @@ dependencies {
 
     // Firebase
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics.ktx)
 
     // Dependency Injection
@@ -292,6 +292,8 @@ dependencies {
 
     // Instrumented Test Libraries
     androidTestImplementation(composeBom)
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    debugImplementation(libs.compose.ui.test.manifest)
     androidTestImplementation(libs.coroutines.test)
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.ext.junit)

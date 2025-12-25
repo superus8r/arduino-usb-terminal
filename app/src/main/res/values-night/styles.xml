@@ -1,0 +1,6 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Night: nav bar icons should be light -->
+    <style name="SettingModalBottomSheetTheme" parent="@style/ModalBottomSheetTheme.Base">
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+    </style>
+</resources>
