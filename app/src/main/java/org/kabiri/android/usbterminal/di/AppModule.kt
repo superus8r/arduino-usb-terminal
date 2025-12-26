@@ -23,11 +23,15 @@ import org.kabiri.android.usbterminal.data.repository.USER_SETTING_PREFERENCES_N
 import org.kabiri.android.usbterminal.data.repository.UsbRepository
 import org.kabiri.android.usbterminal.data.repository.UserSettingRepository
 import org.kabiri.android.usbterminal.domain.ArduinoUseCase
+import org.kabiri.android.usbterminal.domain.GetAutoScrollUseCase
 import org.kabiri.android.usbterminal.domain.GetCustomBaudRateUseCase
 import org.kabiri.android.usbterminal.domain.IArduinoUseCase
+import org.kabiri.android.usbterminal.domain.IGetAutoScrollUseCase
 import org.kabiri.android.usbterminal.domain.IGetCustomBaudRateUseCase
+import org.kabiri.android.usbterminal.domain.ISetAutoScrollUseCase
 import org.kabiri.android.usbterminal.domain.ISetCustomBaudRateUseCase
 import org.kabiri.android.usbterminal.domain.IUsbUseCase
+import org.kabiri.android.usbterminal.domain.SetAutoScrollUseCase
 import org.kabiri.android.usbterminal.domain.SetCustomBaudRateUseCase
 import org.kabiri.android.usbterminal.domain.UsbUseCase
 import org.kabiri.android.usbterminal.util.IResourceProvider
@@ -130,5 +134,19 @@ internal class AppModule {
         userSettingRepository: IUserSettingRepository
     ): ISetCustomBaudRateUseCase {
         return SetCustomBaudRateUseCase(userSettingRepository = userSettingRepository)
+    }
+
+    @Provides
+    fun provideGetAutoScrollUseCase(
+        userSettingRepository: IUserSettingRepository,
+    ): IGetAutoScrollUseCase {
+        return GetAutoScrollUseCase(userSettingRepository = userSettingRepository)
+    }
+
+    @Provides
+    fun provideSetAutoScrollUseCase(
+        userSettingRepository: IUserSettingRepository,
+    ): ISetAutoScrollUseCase {
+        return SetAutoScrollUseCase(userSettingRepository = userSettingRepository)
     }
 }

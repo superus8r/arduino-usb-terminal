@@ -41,7 +41,7 @@ internal class MainActivityAndroidTest {
         // arrange
         // act
         // assert
-        onView(withId(R.id.tvOutput)).check(matches(isDisplayed()))
+        onView(withId(R.id.composeOutput)).check(matches(isDisplayed()))
         onView(withId(R.id.btEnter)).check(matches(isDisplayed()))
         onView(withId(R.id.etInput)).check(matches(isDisplayed()))
     }

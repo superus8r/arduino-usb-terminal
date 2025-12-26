@@ -12,7 +12,7 @@ open class CustomBottomSheetDialogFragment(
     private val canUserDragToCancel: Boolean = true,
 ): BottomSheetDialogFragment() {
 
-    override fun getTheme(): Int = R.style.ModalBottomSheetTheme
+    override fun getTheme(): Int = R.style.SettingModalBottomSheetTheme
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         BottomSheetDialog(requireContext(), theme)
