@@ -196,4 +196,66 @@ internal class ArduinoRepositoryTest {
             verify { mockConnection.close() }
             assertThat(sut.messageFlow.first()).isEqualTo(expected)
         }
+
+    @Test
+    fun `disconnect emits error when connection close throws exception`() =
+        runTest {
+            // arrange
+            val expected = "close failed"
+            mockkStatic(UsbSerialDevice::class)
+            every { mockUsbManager.openDevice(mockDevice) } returns mockConnection
+            every {
+                UsbSerialDevice.createUsbSerialDevice(
+                    mockDevice,
+                    mockConnection,
+                )
+            } returns mockSerial
+            every { mockSerial.open() } returns true
+            // Initialize the connection first
+            sut.openDeviceAndPort(mockDevice)
+
+            // Force close() to throw a generic exception
+            every { mockConnection.close() } throws RuntimeException(expected)
+
+            // act
+            sut.disconnect()
+            advanceUntilIdle()
+
+            // assert
+            assertThat(sut.errorMessageFlow.first()).isEqualTo(expected)
+        }
+
+    @Test
+    fun `serialWrite emits error when write throws exception`() =
+        runTest {
+            // arrange
+            val errorMsg = "write problem"
+            val exceptionMsg = "test exception"
+            mockkStatic(UsbSerialDevice::class)
+            every { Log.e(any(), any()) } returns 1
+            every { mockUsbManager.openDevice(mockDevice) } returns mockConnection
+            every {
+                UsbSerialDevice.createUsbSerialDevice(
+                    mockDevice,
+                    mockConnection,
+                )
+            } returns mockSerial
+            every { mockSerial.open() } returns true
+            every { mockContext.getString(R.string.helper_error_write_problem) } returns errorMsg
+
+            // Initialize the connection first so serialPort is initialized
+            sut.openDeviceAndPort(mockDevice)
+
+            // Force write() to throw an exception
+            every { mockSerial.write(any()) } throws RuntimeException(exceptionMsg)
+
+            // act
+            val actual = sut.serialWrite("command")
+            advanceUntilIdle()
+
+            // assert
+            assertThat(actual).isFalse()
+            // The repository concatenates the error string and the exception message
+            assertThat(sut.errorMessageFlow.first()).isEqualTo("$errorMsg \n$exceptionMsg")
+        }
 }
