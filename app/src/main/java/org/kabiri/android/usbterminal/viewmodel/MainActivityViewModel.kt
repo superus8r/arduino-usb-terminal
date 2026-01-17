@@ -48,7 +48,12 @@ internal class MainActivityViewModel
 
         val output = SnapshotStateList<OutputText>()
 
-        internal fun startObservingUsbDevice() {
+        init {
+            startObservingUsbDevice()
+            startObservingTerminalOutput()
+        }
+
+        private fun startObservingUsbDevice() {
             // Subscribe to USB device changes.
             viewModelScope.launch {
                 usbUseCase.usbDevice.collect { device ->
@@ -118,7 +123,7 @@ internal class MainActivityViewModel
          * Starts emitting all output sources to the snapshot list used by the UI.
          * Emits every item (including repeats) with its type.
          */
-        fun startObservingTerminalOutput() {
+        private fun startObservingTerminalOutput() {
             val infoOutput: Flow<OutputText> =
                 infoMessage
                     .filter { it.isNotEmpty() }
