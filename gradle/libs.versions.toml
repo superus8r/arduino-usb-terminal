@@ -36,7 +36,7 @@ usbSerial = "6.1.1"
 # Testing
 junit = "4.13.2"
 mockk = "1.14.5"
-testCore = "1.6.1"
+testCore = "1.7.0"
 testExtJunit = "1.2.1"
 testExtJunitKtx = "1.2.1"
 espressoCore = "3.7.0"
