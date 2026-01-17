@@ -172,9 +172,19 @@ tasks.register("generateGoogleServicesJson") {
     doLast {
         val jsonFileName = "google-services.json"
         val fileContent = System.getenv("GOOGLE_SERVICES_JSON")
-        File(projectDir, jsonFileName).apply {
-            createNewFile(); writeText(fileContent)
+        val json = File(projectDir, jsonFileName).apply {
+            createNewFile()
+            writeText(fileContent)
             println("generated $jsonFileName")
+        }
+        // Check if the json file is empty
+        if (json.length() == 0L) {
+            throw GradleException(
+                """
+                google-services.json file is empty
+                Path: ${json.path}
+                """.trimIndent(),
+            )
         }
     }
 }
