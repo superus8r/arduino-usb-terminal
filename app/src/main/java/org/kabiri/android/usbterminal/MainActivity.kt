@@ -32,8 +32,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.startObservingUsbDevice()
-        viewModel.startObservingTerminalOutput()
         setContentView(R.layout.activity_main)
 
         val rootView = findViewById<View>(R.id.root_view)

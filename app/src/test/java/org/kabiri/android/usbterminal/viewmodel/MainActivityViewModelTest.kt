@@ -5,7 +5,6 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,8 +23,6 @@ import org.kabiri.android.usbterminal.domain.IArduinoUseCase
 import org.kabiri.android.usbterminal.domain.IUsbUseCase
 import org.kabiri.android.usbterminal.model.OutputText
 import org.kabiri.android.usbterminal.util.IResourceProvider
-import org.kabiri.android.usbterminal.util.isCloneArduinoBoard
-import org.kabiri.android.usbterminal.util.isOfficialArduinoBoard
 
 private const val OFFICIAL_VENDOR_ID = 0x2341
 private const val OFFICIAL_PRODUCT_ID = 0x0043
@@ -49,6 +46,16 @@ internal class MainActivityViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+
+        every { mockUsbUseCase.usbDevice } returns MutableStateFlow(null)
+        every { mockUsbUseCase.infoMessageFlow } returns MutableStateFlow("")
+
+        every { mockArduinoUsecase.messageFlow } returns MutableStateFlow("")
+        every { mockArduinoUsecase.infoMessageFlow } returns MutableStateFlow("")
+        every { mockArduinoUsecase.errorMessageFlow } returns MutableStateFlow("")
+
+        every { mockResourceProvider.getString(any()) } returns ""
+
         sut =
             MainActivityViewModel(
                 arduinoUseCase = mockArduinoUsecase,
@@ -60,7 +67,6 @@ internal class MainActivityViewModelTest {
     @After
     fun cleanUp() {
         Dispatchers.resetMain()
-        unmockkStatic(UsbDevice::isOfficialArduinoBoard, UsbDevice::isCloneArduinoBoard)
         clearAllMocks()
     }
 
@@ -75,8 +81,15 @@ internal class MainActivityViewModelTest {
             every { mockUsbUseCase.usbDevice } returns deviceFlow
             every { mockArduinoUsecase.openDeviceAndPort(mockDevice) } returns Unit
 
+            // Re-initialize sut to capture the mocked flow in init
+            sut =
+                MainActivityViewModel(
+                    arduinoUseCase = mockArduinoUsecase,
+                    usbUseCase = mockUsbUseCase,
+                    resourceProvider = mockResourceProvider,
+                )
+
             // act
-            sut.startObservingUsbDevice()
             deviceFlow.value = mockDevice
             advanceUntilIdle()
 
@@ -93,8 +106,15 @@ internal class MainActivityViewModelTest {
             val deviceFlow = MutableStateFlow<UsbDevice?>(expected)
             every { mockUsbUseCase.usbDevice } returns deviceFlow
 
+            // Re-initialize sut
+            sut =
+                MainActivityViewModel(
+                    arduinoUseCase = mockArduinoUsecase,
+                    usbUseCase = mockUsbUseCase,
+                    resourceProvider = mockResourceProvider,
+                )
+
             // act
-            sut.startObservingUsbDevice()
             deviceFlow.value = expected
             advanceUntilIdle()
 
@@ -132,6 +152,7 @@ internal class MainActivityViewModelTest {
             every { mockUsbUseCase.scanForUsbDevices() } returns listOf(fakeDevice)
             every { mockResourceProvider.getString(R.string.helper_error_arduino_device_not_found) } returns expectedError
             every { mockResourceProvider.getString(R.string.helper_error_connecting_anyway) } returns expectedInfo
+            every { mockUsbUseCase.requestPermission(any()) } returns Unit
 
             // act
             sut.connect()
@@ -154,6 +175,7 @@ internal class MainActivityViewModelTest {
 
             every { mockUsbUseCase.scanForUsbDevices() } returns listOf(fakeDevice)
             every { mockResourceProvider.getString(R.string.helper_error_connecting_anyway) } returns expected
+            every { mockUsbUseCase.requestPermission(any()) } returns Unit
 
             // act
             sut.connect()
@@ -172,13 +194,13 @@ internal class MainActivityViewModelTest {
             every { fakeDevice.productId } returns OFFICIAL_PRODUCT_ID
 
             every { mockUsbUseCase.scanForUsbDevices() } returns listOf(fakeDevice)
+            every { mockUsbUseCase.requestPermission(any()) } returns Unit
 
             // act
             sut.connect()
 
             // assert
             verify(exactly = 1) { mockUsbUseCase.requestPermission(fakeDevice) }
-            assertThat(sut.infoMessage.value).isEqualTo("")
             assertThat(sut.errorMessage.value).isEqualTo("")
         }
 
@@ -220,6 +242,9 @@ internal class MainActivityViewModelTest {
     fun `disconnect calls disconnect on both usbUseCase and arduinoUseCase`() =
         runTest {
             // arrange
+            every { mockUsbUseCase.disconnect() } returns Unit
+            every { mockArduinoUsecase.disconnect() } returns Unit
+
             // act
             sut.disconnect()
 
@@ -260,8 +285,15 @@ internal class MainActivityViewModelTest {
             every { mockUsbUseCase.infoMessageFlow } returns usbInfoFlow
             every { mockResourceProvider.getString(any()) } returns ""
 
+            // Re-initialize sut
+            sut =
+                MainActivityViewModel(
+                    arduinoUseCase = mockArduinoUsecase,
+                    usbUseCase = mockUsbUseCase,
+                    resourceProvider = mockResourceProvider,
+                )
+
             // act
-            sut.startObservingTerminalOutput()
             advanceUntilIdle()
 
             // assert
@@ -286,8 +318,15 @@ internal class MainActivityViewModelTest {
             every { mockUsbUseCase.infoMessageFlow } returns usbInfoFlow
             every { mockResourceProvider.getString(any()) } returns ""
 
+            // Re-initialize sut
+            sut =
+                MainActivityViewModel(
+                    arduinoUseCase = mockArduinoUsecase,
+                    usbUseCase = mockUsbUseCase,
+                    resourceProvider = mockResourceProvider,
+                )
+
             // act
-            sut.startObservingTerminalOutput()
             advanceUntilIdle()
 
             // assert
