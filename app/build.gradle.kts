@@ -32,11 +32,11 @@ android {
         buildConfig = true
     }
 
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         applicationId = "org.kabiri.android.usbterminal"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 18
         versionName = "0.9.88${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
