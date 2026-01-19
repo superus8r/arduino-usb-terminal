@@ -42,7 +42,7 @@ testExtJunitKtx = "1.2.1"
 espressoCore = "3.7.0"
 hamcrest = "3.0"
 testRunner = "1.6.2"
-testRules = "1.6.1"
+testRules = "1.7.0"
 truth = "1.4.4"
 androidxTruth = "1.6.0"
 
