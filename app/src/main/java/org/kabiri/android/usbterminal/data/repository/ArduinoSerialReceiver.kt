@@ -47,4 +47,10 @@ class ArduinoSerialReceiver: UsbSerialInterface.UsbReadCallback {
             Log.e(TAG, "Message was null")
         }
     }
+
+    fun clear() {
+        _liveOutput.value = ""
+        _liveInfoOutput.value = ""
+        _liveErrorOutput.value = ""
+    }
 }
