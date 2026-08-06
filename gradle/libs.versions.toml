@@ -2,7 +2,7 @@
 # Build tools & plugins
 gradle = "8.11.1"
 kotlin = "2.1.20"
-jacoco = "0.8.8"
+jacoco = "0.8.15"
 
 # AndroidX
 appcompat = "1.7.1"
