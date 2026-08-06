@@ -171,14 +171,19 @@ sonarqube {
 tasks.register("generateGoogleServicesJson") {
     doLast {
         val jsonFileName = "google-services.json"
-        val fileContent = System.getenv("GOOGLE_SERVICES_JSON")
-        val json = File(projectDir, jsonFileName).apply {
-            createNewFile()
-            writeText(fileContent)
-            println("generated $jsonFileName")
+        val json = File(projectDir, jsonFileName)
+        
+        if (!json.exists() || json.length() == 0L) {
+            val fileContent = System.getenv("GOOGLE_SERVICES_JSON")
+            if (!fileContent.isNullOrBlank()) {
+                json.createNewFile()
+                json.writeText(fileContent)
+                println("generated $jsonFileName")
+            }
         }
+        
         // Check if the json file is empty
-        if (json.length() == 0L) {
+        if (!json.exists() || json.length() == 0L) {
             throw GradleException(
                 """
                 google-services.json file is empty
