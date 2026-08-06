@@ -113,9 +113,16 @@ internal class MainActivityViewModel
                 arduinoUseCase.openDeviceAndPort(device)
             }
 
+        private fun addOutput(item: OutputText) {
+            if (output.size >= 1000) {
+                output.removeAt(0)
+            }
+            output.add(item)
+        }
+
         fun serialWrite(command: String): Boolean {
             val outputText = OutputText(command, OutputText.OutputType.TYPE_NORMAL)
-            output.add(outputText)
+            addOutput(outputText)
             return arduinoUseCase.serialWrite(command)
         }
 
@@ -161,7 +168,7 @@ internal class MainActivityViewModel
                 arduinoDefaultOutput,
                 arduinoInfoOutput,
                 arduinoErrorOutput,
-            ).onEach { output.add(it) }
+            ).onEach { addOutput(it) }
                 .launchIn(viewModelScope)
         }
     }
