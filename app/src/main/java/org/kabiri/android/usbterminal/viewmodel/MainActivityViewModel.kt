@@ -48,7 +48,12 @@ internal class MainActivityViewModel
 
         val output = SnapshotStateList<OutputText>()
 
-        internal fun startObservingUsbDevice() {
+        init {
+            startObservingUsbDevice()
+            startObservingTerminalOutput()
+        }
+
+        private fun startObservingUsbDevice() {
             // Subscribe to USB device changes.
             viewModelScope.launch {
                 usbUseCase.usbDevice.collect { device ->
@@ -108,9 +113,16 @@ internal class MainActivityViewModel
                 arduinoUseCase.openDeviceAndPort(device)
             }
 
+        private fun addOutput(item: OutputText) {
+            if (output.size >= 1000) {
+                output.removeAt(0)
+            }
+            output.add(item)
+        }
+
         fun serialWrite(command: String): Boolean {
             val outputText = OutputText(command, OutputText.OutputType.TYPE_NORMAL)
-            output.add(outputText)
+            addOutput(outputText)
             return arduinoUseCase.serialWrite(command)
         }
 
@@ -118,7 +130,7 @@ internal class MainActivityViewModel
          * Starts emitting all output sources to the snapshot list used by the UI.
          * Emits every item (including repeats) with its type.
          */
-        fun startObservingTerminalOutput() {
+        private fun startObservingTerminalOutput() {
             val infoOutput: Flow<OutputText> =
                 infoMessage
                     .filter { it.isNotEmpty() }
@@ -156,7 +168,7 @@ internal class MainActivityViewModel
                 arduinoDefaultOutput,
                 arduinoInfoOutput,
                 arduinoErrorOutput,
-            ).onEach { output.add(it) }
+            ).onEach { addOutput(it) }
                 .launchIn(viewModelScope)
         }
     }

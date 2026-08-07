@@ -19,12 +19,12 @@ repositories {
 android {
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain(21)
     }
 
     buildFeatures {
@@ -32,11 +32,11 @@ android {
         buildConfig = true
     }
 
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         applicationId = "org.kabiri.android.usbterminal"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 18
         versionName = "0.9.88${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -160,21 +160,30 @@ tasks.register<JacocoReport>("jacocoUiOnly") {
     })
 }
 
-sonarqube {
-    properties {
-        property("sonar.projectKey", System.getenv("SONAR_PROJECT_KEY"))
-        property("sonar.organization", System.getenv("SONAR_ORGANIZATION"))
-        property("sonar.host.url", System.getenv("SONAR_HOST_URL"))
-    }
-}
+
 
 tasks.register("generateGoogleServicesJson") {
     doLast {
         val jsonFileName = "google-services.json"
-        val fileContent = System.getenv("GOOGLE_SERVICES_JSON")
-        File(projectDir, jsonFileName).apply {
-            createNewFile(); writeText(fileContent)
-            println("generated $jsonFileName")
+        val json = File(projectDir, jsonFileName)
+        
+        if (!json.exists() || json.length() == 0L) {
+            val fileContent = System.getenv("GOOGLE_SERVICES_JSON")
+            if (!fileContent.isNullOrBlank()) {
+                json.createNewFile()
+                json.writeText(fileContent)
+                println("generated $jsonFileName")
+            }
+        }
+        
+        // Check if the json file is empty
+        if (!json.exists() || json.length() == 0L) {
+            throw GradleException(
+                """
+                google-services.json file is empty
+                Path: ${json.path}
+                """.trimIndent(),
+            )
         }
     }
 }

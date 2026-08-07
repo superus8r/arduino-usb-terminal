@@ -95,6 +95,11 @@ internal class ArduinoRepository
          * This method should be called after the permission is granted to access the Arduino via USB.
          */
         override fun openDeviceAndPort(device: UsbDevice) {
+            _messageFlow.value = ""
+            _infoMessageFlow.value = ""
+            _errorMessageFlow.value = ""
+            arduinoSerialReceiver.clear()
+
             try {
                 // setup the device communication.
                 connection = usbManager.openDevice(device)
