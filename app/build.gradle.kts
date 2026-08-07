@@ -160,13 +160,7 @@ tasks.register<JacocoReport>("jacocoUiOnly") {
     })
 }
 
-sonarqube {
-    properties {
-        property("sonar.projectKey", System.getenv("SONAR_PROJECT_KEY"))
-        property("sonar.organization", System.getenv("SONAR_ORGANIZATION"))
-        property("sonar.host.url", System.getenv("SONAR_HOST_URL"))
-    }
-}
+
 
 tasks.register("generateGoogleServicesJson") {
     doLast {
