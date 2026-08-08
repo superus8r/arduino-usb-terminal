@@ -60,7 +60,10 @@ android {
         named("release") {
             signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
         named("debug") {
             enableUnitTestCoverage = true
@@ -69,6 +72,7 @@ android {
     }
 
     testOptions {
+        unitTests.isReturnDefaultValues = true
 
         animationsDisabled = true
 
@@ -92,7 +96,6 @@ android {
     }
 
     namespace = "org.kabiri.android.usbterminal"
-
 }
 
 jacoco {
@@ -111,24 +114,33 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         csv.required.set(false)
     }
 
-    val fileFilter = listOf(
-        "**/R.class",
-        "**/MainActivity.*",
-        "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
-        "**/*Test*.*", "android/**/*.*",
-        "**/Dagger*.*", "**/*_Hilt*.*", "**/*Hilt*.*",
-    )
-    val kotlinDebugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
+    val fileFilter =
+        listOf(
+            "**/R.class",
+            "**/MainActivity.*",
+            "**/R$*.class",
+            "**/BuildConfig.*",
+            "**/Manifest*.*",
+            "**/*Test*.*",
+            "android/**/*.*",
+            "**/Dagger*.*",
+            "**/*_Hilt*.*",
+            "**/*Hilt*.*",
+        )
+    val kotlinDebugTree =
+        fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
     val mainKotlinSrc = layout.projectDirectory.dir("src/main/kotlin")
     val mainJavaSrc = layout.projectDirectory.dir("src/main/java")
     sourceDirectories.from(files(mainKotlinSrc, mainJavaSrc))
     classDirectories.from(files(kotlinDebugTree))
-    executionData.from(fileTree(layout.buildDirectory) {
-        include(
-            "outputs/managed_device_code_coverage/**/*.ec",
-            "outputs/unit_test_code_coverage/**/*.exec",
-        )
-    })
+    executionData.from(
+        fileTree(layout.buildDirectory) {
+            include(
+                "outputs/managed_device_code_coverage/**/*.ec",
+                "outputs/unit_test_code_coverage/**/*.exec",
+            )
+        },
+    )
 }
 
 tasks.register<JacocoReport>("jacocoUiOnly") {
@@ -141,32 +153,43 @@ tasks.register<JacocoReport>("jacocoUiOnly") {
         csv.required.set(false)
     }
 
-    val fileFilter = listOf(
-        "**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
-        "**/*Test*.*", "android/**/*.*",
-        "**/Dagger*.*", "**/*_Hilt*.*", "**/*Hilt*.*",
-    )
-    val javaDebugTree = fileTree(layout.buildDirectory.dir("intermediates/javac/debug/classes")) { exclude(fileFilter) }
-    val kotlinDebugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
+    val fileFilter =
+        listOf(
+            "**/R.class",
+            "**/R$*.class",
+            "**/BuildConfig.*",
+            "**/Manifest*.*",
+            "**/*Test*.*",
+            "android/**/*.*",
+            "**/Dagger*.*",
+            "**/*_Hilt*.*",
+            "**/*Hilt*.*",
+        )
+    val javaDebugTree =
+        fileTree(layout.buildDirectory.dir("intermediates/javac/debug/classes")) {
+            exclude(fileFilter)
+        }
+    val kotlinDebugTree =
+        fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
     val mainJavaSrc = layout.projectDirectory.dir("src/main/java")
     val mainKotlinSrc = layout.projectDirectory.dir("src/main/kotlin")
     sourceDirectories.from(files(mainJavaSrc, mainKotlinSrc))
     classDirectories.from(files(javaDebugTree, kotlinDebugTree))
-    executionData.from(fileTree(layout.buildDirectory) {
-        include(
-            "outputs/managed_device_code_coverage/**/*.ec",
-            "outputs/managed_device_code_coverage/**/*.exec"
-        )
-    })
+    executionData.from(
+        fileTree(layout.buildDirectory) {
+            include(
+                "outputs/managed_device_code_coverage/**/*.ec",
+                "outputs/managed_device_code_coverage/**/*.exec",
+            )
+        },
+    )
 }
-
-
 
 tasks.register("generateGoogleServicesJson") {
     doLast {
         val jsonFileName = "google-services.json"
         val json = File(projectDir, jsonFileName)
-        
+
         if (!json.exists() || json.length() == 0L) {
             val fileContent = System.getenv("GOOGLE_SERVICES_JSON")
             if (!fileContent.isNullOrBlank()) {
@@ -175,7 +198,7 @@ tasks.register("generateGoogleServicesJson") {
                 println("generated $jsonFileName")
             }
         }
-        
+
         // Check if the json file is empty
         if (!json.exists() || json.length() == 0L) {
             throw GradleException(
@@ -206,13 +229,15 @@ tasks.register("generateKsPropFile") {
         val configFileName = "keystore.properties"
         File(projectDir, configFileName).apply {
             createNewFile()
-            writeText("""
+            writeText(
+                """
                 # Gradle signing properties for app module
                 release.file=${System.getenv("USB_TERMINAL_KS_PATH")}
                 release.storePassword=${System.getenv("USB_TERMINAL_KS_PASSWORD")}
                 release.keyAlias=${System.getenv("USB_TERMINAL_KS_KEY_ALIAS")}
                 release.keyPassword=${System.getenv("USB_TERMINAL_KS_KEY_PASSWORD")}
-                """.trimIndent())
+                """.trimIndent(),
+            )
             println("generated ${this.path}")
         }
     }
@@ -223,9 +248,9 @@ tasks.register("generateAppDistKey") {
         val jsonFileName = "app-dist-key.json"
         val fileContent = System.getenv("GOOGLE_APP_DIST_FASTLANE_SERVICE_ACCOUNT")
         File(rootDir, jsonFileName).apply {
-                createNewFile()
-                writeText(fileContent)
-                println("generated ${this.path}")
+            createNewFile()
+            writeText(fileContent)
+            println("generated ${this.path}")
         }
     }
 }
