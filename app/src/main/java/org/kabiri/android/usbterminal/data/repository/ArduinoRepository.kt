@@ -78,7 +78,7 @@ internal class ArduinoRepository
         override fun disconnect() {
             try {
                 if (::connection.isInitialized) connection.close()
-                _messageFlow.value = context.getString(R.string.helper_info_serial_connection_closed)
+                _infoMessageFlow.value = context.getString(R.string.helper_info_serial_connection_closed)
             } catch (e: UninitializedPropertyAccessException) {
                 _errorMessageFlow.value =
                     context.getString(R.string.helper_error_connection_not_ready_to_close)
