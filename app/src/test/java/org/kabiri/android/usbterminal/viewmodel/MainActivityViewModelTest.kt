@@ -90,12 +90,12 @@ internal class MainActivityViewModelTest {
                 )
 
             // act
-            deviceFlow.value = mockDevice
+            deviceFlow.tryEmit(mockDevice)
             advanceUntilIdle()
 
             // assert
             verify(exactly = 1) { mockArduinoUsecase.openDeviceAndPort(mockDevice) }
-            assertThat(sut.infoMessage.value).contains(expected.toString())
+            assertThat(sut.infoMessage.replayCache.lastOrNull() ?: "").contains(expected.toString())
         }
 
     @Test
@@ -115,12 +115,12 @@ internal class MainActivityViewModelTest {
                 )
 
             // act
-            deviceFlow.value = expected
+            deviceFlow.tryEmit(expected)
             advanceUntilIdle()
 
             // assert
             verify(exactly = 0) { mockArduinoUsecase.openDeviceAndPort(any()) }
-            assertThat(sut.infoMessage.value).contains(expected.toString())
+            assertThat(sut.infoMessage.replayCache.lastOrNull() ?: "").contains(expected.toString())
         }
 
     @Test
@@ -135,7 +135,7 @@ internal class MainActivityViewModelTest {
             sut.connect()
 
             // assert
-            assertThat(sut.errorMessage.value).isEqualTo(expected)
+            assertThat(sut.errorMessage.replayCache.lastOrNull() ?: "").isEqualTo(expected)
         }
 
     @Test
@@ -158,8 +158,8 @@ internal class MainActivityViewModelTest {
             sut.connect()
 
             // assert
-            assertThat(sut.errorMessage.value).isEqualTo(expectedError)
-            assertThat(sut.infoMessage.value).isEqualTo(expectedInfo)
+            assertThat(sut.errorMessage.replayCache.lastOrNull() ?: "").isEqualTo(expectedError)
+            assertThat(sut.infoMessage.replayCache.lastOrNull() ?: "").isEqualTo(expectedInfo)
             verify(exactly = 1) { mockUsbUseCase.requestPermission(fakeDevice) }
         }
 
@@ -181,7 +181,7 @@ internal class MainActivityViewModelTest {
             sut.connect()
 
             // assert
-            assertThat(sut.infoMessage.value).isEqualTo(expected)
+            assertThat(sut.infoMessage.replayCache.lastOrNull() ?: "").isEqualTo(expected)
             verify(exactly = 1) { mockUsbUseCase.requestPermission(fakeDevice) }
         }
 
@@ -201,7 +201,7 @@ internal class MainActivityViewModelTest {
 
             // assert
             verify(exactly = 1) { mockUsbUseCase.requestPermission(fakeDevice) }
-            assertThat(sut.errorMessage.value).isEqualTo("")
+            assertThat(sut.errorMessage.replayCache.lastOrNull() ?: "").isEqualTo("")
         }
 
     @Test

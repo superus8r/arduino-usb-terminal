@@ -60,7 +60,8 @@ class MainActivity : AppCompatActivity() {
         // Compose terminal output UI
         composeOutput.setContent {
             UsbTerminalTheme {
-                val autoScrollEnabled = settingViewModel.currentAutoScroll.collectAsState(initial = true).value
+                val autoScrollEnabled =
+                    settingViewModel.currentAutoScroll.collectAsState(initial = true).value
                 TerminalOutput(
                     logs = viewModel.output,
                     autoScroll = autoScrollEnabled,
@@ -85,8 +86,11 @@ class MainActivity : AppCompatActivity() {
 
         etInput.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEND ||
-                (event?.keyCode == KeyEvent.KEYCODE_ENTER &&
-                        event.action == KeyEvent.ACTION_DOWN)) {
+                (
+                    event?.keyCode == KeyEvent.KEYCODE_ENTER &&
+                        event.action == KeyEvent.ACTION_DOWN
+                )
+            ) {
                 sendCommand()
                 true
             } else {
@@ -95,34 +99,38 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         viewModel.connectIfAlreadyHasPermission()
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         viewModel.disconnect()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
             R.id.actionConnect -> {
                 viewModel.connect()
                 true
             }
+
             R.id.actionDisconnect -> {
                 viewModel.disconnect()
                 true
             }
+
             R.id.actionSettings -> {
                 SettingModalBottomSheet(viewModel = settingViewModel)
                     .show(supportFragmentManager, TAG)
                 true
             }
-            else -> false
+
+            else -> {
+                false
+            }
         }
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater

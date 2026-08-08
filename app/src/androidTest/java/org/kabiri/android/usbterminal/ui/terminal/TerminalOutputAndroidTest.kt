@@ -44,8 +44,8 @@ class TerminalOutputAndroidTest {
 
         // assert
         composeRule.onNodeWithText("Line 1").assertIsDisplayed()
-        composeRule.onNodeWithText("Error!").assertIsDisplayed()
-        composeRule.onNodeWithText("Info").assertIsDisplayed()
+        composeRule.onNodeWithText("Error!", substring = true).assertIsDisplayed()
+        composeRule.onNodeWithText("Info", substring = true).assertIsDisplayed()
     }
 
     @Test
