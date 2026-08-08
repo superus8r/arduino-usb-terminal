@@ -8,9 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.firstOrNull
@@ -28,6 +26,7 @@ import org.kabiri.android.usbterminal.util.IResourceProvider
 import org.kabiri.android.usbterminal.util.getArduinoType
 import org.kabiri.android.usbterminal.util.isCloneArduinoBoard
 import org.kabiri.android.usbterminal.util.isOfficialArduinoBoard
+import org.kabiri.android.usbterminal.utils.value
 import javax.inject.Inject
 
 /**
@@ -44,7 +43,7 @@ internal class MainActivityViewModel
     ) : ViewModel() {
         private val _infoMessageFlow =
             MutableSharedFlow<String>(
-                extraBufferCapacity = 1,
+                replay = 1,
                 onBufferOverflow = BufferOverflow.DROP_OLDEST,
             )
         val infoMessage: SharedFlow<String>
@@ -52,7 +51,7 @@ internal class MainActivityViewModel
 
         private val _errorMessageFlow =
             MutableSharedFlow<String>(
-                extraBufferCapacity = 1,
+                replay = 1,
                 onBufferOverflow = BufferOverflow.DROP_OLDEST,
             )
         val errorMessage: SharedFlow<String>
@@ -185,8 +184,8 @@ internal class MainActivityViewModel
         }
     }
 
-private var kotlinx.coroutines.flow.MutableSharedFlow<String>.value: String
-    get() = ""
+internal var SharedFlow<String>.value: String
+    get() = this.replayCache.lastOrNull() ?: ""
     set(v) {
-        tryEmit(v)
+        (this as MutableSharedFlow<String>).tryEmit(v)
     }

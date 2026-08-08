@@ -11,7 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -54,7 +53,7 @@ internal class UsbRepository
 
         private val _infoMessageFlow =
             MutableSharedFlow<String>(
-                extraBufferCapacity = 1,
+                replay = 1,
                 onBufferOverflow = BufferOverflow.DROP_OLDEST,
             )
         override val infoMessageFlow: SharedFlow<String> = _infoMessageFlow.asSharedFlow()
@@ -149,10 +148,4 @@ internal class UsbRepository
                 _usbDevice.emit(null)
             }
         }
-    }
-
-private var kotlinx.coroutines.flow.MutableSharedFlow<String>.value: String
-    get() = ""
-    set(v) {
-        tryEmit(v)
     }

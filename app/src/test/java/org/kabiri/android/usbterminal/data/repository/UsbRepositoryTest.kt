@@ -26,11 +26,9 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.kabiri.android.usbterminal.Constants
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class UsbRepositoryTest {
-
     private val testDispatcher: TestDispatcher = StandardTestDispatcher()
     private val testScope = TestScope(testDispatcher)
 
@@ -45,16 +43,29 @@ internal class UsbRepositoryTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
 
-        every { mockUsbManager.deviceList } returns hashMapOf(
-            "device1" to mockUsbDevice1,
-            "device2" to mockUsbDevice2,
-        )
+        every { mockUsbManager.deviceList } returns
+            hashMapOf(
+                "device1" to mockUsbDevice1,
+                "device2" to mockUsbDevice2,
+            )
         every { mockContext.getSystemService(UsbManager::class.java) } returns mockUsbManager
+        every { mockContext.packageName } returns "org.kabiri.android.usbterminal"
+        every { mockUsbManager.hasPermission(any<UsbDevice>()) } returns false
+        every { mockUsbDevice1.manufacturerName } returns "Manufacturer1"
+        every { mockUsbDevice1.productName } returns "Product1"
+        every { mockUsbDevice1.vendorId } returns 1
+        every { mockUsbDevice1.productId } returns 1
 
-        sut = UsbRepository(
-            context = mockContext,
-            scope = testScope,
-        )
+        every { mockUsbDevice2.manufacturerName } returns "Manufacturer2"
+        every { mockUsbDevice2.productName } returns "Product2"
+        every { mockUsbDevice2.vendorId } returns 2
+        every { mockUsbDevice2.productId } returns 2
+
+        sut =
+            UsbRepository(
+                context = mockContext,
+                scope = testScope,
+            )
     }
 
     @After
@@ -64,203 +75,213 @@ internal class UsbRepositoryTest {
     }
 
     @Test
-    fun `scanForArduinoDevices returns list of usb devices from usbManager`() = runTest {
-        // arrange
-        val expectedDeviceList = listOf(mockUsbDevice1, mockUsbDevice2)
+    fun `scanForArduinoDevices returns list of usb devices from usbManager`() =
+        runTest {
+            // arrange
+            val expectedDeviceList = listOf(mockUsbDevice1, mockUsbDevice2)
 
-        // act
-        val actualDeviceList = sut.scanForArduinoDevices()
-        advanceUntilIdle()
+            // act
+            val actualDeviceList = sut.scanForArduinoDevices()
+            advanceUntilIdle()
 
-        // assert
-        verify { mockUsbManager.deviceList }
-        assertThat(actualDeviceList).isNotEmpty()
-        assertThat(actualDeviceList).hasSize(actualDeviceList.size)
-        assertThat(actualDeviceList.containsAll(expectedDeviceList)).isTrue()
-    }
-
-    @Test
-    fun `requestUsbPermission registers receiver and requests permission`() = runTest {
-        // arrange
-        mockkStatic(PendingIntent::class)
-        mockkStatic(ContextCompat::class)
-        val mockIntent: PendingIntent = mockk()
-        every {
-            PendingIntent.getBroadcast(
-                mockContext,
-                0,
-                any(),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-        } returns mockIntent
-        every {
-            ContextCompat.registerReceiver(
-                mockContext,
-                any<UsbPermissionReceiver>(),
-                IntentFilter(Constants.ACTION_USB_PERMISSION),
-                ContextCompat.RECEIVER_EXPORTED
-            )
-        } returns null
-
-        // act
-        sut.requestUsbPermission(mockUsbDevice1)
-        advanceUntilIdle()
-
-        // assert
-        assertThat(sut.usbDevice.first()).isEqualTo(mockUsbDevice1)
-        verify {
-            PendingIntent.getBroadcast(
-                mockContext,
-                0,
-                any<Intent>(),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            ContextCompat.registerReceiver(
-                mockContext,
-                any<UsbPermissionReceiver>(),
-                any<IntentFilter>(),
-                ContextCompat.RECEIVER_EXPORTED
-            )
-            mockUsbManager.requestPermission(mockUsbDevice1, mockIntent)
+            // assert
+            verify { mockUsbManager.deviceList }
+            assertThat(actualDeviceList).isNotEmpty()
+            assertThat(actualDeviceList).hasSize(actualDeviceList.size)
+            assertThat(actualDeviceList.containsAll(expectedDeviceList)).isTrue()
         }
-    }
 
     @Test
-    fun `hasPermission returns true when granted`() = runTest {
-        // arrange
-        every { mockUsbManager.hasPermission(mockUsbDevice1) } returns true
+    fun `requestUsbPermission registers receiver and requests permission`() =
+        runTest {
+            // arrange
+            mockkStatic(PendingIntent::class)
+            mockkStatic(ContextCompat::class)
+            val mockIntent: PendingIntent = mockk()
+            every {
+                PendingIntent.getBroadcast(
+                    mockContext,
+                    0,
+                    any(),
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
+                )
+            } returns mockIntent
+            every {
+                ContextCompat.registerReceiver(
+                    mockContext,
+                    any<UsbPermissionReceiver>(),
+                    any<IntentFilter>(),
+                    ContextCompat.RECEIVER_EXPORTED,
+                )
+            } returns null
 
-        // act
-        val actual = sut.hasPermission(mockUsbDevice1)
+            // act
+            sut.requestUsbPermission(mockUsbDevice1)
+            advanceUntilIdle()
 
-        // assert
-        assertThat(actual).isTrue()
-        verify { mockUsbManager.hasPermission(mockUsbDevice1) }
-    }
-
-    @Test
-    fun `hasPermission returns false when denied`() = runTest {
-        // arrange
-        every { mockUsbManager.hasPermission(mockUsbDevice2) } returns false
-
-        // act
-        val actual = sut.hasPermission(mockUsbDevice2)
-
-        // assert
-        assertThat(actual).isFalse()
-        verify { mockUsbManager.hasPermission(mockUsbDevice2) }
-    }
-
-    @Test
-    fun `onPermissionResult emits info when granted`() = runTest(testDispatcher) {
-        // arrange
-        val fakeGranted = true
-        val fakeId = 123
-        val fakeString = "doesn't matter"
-        val fakeMsg = "permission granted"
-        val fakeDeviceInfo = "$fakeString $fakeString $fakeId $fakeId"
-        val expected = "\n$fakeMsg $fakeDeviceInfo"
-        every { mockContext.getString(any()) } returns fakeMsg
-        every { mockUsbDevice1.manufacturerName } returns fakeString
-        every { mockUsbDevice1.productName } returns fakeString
-        every { mockUsbDevice1.vendorId } returns fakeId
-        every { mockUsbDevice1.productId } returns fakeId
-
-        // act
-        sut.onPermissionResult(
-            device = mockUsbDevice1,
-            granted = fakeGranted
-        )
-        advanceUntilIdle()
-
-        // assert
-        assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
-    }
+            // assert
+            verify {
+                PendingIntent.getBroadcast(
+                    mockContext,
+                    0,
+                    any<Intent>(),
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
+                )
+                ContextCompat.registerReceiver(
+                    mockContext,
+                    any<UsbPermissionReceiver>(),
+                    any<IntentFilter>(),
+                    ContextCompat.RECEIVER_EXPORTED,
+                )
+                mockUsbManager.requestPermission(mockUsbDevice1, mockIntent)
+            }
+        }
 
     @Test
-    fun `onPermissionResult emits info when denied`() = runTest(testDispatcher) {
-        // arrange
-        val fakeGranted = false
-        val fakeId = 123
-        val fakeString = "doesn't matter"
-        val fakeMsg = "permission denied"
-        val fakeDeviceInfo = "$fakeString $fakeString $fakeId $fakeId"
-        val expected = "$fakeMsg $fakeDeviceInfo"
-        every { mockContext.getString(any()) } returns fakeMsg
-        every { mockUsbDevice1.manufacturerName } returns fakeString
-        every { mockUsbDevice1.productName } returns fakeString
-        every { mockUsbDevice1.vendorId } returns fakeId
-        every { mockUsbDevice1.productId } returns fakeId
+    fun `hasPermission returns true when granted`() =
+        runTest {
+            // arrange
+            every { mockUsbManager.hasPermission(mockUsbDevice1) } returns true
 
-        // act
-        sut.onPermissionResult(
-            device = mockUsbDevice1,
-            granted = fakeGranted
-        )
-        advanceUntilIdle()
+            // act
+            val actual = sut.hasPermission(mockUsbDevice1)
 
-        // assert
-        assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
-    }
+            // assert
+            assertThat(actual).isTrue()
+            verify { mockUsbManager.hasPermission(mockUsbDevice1) }
+        }
 
     @Test
-    fun `onDeviceAttached emits info when granted`() = runTest(testDispatcher) {
-        // arrange
-        val expected = "fake device attached"
-        every { mockContext.getString(any()) } returns expected
+    fun `hasPermission returns false when denied`() =
+        runTest {
+            // arrange
+            every { mockUsbManager.hasPermission(mockUsbDevice2) } returns false
 
-        // act
-        sut.onDeviceAttached(device = mockUsbDevice1)
-        advanceUntilIdle()
+            // act
+            val actual = sut.hasPermission(mockUsbDevice2)
 
-        // assert
-        assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
-    }
-
-    @Test
-    fun `onDeviceDetached emits info when granted`() = runTest(testDispatcher) {
-        // arrange
-        val expected = "fake device detached"
-        every { mockContext.getString(any()) } returns expected
-
-        // act
-        sut.onDeviceDetached(device = mockUsbDevice1)
-        advanceUntilIdle()
-
-        // assert
-        assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
-    }
+            // assert
+            assertThat(actual).isFalse()
+            verify { mockUsbManager.hasPermission(mockUsbDevice2) }
+        }
 
     @Test
-    fun `onUnknownAction emits info when granted`() = runTest(testDispatcher) {
-        // arrange
-        val expected = "strange action received"
-        val mockIntent: Intent = mockk()
-        every { mockContext.getString(any()) } returns expected
+    fun `onPermissionResult emits info when granted`() =
+        runTest(testDispatcher) {
+            // arrange
+            val fakeGranted = true
+            val fakeId = 123
+            val fakeString = "doesn't matter"
+            val fakeMsg = "permission granted"
+            val fakeDeviceInfo = "$fakeString $fakeString $fakeId $fakeId"
+            val expected = "\n$fakeMsg $fakeDeviceInfo"
+            every { mockContext.getString(any()) } returns fakeMsg
+            every { mockUsbDevice1.manufacturerName } returns fakeString
+            every { mockUsbDevice1.productName } returns fakeString
+            every { mockUsbDevice1.vendorId } returns fakeId
+            every { mockUsbDevice1.productId } returns fakeId
 
-        // act
-        sut.onUnknownAction(mockIntent)
-        advanceUntilIdle()
+            // act
+            sut.onPermissionResult(
+                device = mockUsbDevice1,
+                granted = fakeGranted,
+            )
+            advanceUntilIdle()
 
-        // assert
-        assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
-    }
+            // assert
+            assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
+        }
 
     @Test
-    fun `onDisconnect clears usbDevice`() = runTest {
-        // arrange
-        mockkStatic(PendingIntent::class)
-        mockkStatic(ContextCompat::class)
-        every { PendingIntent.getBroadcast(any(), any(), any(), any()) } returns mockk()
-        sut.requestUsbPermission(mockUsbDevice1)
-        advanceUntilIdle()
-        assertThat(sut.usbDevice.first()).isNotNull()
+    fun `onPermissionResult emits info when denied`() =
+        runTest(testDispatcher) {
+            // arrange
+            val fakeGranted = false
+            val fakeId = 123
+            val fakeString = "doesn't matter"
+            val fakeMsg = "permission denied"
+            val fakeDeviceInfo = "$fakeString $fakeString $fakeId $fakeId"
+            val expected = "$fakeMsg $fakeDeviceInfo"
+            every { mockContext.getString(any()) } returns fakeMsg
+            every { mockUsbDevice1.manufacturerName } returns fakeString
+            every { mockUsbDevice1.productName } returns fakeString
+            every { mockUsbDevice1.vendorId } returns fakeId
+            every { mockUsbDevice1.productId } returns fakeId
 
-        // act
-        sut.disconnect()
-        advanceUntilIdle()
+            // act
+            sut.onPermissionResult(
+                device = mockUsbDevice1,
+                granted = fakeGranted,
+            )
+            advanceUntilIdle()
 
-        // assert
-        assertThat(sut.usbDevice.first()).isNull()
-    }
+            // assert
+            assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
+        }
+
+    @Test
+    fun `onDeviceAttached emits info when granted`() =
+        runTest(testDispatcher) {
+            // arrange
+            val expected = "fake device attached"
+            every { mockContext.getString(any()) } returns expected
+
+            // act
+            sut.onDeviceAttached(device = mockUsbDevice1)
+            advanceUntilIdle()
+
+            // assert
+            assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
+        }
+
+    @Test
+    fun `onDeviceDetached emits info when granted`() =
+        runTest(testDispatcher) {
+            // arrange
+            val expected = "fake device detached"
+            every { mockContext.getString(any()) } returns expected
+
+            // act
+            sut.onDeviceDetached(device = mockUsbDevice1)
+            advanceUntilIdle()
+
+            // assert
+            assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
+        }
+
+    @Test
+    fun `onUnknownAction emits info when granted`() =
+        runTest(testDispatcher) {
+            // arrange
+            val expected = "strange action received"
+            val mockIntent: Intent = mockk()
+            every { mockContext.getString(any()) } returns expected
+
+            // act
+            sut.onUnknownAction(mockIntent)
+            advanceUntilIdle()
+
+            // assert
+            assertThat(sut.infoMessageFlow.first()).isEqualTo(expected)
+        }
+
+    @Test
+    fun `onDisconnect clears usbDevice`() =
+        runTest {
+            // arrange
+            mockkStatic(PendingIntent::class)
+            mockkStatic(ContextCompat::class)
+            every { PendingIntent.getBroadcast(any(), any(), any(), any()) } returns mockk()
+            every { ContextCompat.registerReceiver(any(), any(), any(), any()) } returns mockk()
+            sut.onPermissionResult(mockUsbDevice1, true)
+            advanceUntilIdle()
+            assertThat(sut.usbDevice.first()).isNotNull()
+
+            // act
+            sut.disconnect()
+            advanceUntilIdle()
+
+            // assert
+            assertThat(sut.usbDevice.first()).isNull()
+        }
 }
