@@ -18,6 +18,15 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.kabiri.android.usbterminal.R
@@ -60,19 +69,47 @@ internal fun TerminalOutput(
         verticalArrangement = Arrangement.Bottom,
     ) {
         itemsIndexed(logs, key = { index, _ -> index }) { _, item ->
-            val color =
-                when (item.type) {
-                    OutputText.OutputType.TYPE_ERROR -> MaterialTheme.colorScheme.error
-                    OutputText.OutputType.TYPE_INFO -> MaterialTheme.colorScheme.onBackground
-                    else -> MaterialTheme.colorScheme.onBackground
-                }
-            Text(
-                text = item.text,
-                color = color,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = Int.MAX_VALUE,
-                overflow = TextOverflow.Clip,
-            )
+            val isNormal = item.type == OutputText.OutputType.TYPE_NORMAL
+            val isInfo = item.type == OutputText.OutputType.TYPE_INFO
+            val isError = item.type == OutputText.OutputType.TYPE_ERROR
+
+            val backgroundColor = when {
+                isError -> MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
+                isInfo -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f)
+                else -> Color.Transparent
+            }
+
+            val textColor = when {
+                isError -> MaterialTheme.colorScheme.error
+                isInfo -> MaterialTheme.colorScheme.onBackground
+                else -> MaterialTheme.colorScheme.onBackground
+            }
+
+            val prefix = when {
+                isError -> "⚠️ "
+                isInfo -> "ℹ️ "
+                else -> ""
+            }
+
+            val fontFamily = if (isNormal) FontFamily.Monospace else FontFamily.Default
+            val fontStyle = if (isInfo) FontStyle.Italic else FontStyle.Normal
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(backgroundColor)
+                    .padding(horizontal = 12.dp, vertical = if (isNormal) 2.dp else 6.dp)
+            ) {
+                Text(
+                    text = prefix + item.text,
+                    color = textColor,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontFamily = fontFamily,
+                    fontStyle = fontStyle,
+                    maxLines = Int.MAX_VALUE,
+                    overflow = TextOverflow.Clip,
+                )
+            }
         }
     }
 }
