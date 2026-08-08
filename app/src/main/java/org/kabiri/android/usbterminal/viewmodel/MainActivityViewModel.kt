@@ -5,9 +5,13 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
@@ -38,13 +42,21 @@ internal class MainActivityViewModel
         private val usbUseCase: IUsbUseCase,
         private val resourceProvider: IResourceProvider,
     ) : ViewModel() {
-        private val _infoMessageFlow = MutableStateFlow("")
-        val infoMessage: StateFlow<String>
-            get() = _infoMessageFlow
+        private val _infoMessageFlow =
+            MutableSharedFlow<String>(
+                extraBufferCapacity = 1,
+                onBufferOverflow = BufferOverflow.DROP_OLDEST,
+            )
+        val infoMessage: SharedFlow<String>
+            get() = _infoMessageFlow.asSharedFlow()
 
-        private val _errorMessageFlow = MutableStateFlow("")
-        val errorMessage: StateFlow<String>
-            get() = _errorMessageFlow
+        private val _errorMessageFlow =
+            MutableSharedFlow<String>(
+                extraBufferCapacity = 1,
+                onBufferOverflow = BufferOverflow.DROP_OLDEST,
+            )
+        val errorMessage: SharedFlow<String>
+            get() = _errorMessageFlow.asSharedFlow()
 
         val output = SnapshotStateList<OutputText>()
 
@@ -171,4 +183,10 @@ internal class MainActivityViewModel
             ).onEach { addOutput(it) }
                 .launchIn(viewModelScope)
         }
+    }
+
+private var kotlinx.coroutines.flow.MutableSharedFlow<String>.value: String
+    get() = ""
+    set(v) {
+        tryEmit(v)
     }

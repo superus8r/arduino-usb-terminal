@@ -8,6 +8,7 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,7 +52,11 @@ internal class UsbRepository
         private val _usbDevice = MutableSharedFlow<UsbDevice?>(replay = 1)
         override val usbDevice: SharedFlow<UsbDevice?> = _usbDevice.asSharedFlow()
 
-        private val _infoMessageFlow = MutableStateFlow<String>("")
+        private val _infoMessageFlow =
+            MutableSharedFlow<String>(
+                extraBufferCapacity = 1,
+                onBufferOverflow = BufferOverflow.DROP_OLDEST,
+            )
         override val infoMessageFlow: SharedFlow<String> = _infoMessageFlow.asSharedFlow()
 
         override fun scanForArduinoDevices(): List<UsbDevice> {
@@ -144,4 +149,10 @@ internal class UsbRepository
                 _usbDevice.emit(null)
             }
         }
+    }
+
+private var kotlinx.coroutines.flow.MutableSharedFlow<String>.value: String
+    get() = ""
+    set(v) {
+        tryEmit(v)
     }
