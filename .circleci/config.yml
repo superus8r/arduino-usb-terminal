@@ -46,7 +46,7 @@ executors:
       image: android:2024.11.1
   android-docker:
     docker:
-      - image: cimg/android:2025.04
+      - image: cimg/android:2026.08
 
 jobs:
   android-test:
