@@ -264,7 +264,7 @@ internal class ArduinoRepositoryTest {
         runTest {
             // arrange
             val exceptionMessage = "set baud problem"
-            val expected = exceptionMessage
+            val expected = "set baud problem error"
             mockkStatic(UsbSerialDevice::class)
             every { Log.e(any(), any()) } returns 1
             every { mockUsbManager.openDevice(mockDevice) } returns mockConnection
