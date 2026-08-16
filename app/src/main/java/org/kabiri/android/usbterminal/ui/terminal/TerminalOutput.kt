@@ -11,17 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -52,9 +48,6 @@ internal fun TerminalOutput(
     val clipboard = LocalClipboardManager.current
     val context = LocalContext.current
 
-    // Concatenate all logs as plain text for copy action
-    val allText = remember(logs.size) { logs.joinToString(separator = "") { it.text } }
-
     val longClickMessage = stringResource(R.string.copied_to_clipboard)
 
     LazyColumn(
@@ -62,6 +55,8 @@ internal fun TerminalOutput(
             modifier.combinedClickable(
                 onClick = {},
                 onLongClick = {
+                    // Concatenate all logs as plain text only when the user long-clicks
+                    val allText = logs.joinToString(separator = "") { it.text }
                     clipboard.setText(AnnotatedString(allText))
                     Toast.makeText(context, longClickMessage, Toast.LENGTH_SHORT).show()
                 },
