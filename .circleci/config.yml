@@ -78,9 +78,8 @@ jobs:
     resource_class: large
     steps:
       - setup_android
-      - run:
-          name: Prepare Fastlane
-          command: bundle install
+      - ruby/install-deps:
+          with-cache: true
       - run:
           name: Distribute to Firebase AppTester Dev
           command: bundle exec fastlane distDev
@@ -95,9 +94,8 @@ jobs:
     resource_class: large
     steps:
       - setup_android
-      - run:
-          name: Prepare Fastlane
-          command: sudo bundle update
+      - ruby/install-deps:
+          with-cache: true
       - run:
           name: Distribute to Google PlayStore Internal Testing
           command: bundle exec fastlane deploy
