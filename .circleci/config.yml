@@ -80,7 +80,7 @@ jobs:
       - setup_android
       - run:
           name: Prepare Fastlane
-          command: sudo bundle update
+          command: bundle install
       - run:
           name: Distribute to Firebase AppTester Dev
           command: bundle exec fastlane distDev
