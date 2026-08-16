@@ -78,57 +78,69 @@ internal fun TerminalOutput(
         verticalArrangement = Arrangement.Bottom,
     ) {
         itemsIndexed(logs, key = { index, _ -> index }) { index, item ->
-            val isNormal = item.type == OutputText.OutputType.TYPE_NORMAL
-            val isInfo = item.type == OutputText.OutputType.TYPE_INFO
-            val isError = item.type == OutputText.OutputType.TYPE_ERROR
-
-            val backgroundColor =
-                when {
-                    isError -> MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
-                    isInfo -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f)
-                    else -> Color.Transparent
-                }
-
-            val textColor =
-                when {
-                    isError -> MaterialTheme.colorScheme.error
-                    isInfo -> MaterialTheme.colorScheme.onBackground
-                    else -> MaterialTheme.colorScheme.onBackground
-                }
-
-            val prefix =
-                when {
-                    isError -> "⚠️ "
-                    isInfo -> "ℹ️ "
-                    else -> ""
-                }
-
-            val fontFamily = if (isNormal) FontFamily.Monospace else FontFamily.Default
-            val fontStyle = if (isInfo) FontStyle.Italic else FontStyle.Normal
-
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .background(backgroundColor)
-                        .padding(horizontal = 12.dp, vertical = if (isNormal) 2.dp else 6.dp),
-            ) {
-                Text(
-                    text = prefix + item.text,
-                    color = textColor,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontFamily = fontFamily,
-                    fontStyle = fontStyle,
-                    maxLines = Int.MAX_VALUE,
-                    overflow = TextOverflow.Clip,
-                )
-            }
-            if (index < logs.lastIndex) {
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
-                    thickness = 1.dp,
-                )
-            }
+            TerminalOutputItem(
+                item = item,
+                isLastItem = index == logs.lastIndex,
+            )
         }
+    }
+}
+
+@Composable
+private fun TerminalOutputItem(
+    item: OutputText,
+    isLastItem: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val isNormal = item.type == OutputText.OutputType.TYPE_NORMAL
+    val isInfo = item.type == OutputText.OutputType.TYPE_INFO
+    val isError = item.type == OutputText.OutputType.TYPE_ERROR
+
+    val backgroundColor =
+        when {
+            isError -> MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
+            isInfo -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f)
+            else -> Color.Transparent
+        }
+
+    val textColor =
+        when {
+            isError -> MaterialTheme.colorScheme.error
+            isInfo -> MaterialTheme.colorScheme.onBackground
+            else -> MaterialTheme.colorScheme.onBackground
+        }
+
+    val prefix =
+        when {
+            isError -> "⚠️ "
+            isInfo -> "ℹ️ "
+            else -> ""
+        }
+
+    val fontFamily = if (isNormal) FontFamily.Monospace else FontFamily.Default
+    val fontStyle = if (isInfo) FontStyle.Italic else FontStyle.Normal
+
+    Box(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(backgroundColor)
+                .padding(horizontal = 12.dp, vertical = if (isNormal) 2.dp else 6.dp),
+    ) {
+        Text(
+            text = prefix + item.text,
+            color = textColor,
+            style = MaterialTheme.typography.bodyMedium,
+            fontFamily = fontFamily,
+            fontStyle = fontStyle,
+            maxLines = Int.MAX_VALUE,
+            overflow = TextOverflow.Clip,
+        )
+    }
+    if (!isLastItem) {
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
+            thickness = 1.dp,
+        )
     }
 }
