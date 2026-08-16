@@ -178,8 +178,7 @@ internal class ArduinoRepository
                     false
                 }
             } catch (e: Exception) {
-                _errorMessageFlow.value = context.getString(R.string.helper_error_write_problem) +
-                    " \n${e.localizedMessage}"
+                _errorMessageFlow.value = context.getString(R.string.helper_error_write_problem) + " ${e.localizedMessage}"
                 Log.e(TAG, "$e")
                 false
             }
@@ -219,7 +218,7 @@ internal class ArduinoRepository
                 serialPort.setBaudRate(baudRate)
             } catch (e: Exception) {
                 _errorMessageFlow.value = context.getString(R.string.helper_error_applying_baud_rate) +
-                    " \n${e.localizedMessage}"
+                    "${e.localizedMessage}"
             }
         }
     }

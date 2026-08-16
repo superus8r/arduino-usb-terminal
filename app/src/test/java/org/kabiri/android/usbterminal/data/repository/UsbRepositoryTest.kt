@@ -174,7 +174,7 @@ internal class UsbRepositoryTest {
             val fakeString = "doesn't matter"
             val fakeMsg = "permission granted"
             val fakeDeviceInfo = "$fakeString $fakeString $fakeId $fakeId"
-            val expected = "\n$fakeMsg $fakeDeviceInfo"
+            val expected = "$fakeMsg $fakeDeviceInfo"
             every { mockContext.getString(any()) } returns fakeMsg
             every { mockUsbDevice1.manufacturerName } returns fakeString
             every { mockUsbDevice1.productName } returns fakeString
