@@ -1,5 +1,6 @@
 package org.kabiri.android.usbterminal.ui.terminal
 
+import android.content.ClipData
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -16,17 +17,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.model.OutputText
 
@@ -45,7 +48,8 @@ internal fun TerminalOutput(
         }
     }
 
-    val clipboard = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
+    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
     val longClickMessage = stringResource(R.string.copied_to_clipboard)
@@ -55,10 +59,18 @@ internal fun TerminalOutput(
             modifier.combinedClickable(
                 onClick = {},
                 onLongClick = {
-                    // Concatenate all logs as plain text only when the user long-clicks
                     val allText = logs.joinToString(separator = "") { it.text }
-                    clipboard.setText(AnnotatedString(allText))
-                    Toast.makeText(context, longClickMessage, Toast.LENGTH_SHORT).show()
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(
+                            ClipEntry(
+                                ClipData.newPlainText(
+                                    "Terminal Output",
+                                    allText,
+                                ),
+                            ),
+                        )
+                        Toast.makeText(context, longClickMessage, Toast.LENGTH_SHORT).show()
+                    }
                 },
             ),
         state = listState,
