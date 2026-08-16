@@ -256,6 +256,6 @@ internal class ArduinoRepositoryTest {
             // assert
             assertThat(actual).isFalse()
             // The repository concatenates the error string and the exception message
-            assertThat(sut.errorMessageFlow.first()).isEqualTo("$errorMsg \n$exceptionMsg")
+            assertThat(sut.errorMessageFlow.first()).isEqualTo("$errorMsg $exceptionMsg")
         }
 }
