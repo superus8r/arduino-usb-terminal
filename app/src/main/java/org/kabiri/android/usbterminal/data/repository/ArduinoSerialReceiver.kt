@@ -12,8 +12,7 @@ import java.nio.charset.Charset
  *
  * Reads the serial messages from the Arduino.
  */
-class ArduinoSerialReceiver: UsbSerialInterface.UsbReadCallback {
-
+class ArduinoSerialReceiver : UsbSerialInterface.UsbReadCallback {
     companion object {
         private const val TAG = "ArduinoSerialReceiver"
     }
@@ -31,17 +30,18 @@ class ArduinoSerialReceiver: UsbSerialInterface.UsbReadCallback {
 
     override fun onReceivedData(message: ByteArray?) {
         message?.let {
-            try { // reading the message from the arduino board.
+            try {
+                // reading the message from the arduino board.
                 val encoded = String(message, Charset.defaultCharset())
                 Log.i(TAG, "message from arduino: $encoded")
                 _liveOutput.value = encoded
             } catch (e: UnsupportedEncodingException) {
                 e.printStackTrace()
                 Log.e(TAG, "Encoding problem occurred when reading the serial message: $e")
-                _liveErrorOutput.value = "\n${e.localizedMessage}"
+                _liveErrorOutput.value = "${e.localizedMessage}"
             } catch (e: Exception) {
                 Log.e(TAG, "Unknown error occurred when reading the serial message: $e")
-                _liveErrorOutput.value = "\n${e.localizedMessage}"
+                _liveErrorOutput.value = "${e.localizedMessage}"
             }
         } ?: run {
             Log.e(TAG, "Message was null")

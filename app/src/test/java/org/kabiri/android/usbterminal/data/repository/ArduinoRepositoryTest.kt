@@ -256,6 +256,38 @@ internal class ArduinoRepositoryTest {
             // assert
             assertThat(actual).isFalse()
             // The repository concatenates the error string and the exception message
-            assertThat(sut.errorMessageFlow.first()).isEqualTo("$errorMsg \n$exceptionMsg")
+            assertThat(sut.errorMessageFlow.first()).isEqualTo("$errorMsg $exceptionMsg")
+        }
+
+    @Test
+    fun `setBaudRate emits error when exception is thrown`() =
+        runTest {
+            // arrange
+            val exceptionMessage = "set baud problem"
+            val expected = "set baud problem error"
+            mockkStatic(UsbSerialDevice::class)
+            every { Log.e(any(), any()) } returns 1
+            every { mockUsbManager.openDevice(mockDevice) } returns mockConnection
+            every {
+                UsbSerialDevice.createUsbSerialDevice(
+                    mockDevice,
+                    mockConnection,
+                )
+            } returns mockSerial
+            every { mockSerial.open() } returns true
+            every { mockContext.getString(R.string.helper_error_applying_baud_rate) } returns exceptionMessage
+
+            sut.openDeviceAndPort(mockDevice)
+            every { mockSerial.setBaudRate(any()) } throws RuntimeException(" error")
+
+            // act
+            val method =
+                sut.javaClass.getDeclaredMethod("updateSerialPortBaudRate", Int::class.java)
+            method.isAccessible = true
+            method.invoke(sut, 9600)
+            advanceUntilIdle()
+
+            // assert
+            assertThat(sut.errorMessageFlow.first()).isEqualTo(expected)
         }
 }

@@ -10,17 +10,18 @@ import org.kabiri.android.usbterminal.R
 
 open class CustomBottomSheetDialogFragment(
     private val canUserDragToCancel: Boolean = true,
-): BottomSheetDialogFragment() {
-
+) : BottomSheetDialogFragment() {
     override fun getTheme(): Int = R.style.SettingModalBottomSheetTheme
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
-        BottomSheetDialog(requireContext(), theme)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = BottomSheetDialog(requireContext(), theme)
 
     /**
      * Skip the "STATE_HALF_EXPANDED"
      */
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.let {
             val sheet = it as BottomSheetDialog

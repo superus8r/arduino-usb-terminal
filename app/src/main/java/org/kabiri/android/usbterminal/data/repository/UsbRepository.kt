@@ -111,7 +111,7 @@ internal class UsbRepository
                     val infoMsg =
                         "${context.getString(R.string.breceiver_info_usb_permission_granted)} " +
                             deviceInfo
-                    _infoMessageFlow.emit("\n$infoMsg")
+                    _infoMessageFlow.emit(infoMsg)
                     device?.let { _usbDevice.emit(it) }
                 } else {
                     val errorMsg =
