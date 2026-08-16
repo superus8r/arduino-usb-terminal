@@ -122,7 +122,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.actionSettings -> {
-                SettingModalBottomSheet(viewModel = settingViewModel)
+                SettingModalBottomSheet()
                     .show(supportFragmentManager, TAG)
                 true
             }
