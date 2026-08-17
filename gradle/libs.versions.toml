@@ -18,7 +18,7 @@ datastorePreferences = "1.1.7"
 composeBom = "2025.06.01"
 
 # Google/Material
-material = "1.12.0"
+material = "1.14.0"
 
 # Firebase
 firebaseBom = "33.16.0"
