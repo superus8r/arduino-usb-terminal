@@ -288,7 +288,7 @@ dependencies {
 
     // Firebase
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics.ktx)
+    implementation(libs.firebase.crashlytics)
 
     // Dependency Injection
     implementation(libs.hilt.android)

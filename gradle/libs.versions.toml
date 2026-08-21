@@ -1,7 +1,7 @@
 [versions]
 # Build tools & plugins
 gradle = "9.2.1"
-kotlin = "2.2.10"
+kotlin = "2.4.10"
 jacoco = "0.8.15"
 
 # AndroidX
@@ -12,7 +12,7 @@ lifecycleRuntimeKtx = "2.11.0"
 lifecycleViewmodelKtx = "2.11.0"
 lifecycleExtensions = "2.2.0"
 activityCompose = "1.13.0"
-datastorePreferences = "1.1.7"
+datastorePreferences = "1.2.1"
 
 # Compose
 composeBom = "2026.08.00"
@@ -21,11 +21,11 @@ composeBom = "2026.08.00"
 material = "1.14.0"
 
 # Firebase
-firebaseBom = "33.16.0"
+firebaseBom = "34.18.0"
 
 # Dagger/Hilt
-hilt = "2.57.2"
-hiltAndroidTesting = "2.57.2"
+hilt = "2.60.1"
+hiltAndroidTesting = "2.60.1"
 
 # Coroutines
 coroutines = "1.11.0"
@@ -74,7 +74,7 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 
 # --- Firebase ---
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 
 # --- Dagger/Hilt ---
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
@@ -108,8 +108,8 @@ androidx-test-truth = { module = "androidx.test.ext:truth", version.ref = "andro
 
 # --- Plugins (classpath dependencies) ---
 hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
-google-services = { module = "com.google.gms:google-services", version = "4.4.3" }
-firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version = "3.0.4" }
+google-services = { module = "com.google.gms:google-services", version = "4.5.0" }
+firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version = "3.0.8" }
 
 [plugins]
 # --- Gradle Plugins ---
