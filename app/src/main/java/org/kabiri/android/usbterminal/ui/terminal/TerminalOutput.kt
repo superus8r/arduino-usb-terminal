@@ -59,17 +59,22 @@ internal fun TerminalOutput(
             modifier.combinedClickable(
                 onClick = {},
                 onLongClick = {
-                    val allText = logs.joinToString(separator = "") { it.text }
-                    coroutineScope.launch {
-                        clipboard.setClipEntry(
-                            ClipEntry(
-                                ClipData.newPlainText(
-                                    "Terminal Output",
-                                    allText,
+                    coroutineScope.launch(kotlinx.coroutines.Dispatchers.Default) {
+                        // Do the heavy string concatenation in the background
+                        val allText = logs.toList().joinToString(separator = "") { it.text }
+
+                        // Switch back to Main thread for UI and Clipboard operations
+                        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                            clipboard.setClipEntry(
+                                ClipEntry(
+                                    ClipData.newPlainText(
+                                        "Terminal Output",
+                                        allText,
+                                    ),
                                 ),
-                            ),
-                        )
-                        Toast.makeText(context, longClickMessage, Toast.LENGTH_SHORT).show()
+                            )
+                            Toast.makeText(context, longClickMessage, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 },
             ),
