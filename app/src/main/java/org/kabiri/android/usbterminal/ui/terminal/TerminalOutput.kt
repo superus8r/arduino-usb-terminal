@@ -1,7 +1,5 @@
 package org.kabiri.android.usbterminal.ui.terminal
 
-import android.content.ClipData
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,10 +19,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,6 +36,7 @@ internal fun TerminalOutput(
     autoScroll: Boolean,
     modifier: Modifier = Modifier,
     defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    onCopyText: (String) -> Unit = {},
 ) {
     val listState = rememberLazyListState()
 
@@ -52,11 +47,7 @@ internal fun TerminalOutput(
         }
     }
 
-    val clipboard = LocalClipboard.current
     val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
-
-    val longClickMessage = stringResource(R.string.copied_to_clipboard)
 
     LazyColumn(
         modifier =
@@ -70,16 +61,7 @@ internal fun TerminalOutput(
                                 logs.toList().joinToString(separator = "") { it.text }
                             }
 
-                        // Switch back to Main thread for UI and Clipboard operations
-                        clipboard.setClipEntry(
-                            ClipEntry(
-                                ClipData.newPlainText(
-                                    "Terminal Output",
-                                    allText,
-                                ),
-                            ),
-                        )
-                        Toast.makeText(context, longClickMessage, Toast.LENGTH_SHORT).show()
+                        onCopyText(allText)
                     }
                 },
             ),
