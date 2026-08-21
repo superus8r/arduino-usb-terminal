@@ -28,7 +28,7 @@ hilt = "2.57.2"
 hiltAndroidTesting = "2.57.2"
 
 # Coroutines
-coroutines = "1.10.2"
+coroutines = "1.11.0"
 
 # USB Serial
 usbSerial = "6.1.1"
