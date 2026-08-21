@@ -1,21 +1,21 @@
 [versions]
 # Build tools & plugins
-gradle = "8.11.1"
-kotlin = "2.1.20"
+gradle = "9.2.1"
+kotlin = "2.2.10"
 jacoco = "0.8.15"
 
 # AndroidX
 appcompat = "1.8.0"
-coreKtx = "1.16.0"
+coreKtx = "1.19.0"
 constraintlayout = "2.2.2"
-lifecycleRuntimeKtx = "2.10.0"
-lifecycleViewmodelKtx = "2.9.1"
+lifecycleRuntimeKtx = "2.11.0"
+lifecycleViewmodelKtx = "2.11.0"
 lifecycleExtensions = "2.2.0"
 activityCompose = "1.13.0"
 datastorePreferences = "1.1.7"
 
 # Compose
-composeBom = "2025.06.01"
+composeBom = "2026.08.00"
 
 # Google/Material
 material = "1.14.0"
@@ -62,6 +62,8 @@ datastore-preferences = { module = "androidx.datastore:datastore-preferences", v
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 compose-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
+compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }

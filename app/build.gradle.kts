@@ -32,11 +32,11 @@ android {
         buildConfig = true
     }
 
-    compileSdk = 36
+    compileSdk = 37
     defaultConfig {
         applicationId = "org.kabiri.android.usbterminal"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = System.getenv("CIRCLE_BUILD_NUM")?.toIntOrNull() ?: 18
         versionName = "0.9.88${System.getenv("CIRCLE_BUILD_NUM") ?: ""}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -306,6 +306,8 @@ dependencies {
     implementation(composeBom)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons.core)
+    implementation(libs.compose.material.icons.extended)
     // Compose - Android Studio Preview support
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
