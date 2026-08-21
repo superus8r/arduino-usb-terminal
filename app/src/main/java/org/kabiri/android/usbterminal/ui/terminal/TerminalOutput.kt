@@ -29,7 +29,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.model.OutputText
 
@@ -38,6 +41,7 @@ internal fun TerminalOutput(
     logs: SnapshotStateList<OutputText>,
     autoScroll: Boolean,
     modifier: Modifier = Modifier,
+    defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
     val listState = rememberLazyListState()
 
@@ -59,22 +63,23 @@ internal fun TerminalOutput(
             modifier.combinedClickable(
                 onClick = {},
                 onLongClick = {
-                    coroutineScope.launch(kotlinx.coroutines.Dispatchers.Default) {
+                    coroutineScope.launch {
                         // Do the heavy string concatenation in the background
-                        val allText = logs.toList().joinToString(separator = "") { it.text }
+                        val allText =
+                            withContext(defaultDispatcher) {
+                                logs.toList().joinToString(separator = "") { it.text }
+                            }
 
                         // Switch back to Main thread for UI and Clipboard operations
-                        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                            clipboard.setClipEntry(
-                                ClipEntry(
-                                    ClipData.newPlainText(
-                                        "Terminal Output",
-                                        allText,
-                                    ),
+                        clipboard.setClipEntry(
+                            ClipEntry(
+                                ClipData.newPlainText(
+                                    "Terminal Output",
+                                    allText,
                                 ),
-                            )
-                            Toast.makeText(context, longClickMessage, Toast.LENGTH_SHORT).show()
-                        }
+                            ),
+                        )
+                        Toast.makeText(context, longClickMessage, Toast.LENGTH_SHORT).show()
                     }
                 },
             ),
