@@ -6,9 +6,8 @@ plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
-    id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
-    id("kotlin-kapt")
+    alias(libs.plugins.ksp)
     id("dagger.hilt.android.plugin")
     id("jacoco")
 }
@@ -292,7 +291,7 @@ dependencies {
 
     // Dependency Injection
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // Coroutines
     implementation(libs.lifecycle.runtime.ktx)
@@ -341,7 +340,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.truth)
     // Hilt Testing
     androidTestImplementation(libs.hilt.android.testing)
-    kaptAndroidTest(libs.hilt.android.compiler)
+    kspAndroidTest(libs.hilt.android.compiler)
 
     // Android Serial Controller
     implementation(libs.usb.serial)

@@ -2,6 +2,8 @@
 # Build tools & plugins
 gradle = "9.2.1"
 kotlin = "2.4.10"
+ksp = "2.3.11"
+#noinspection UnusedVersionCatalogEntry
 jacoco = "0.8.15"
 
 # AndroidX
@@ -114,6 +116,6 @@ firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlyti
 [plugins]
 # --- Gradle Plugins ---
 android-application = { id = "com.android.application", version.ref = "gradle" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 sonarqube = { id = "org.sonarqube", version = "7.4.0.8496" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
