@@ -94,6 +94,10 @@ android {
         }
     }
 
+    testCoverage {
+        jacocoVersion = libs.versions.jacoco.get()
+    }
+
     namespace = "org.kabiri.android.usbterminal"
 }
 
