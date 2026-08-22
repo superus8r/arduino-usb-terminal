@@ -8,7 +8,7 @@ buildscript {
 
 plugins {
     alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.sonarqube)
 }
@@ -25,8 +25,29 @@ sonarqube {
         property("sonar.sourceEncoding", "UTF-8")
         property("sonar.host.url", "https://sonarcloud.io")
 
-        property("sonar.binaries", project(":app").layout.buildDirectory.dir("tmp/kotlin-classes/debug").get().asFile.absolutePath)
-        property("sonar.androidLint.reportPaths", project(":app").layout.buildDirectory.dir("reports/lint-results-debug.xml").get().asFile.absolutePath)
-        property("sonar.coverage.jacoco.xmlReportPaths", project(":app").layout.buildDirectory.dir("mergedReportDir/jacocoTestReport/jacocoTestReport.xml").get().asFile.absolutePath)
+        property(
+            "sonar.binaries",
+            project(":app")
+                .layout.buildDirectory
+                .dir("tmp/kotlin-classes/debug")
+                .get()
+                .asFile.absolutePath,
+        )
+        property(
+            "sonar.androidLint.reportPaths",
+            project(":app")
+                .layout.buildDirectory
+                .dir("reports/lint-results-debug.xml")
+                .get()
+                .asFile.absolutePath,
+        )
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            project(":app")
+                .layout.buildDirectory
+                .dir("mergedReportDir/jacocoTestReport/jacocoTestReport.xml")
+                .get()
+                .asFile.absolutePath,
+        )
     }
 }

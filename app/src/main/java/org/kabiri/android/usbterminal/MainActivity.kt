@@ -1,5 +1,6 @@
 package org.kabiri.android.usbterminal
 
+import android.content.ClipboardManager
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -65,6 +66,22 @@ class MainActivity : AppCompatActivity() {
                 TerminalOutput(
                     logs = viewModel.output,
                     autoScroll = autoScrollEnabled,
+                    onCopyText = { allText ->
+                        val clipboardManager =
+                            getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip =
+                            android.content.ClipData.newPlainText(
+                                "Terminal Output",
+                                allText,
+                            )
+                        clipboardManager.setPrimaryClip(clip)
+                        android.widget.Toast
+                            .makeText(
+                                this@MainActivity,
+                                R.string.copied_to_clipboard,
+                                android.widget.Toast.LENGTH_SHORT,
+                            ).show()
+                    },
                 )
             }
         }
