@@ -27,7 +27,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.kabiri.android.usbterminal.R
 import org.kabiri.android.usbterminal.model.OutputText
 
 @Composable
