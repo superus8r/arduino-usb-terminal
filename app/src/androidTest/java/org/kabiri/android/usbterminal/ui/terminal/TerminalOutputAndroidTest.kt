@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -49,7 +49,6 @@ class TerminalOutputAndroidTest {
     @Test
     fun terminalOutput_longPressCopiesAllText() {
         // arrange
-        val context = composeRule.activity
         val logs =
             mutableStateListOf(
                 OutputText("A\n", OutputText.OutputType.TYPE_NORMAL),
@@ -102,7 +101,6 @@ class TerminalOutputAndroidTest {
     @Test
     fun terminalOutput_handlesEmptyLogs_andLongPressCopiesEmpty() {
         // arrange
-        val context = composeRule.activity
         val logs = mutableStateListOf<OutputText>()
 
         var copiedText: String? = null
