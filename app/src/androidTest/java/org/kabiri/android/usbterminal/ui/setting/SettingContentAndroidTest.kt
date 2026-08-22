@@ -2,11 +2,9 @@ package org.kabiri.android.usbterminal.ui.setting
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.mockk.every
-import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -21,7 +19,7 @@ class SettingContentAndroidTest {
     @get:Rule
     val composeRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun showContet(viewModel: SettingViewModel) {
+    private fun showContent(viewModel: SettingViewModel) {
         composeRule.setContent {
             UsbTerminalTheme {
                 SettingContent(
@@ -37,12 +35,16 @@ class SettingContentAndroidTest {
         // arrange
         val context = composeRule.activity
         assertThat(context, notNullValue())
-        val viewModel = mockk<SettingViewModel>(relaxed = true)
-        every { viewModel.currentBaudRate } returns flowOf(9600)
-        every { viewModel.currentAutoScroll } returns flowOf(true)
+        val viewModel =
+            SettingViewModel(
+                getBaudRate = { flowOf(9600) },
+                setBaudRate = { },
+                getAutoScroll = { flowOf(true) },
+                setAutoScroll = { },
+            )
 
         // act
-        showContet(viewModel)
+        showContent(viewModel)
 
         // assert
         composeRule.onNodeWithText(context.getString(R.string.settings_title)).assertIsDisplayed()

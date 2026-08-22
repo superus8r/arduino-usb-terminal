@@ -1,13 +1,11 @@
 package org.kabiri.android.usbterminal.ui.terminal
 
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -51,16 +49,20 @@ class TerminalOutputAndroidTest {
     @Test
     fun terminalOutput_longPressCopiesAllText() {
         // arrange
-        val context = composeRule.activity
         val logs =
             mutableStateListOf(
                 OutputText("A\n", OutputText.OutputType.TYPE_NORMAL),
                 OutputText("B", OutputText.OutputType.TYPE_NORMAL),
             )
 
+        var copiedText: String? = null
         composeRule.setContent {
             UsbTerminalTheme {
-                TerminalOutput(logs = logs, autoScroll = true)
+                TerminalOutput(
+                    logs = logs,
+                    autoScroll = true,
+                    onCopyText = { copiedText = it },
+                )
             }
         }
 
@@ -69,13 +71,7 @@ class TerminalOutputAndroidTest {
         composeRule.waitForIdle()
 
         // assert clipboard contains concatenated text
-        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val copied =
-            clipboard.primaryClip
-                ?.getItemAt(0)
-                ?.coerceToText(context)
-                ?.toString()
-        assertThat(copied).isEqualTo("A\nB")
+        assertThat(copiedText).isEqualTo("A\nB")
     }
 
     @Test
@@ -105,9 +101,9 @@ class TerminalOutputAndroidTest {
     @Test
     fun terminalOutput_handlesEmptyLogs_andLongPressCopiesEmpty() {
         // arrange
-        val context = composeRule.activity
         val logs = mutableStateListOf<OutputText>()
 
+        var copiedText: String? = null
         composeRule.setContent {
             UsbTerminalTheme {
                 TerminalOutput(
@@ -115,6 +111,7 @@ class TerminalOutputAndroidTest {
                     autoScroll = false,
                     modifier =
                         Modifier.testTag("terminal"),
+                    onCopyText = { copiedText = it },
                 )
             }
         }
@@ -124,13 +121,7 @@ class TerminalOutputAndroidTest {
         composeRule.waitForIdle()
 
         // assert: clipboard should contain empty string
-        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val copied =
-            clipboard.primaryClip
-                ?.getItemAt(0)
-                ?.coerceToText(context)
-                ?.toString()
-        assertThat(copied).isEqualTo("")
+        assertThat(copiedText).isEqualTo("")
     }
 
     @Test
