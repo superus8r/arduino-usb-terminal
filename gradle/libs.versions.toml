@@ -1,6 +1,6 @@
 [versions]
 # Build tools & plugins
-gradle = "9.2.1"
+gradle = "9.3.1"
 kotlin = "2.4.10"
 ksp = "2.3.11"
 #noinspection UnusedVersionCatalogEntry
