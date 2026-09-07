@@ -117,5 +117,5 @@ firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlyti
 # --- Gradle Plugins ---
 android-application = { id = "com.android.application", version.ref = "gradle" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-sonarqube = { id = "org.sonarqube", version = "7.4.0.8496" }
+sonarqube = { id = "org.sonarqube", version = "7.5.0.8588" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
